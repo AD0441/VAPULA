@@ -8,7 +8,7 @@
     <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple_Silicon-arm64-365D72?style=flat-square">
     <img alt="Versión 0.1.0" src="https://img.shields.io/badge/versi%C3%B3n-0.1.0-58616B?style=flat-square">
   </p>
-  <p><a href="https://github.com/AD0441/VAPULA/releases/tag/v0.1.0">Descargar 0.1.0</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#en-uso">En uso</a> · <a href="#empezar">Empezar</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
+  <p><a href="https://github.com/AD0441/VAPULA/releases/tag/v0.1.0">Descargar 0.1.0</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#en-uso">En uso</a> · <a href="#empezar">Empezar</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="docs/REQUIREMENTS.md">Requisitos</a> · <a href="docs/STATUS.md">Pendientes</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
 </div>
 
 ![VAPULA · Simplicidad con impacto. De los datos a la evidencia. Concéntrate en lo que vale la pena.](docs/assets/brand/family-cover.png)
@@ -18,6 +18,8 @@
 **Creado por Sebastián Pastén F.** Forma parte de la misma familia de herramientas para Mac que [METATRON](https://github.com/AD0441/METATRON), [PAIMON](https://github.com/AD0441/PAIMON) y [RAZIEL](https://github.com/AD0441/RAZIEL). Su motor usa [DuckDB Swift oficial](https://github.com/duckdb/duckdb-swift); la interfaz, el flujo y la identidad son propios.
 
 **Versión preliminar: [VAPULA 0.1.0, para Apple Silicon](https://github.com/AD0441/VAPULA/releases/tag/v0.1.0).** Incluye diez métodos estadísticos, ocho formas de gráfico y exportación PDF/Markdown con figuras. La validación local comprende **53 pruebas optimizadas** y un recorrido real de la aplicación con datos sintéticos. Consulta [validación y cobertura](docs/VALIDATION.md), [límites efectivos](docs/LIMITATIONS.md) e [historial de cambios](CHANGELOG.md).
+
+La [lista de requisitos](docs/REQUIREMENTS.md) recoge lo acordado, las mejoras y la aceptación esperada. La [matriz de estado y pendientes](docs/STATUS.md) distingue lo implementado, lo parcial y las ampliaciones propuestas; la versión preliminar no cierra todos los requisitos indispensables.
 
 ## Simplicidad con impacto
 
@@ -159,6 +161,8 @@ La interfaz limita las filas y puntos visibles; el actor de datos ejecuta las co
 ## Contribuir
 
 Son bienvenidos los [errores y propuestas](https://github.com/AD0441/VAPULA/issues), ejemplos sintéticos reproducibles, pruebas de métodos, accesibilidad y traducciones. Consulta [CONTRIBUTING.md](CONTRIBUTING.md) y [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). No adjuntes datos personales ni credenciales.
+
+Para priorizar trabajo, consulta los [requisitos del producto](docs/REQUIREMENTS.md) y su [cobertura con evidencia](docs/STATUS.md). Las ampliaciones propuestas requieren concretar su alcance antes de implementarse.
 
 Las nuevas funciones deben mantener el procesamiento local, la procedencia de los resultados, el cuidado de los originales y límites claros de memoria y visualización.
 
