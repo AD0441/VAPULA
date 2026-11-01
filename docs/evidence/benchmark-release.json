@@ -1,0 +1,11 @@
+{
+  "build" : "release",
+  "cpu" : "Apple M1",
+  "databaseBytes" : 4468736,
+  "fullProfileSeconds" : 0.20503699779510498,
+  "importSeconds" : 0.2087479829788208,
+  "memoryGB" : 8,
+  "page100AtOffset999900Seconds" : 0.0049250125885009766,
+  "peakRSSBytes" : 262520832,
+  "rows" : 1000000
+}

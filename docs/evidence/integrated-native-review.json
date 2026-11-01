@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-31 America/Santiago",
+  "application": "VAPULA integrated local workbench",
+  "nativeUI": "Computer Use on real macOS window, synthetic fixture only",
+  "passedTests": 53,
+  "suites": 9,
+  "configuration": "release",
+  "checked": [
+    "create project",
+    "import preview and 31-row import",
+    "missing-value impact and six-action menu",
+    "mean imputation",
+    "double-click cell edit",
+    "ten-method menu and real descriptive analysis",
+    "eight-chart menu and titled histogram",
+    "report PDF and Markdown with actual chart",
+    "add column",
+    "append row",
+    "search/select/remove row",
+    "drag and persisted coordinates",
+    "remove canvas branch and undo",
+    "portable reopen",
+    "source selection focuses its box",
+    "final PDF rendered and inspected"
+  ],
+  "notClaimed": [
+    "every method/form visually tested",
+    "full dark mode",
+    "full English localization",
+    "VoiceOver",
+    "other macOS versions",
+    "notarization"
+  ],
+  "sourceSHAUnchanged": true,
+  "finalSyntheticDatasetVersions": 6,
+  "finalSyntheticWorkflowNodes": 9
+}

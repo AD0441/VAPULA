@@ -1,0 +1,23 @@
+name: macOS build and tests
+on: [push, pull_request]
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: macos-26
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Toolchain
+        run: swift --version
+      - name: Optimized tests
+        run: ./script/test.sh -c release
+      - name: Bundle
+        run: VAPULA_BUILD_CONFIGURATION=release ./script/build_and_run.sh --build-only
+      - name: Verify signature and dependencies
+        run: |
+          codesign --verify --deep --strict dist/VAPULA.app
+          otool -L dist/VAPULA.app/Contents/MacOS/VAPULA

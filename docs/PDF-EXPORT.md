@@ -1,0 +1,11 @@
+# Native PDF result export
+
+`PDFReport.data(project:results:)` produces a PDF with vector text entirely with macOS CoreGraphics/CoreText. No browser renderer, interpreter, remote font or runtime download is involved. The optional result selection supports a single-result export; without it, all project results are included. Unrelated results are omitted from selected exports while relevant dataset ancestors and sources remain available for provenance.
+
+A4 pages use a running project header, page number, author/footer, wrapped text, metric tables with repeated table headings across page breaks, and explicit valid/excluded counts, procedures, warnings, source hashes and dataset/result UUIDs. Timestamps use America/Santiago. Numeric values use a locale-independent decimal representation. Interface labels in this first exporter are Spanish; procedure and warning language is retained as recorded by the engine.
+
+The exporter refuses foreign/modified selected results, non-finite metrics, and a pathological single metric name that cannot fit within one page. It does not silently clip long report bodies. The `figures:` argument embeds PNG plots with dataset IDs and captions, fitted and paginated. The app renders its native Swift Charts view on a white 800×450-point paper surface at 2× resolution. Up to 32 charts per report node. Scatter/line/area remain explicitly bounded; rendering does not change their data. Images are raster; report text remains searchable vector text.
+
+`Reports.writeMarkdown(_:figures:to:)` writes a new Markdown document and numbered PNG sidecars together. Existing document/image destinations are protected; only images newly created by a failed attempt are rolled back. Relative filenames are percent-encoded. Keep all sidecars with the document.
+
+Validation: Swift Testing exercises PDFKit text extraction, Unicode hypotheses, source provenance, selection privacy, long-report pagination and page/footer coverage. To leave a synthetic sample for visual inspection, set `VAPULA_PDF_SAMPLE=/tmp/vapula-results-sample.pdf` while running `PDFReportTests.pdfContainsReadableResultsAndProvenance`. The generated sample must be rendered and visually inspected before final delivery.

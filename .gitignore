@@ -1,0 +1,14 @@
+.DS_Store
+.build/
+.swiftpm/
+dist/
+DerivedData/
+*.vapula/
+*.duckdb
+*.duckdb.wal
+*.log
+.impeccable/config.local.json
+
+# Workspace settings and the archived local design prototype
+.codex/
+/Design/

@@ -1,0 +1,36 @@
+[
+  {
+    "name": "org.knime.workbench.ui_5.4.0.v202410151358",
+    "kind": "directory",
+    "selectedResources": [
+      "plugin.xml",
+      "META-INF/MANIFEST.MF"
+    ]
+  },
+  {
+    "name": "org.knime.ui.js_5.4.4.v202504301444",
+    "kind": "directory",
+    "selectedResources": [
+      "plugin.xml",
+      "LICENSE.TXT",
+      "META-INF/MANIFEST.MF"
+    ]
+  },
+  {
+    "name": "org.knime.ui.js_5.4.5.v202507161554",
+    "kind": "directory",
+    "selectedResources": [
+      "plugin.xml",
+      "LICENSE.TXT",
+      "META-INF/MANIFEST.MF"
+    ]
+  },
+  {
+    "name": "org.knime.base_5.4.4.v202504301443",
+    "kind": "directory",
+    "selectedResources": [
+      "plugin.xml",
+      "META-INF/MANIFEST.MF"
+    ]
+  }
+]

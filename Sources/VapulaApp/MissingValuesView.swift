@@ -1,0 +1,118 @@
+import SwiftUI
+import VapulaCore
+
+struct MissingValuesView: View {
+  let workspace: Workspace
+  let dataset: DatasetVersion
+  let initial: Transformation?
+  let apply: (Transformation) -> Void
+  @State private var selected = Set<String>()
+  @State private var method = "mean"
+  @State private var constant = ""
+  @State private var blanks = true
+  @State private var nonfinite = true
+  @State private var impact: MissingImpact?
+  @State private var checking = false
+  @State private var issue: String?
+  private var numericOnly: Bool { !selected.isEmpty && dataset.columns.filter { selected.contains($0.name) }.allSatisfy(\.isNumeric) }
+  private var key: MissingPreviewKey { MissingPreviewKey(dataset: dataset.id, columns: selected.sorted(), blanks: blanks, nonfinite: nonfinite) }
+  var body: some View {
+    ScrollView {
+      VStack(alignment: .leading, spacing: 19) {
+        Text("Qué valores tratar").font(.headline)
+        Text("NULL siempre se considera ausente. Decide si también incluir textos vacíos y números no finitos.").font(.caption).foregroundStyle(.secondary)
+        Toggle("Incluir texto vacío o con espacios", isOn: $blanks)
+        Toggle("Incluir NaN e infinitos", isOn: $nonfinite)
+        Divider()
+        HStack {
+          Text("Columnas").font(.headline)
+          Spacer()
+          Menu {
+            Button("Todas") { selected = Set(dataset.columns.map(\.name)) }
+            Button("Solo numéricas") { selected = Set(dataset.columns.filter(\.isNumeric).map(\.name)) }
+            Button("Ninguna") { selected = [] }
+          } label: { Image(systemName: "ellipsis.circle") }.menuStyle(.borderlessButton).fixedSize()
+        }
+        ScrollView {
+          VStack(alignment: .leading, spacing: 9) {
+            ForEach(dataset.columns) { column in
+              Toggle(isOn: Binding(get: { selected.contains(column.name) }, set: { if $0 { selected.insert(column.name) } else { selected.remove(column.name) } })) {
+                HStack {
+                  Text(column.name).lineLimit(1)
+                  Spacer()
+                  if let count = impact?.counts[column.name] { Text("\(count)").monospacedDigit().foregroundStyle(.secondary) }
+                }
+              }.toggleStyle(.checkbox)
+            }
+          }.padding(.trailing, 4)
+        }.frame(maxHeight: 150)
+        Divider()
+        Text("Cómo resolverlos").font(.headline)
+        Picker("Acción", selection: $method) {
+          Text("Media").tag("mean").disabled(!numericOnly)
+          Text("Mediana").tag("median").disabled(!numericOnly)
+          Text("Moda").tag("mode")
+          Text("Valor indicado").tag("constant")
+          Text("Retirar filas afectadas").tag("dropRows")
+          Text("Retirar columnas afectadas").tag("dropColumns")
+        }.labelsHidden()
+        if method == "constant" {
+          TextField("Valor de reemplazo", text: $constant).textFieldStyle(.roundedBorder)
+          Text("Se comprueba el tipo de cada columna. Los valores incompatibles se rechazan.").font(.caption).foregroundStyle(.secondary)
+        }
+        if method == "mean" || method == "median" {
+          Text("Media y mediana usan los valores observados de cada columna; la salida numérica pasa a DOUBLE. La imputación puede reducir la dispersión y cambiar asociaciones.").font(.caption).foregroundStyle(.secondary)
+        }
+        if method == "mode" {
+          Text("Se usa el valor observado más frecuente. En empates se elige el menor según el orden del tipo de datos.").font(.caption).foregroundStyle(.secondary)
+        }
+        if let impact {
+          VStack(alignment: .leading, spacing: 7) {
+            Text("Impacto antes de aplicar").font(.headline)
+            Text("\(impact.affectedCells) celdas · \(impact.affectedRows) de \(impact.totalRows) filas").monospacedDigit()
+            Text("Se creará una versión nueva. La versión de entrada se conserva.").font(.caption).foregroundStyle(.secondary)
+          }.padding(12).frame(maxWidth: .infinity, alignment: .leading).background(.quaternary.opacity(0.35), in: RoundedRectangle(cornerRadius: 8))
+        }
+        if checking { HStack { ProgressView().controlSize(.small); Text("Contando valores…").font(.caption) } }
+        if let issue { Text(issue).font(.caption).foregroundStyle(.secondary) }
+        Button("Aplicar y crear versión") {
+          let action: MissingAction
+          switch method {
+          case "median": action = .median; case "mode": action = .mode
+          case "constant": action = .constant(constant); case "dropRows": action = .dropRows
+          case "dropColumns": action = .dropColumns; default: action = .mean
+          }
+          apply(.missing(columns: selected.sorted(), action: action, policy: MissingPolicy(blankText: blanks, nonFiniteNumbers: nonfinite)))
+        }.buttonStyle(.borderedProminent).disabled(checking || impact == nil || impact?.affectedCells == 0 || selected.isEmpty || (method == "constant" && constant.isEmpty) || (["mean", "median"].contains(method) && !numericOnly))
+      }.font(.system(size: 12)).padding(16)
+    }
+    .disabled(workspace.busy)
+    .onAppear {
+      if case .missing(let columns, let action, let policy) = initial {
+        selected = Set(columns); blanks = policy.blankText; nonfinite = policy.nonFiniteNumbers
+        switch action {
+        case .mean: method = "mean"; case .median: method = "median"; case .mode: method = "mode"
+        case .dropRows: method = "dropRows"; case .dropColumns: method = "dropColumns"
+        case .constant(let value): method = "constant"; constant = value
+        }
+      } else {
+        let first = dataset.columns.first { $0.isNumeric && $0.name.lowercased() != "id" } ?? dataset.columns.first
+        selected = Set(first.map { [$0.name] } ?? []); method = first?.isNumeric == true ? "mean" : "mode"
+      }
+    }
+    .onChange(of: numericOnly) { if !numericOnly && ["mean", "median"].contains(method) { method = "mode" } }
+    .task(id: key) {
+      impact = nil; issue = nil; checking = false
+      guard !key.columns.isEmpty else { return }
+      checking = true
+      defer { if !Task.isCancelled { checking = false } }
+      do {
+        let value = try await workspace.engine.missingImpact(datasetID: key.dataset, columns: key.columns, policy: MissingPolicy(blankText: key.blanks, nonFiniteNumbers: key.nonfinite))
+        try Task.checkCancellation(); impact = value
+      } catch is CancellationError {} catch { issue = error.localizedDescription }
+    }
+  }
+}
+private struct MissingPreviewKey: Hashable {
+  let dataset: UUID; let columns: [String]; let blanks: Bool; let nonfinite: Bool
+}
