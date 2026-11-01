@@ -9,10 +9,10 @@
     <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple_Silicon-M1_tested-476957">
     <a href="LICENSE"><img alt="Licencia MIT" src="https://img.shields.io/badge/license-MIT-58616B"></a>
   </p>
-  <p><a href="#empezar">Empezar</a> · <a href="#en-uso">En uso</a> · <a href="#un-flujo-siete-familias-de-herramientas">El flujo</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="CONTRIBUTING.md">Contribuir</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
+  <p><a href="#empezar">Empezar</a> · <a href="#en-uso">En uso</a> · <a href="#ventajas-para-el-trabajo-diario">Ventajas</a> · <a href="#un-flujo-siete-familias-de-herramientas">El flujo</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="CONTRIBUTING.md">Contribuir</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
 </div>
 
-![VAPULA — De los datos a la evidencia](docs/assets/promo/vapula-cover.png)
+![VAPULA — De los datos a la evidencia](docs/assets/promo/vapula-portada.png)
 
 **VAPULA** reúne preparación, calidad de datos y estadística en un escritorio de cajas conectadas. Importa una tabla, revisa los valores ausentes, corrige lo necesario y conecta análisis, gráficos e informes. Cada transformación crea una versión nueva; las fuentes originales se conservan.
 
@@ -22,7 +22,7 @@
 
 ## En uso
 
-Estas capturas pertenecen a la aplicación real y utilizan exclusivamente datos sintéticos. La portada es una composición promocional generada a partir de una captura real; las imágenes siguientes se conservan sin modificar.
+Estas capturas pertenecen a la aplicación real, utilizan exclusivamente datos sintéticos y se conservan sin modificar.
 
 ![Flujo de trabajo de VAPULA con versiones, análisis, gráfico e informe conectados](docs/screenshots/flujo.png)
 
@@ -60,6 +60,26 @@ La barra añade cajas al escritorio. El inspector configura el paso seleccionado
 Continúa una rama con **+**, conecta puertos compatibles, mueve las cajas y ejecuta un paso con sus entradas o los pasos pendientes del flujo. Si cambias una entrada, sus descendientes quedan por actualizar. Puedes retirar una rama y deshacer ese cambio; las versiones y los resultados ya guardados permanecen en el historial.
 
 Los proyectos `.vapula` contienen datos y metadatos. Guarda el flujo con **⌘S**, ejecuta con **⌘R** y ajusta el lienzo con **⌘0**. Cierra el proyecto antes de mover o copiar su paquete. Al reabrir, ejecuta el gráfico para regenerar su vista previa con los parámetros guardados.
+
+## Ventajas para el trabajo diario
+
+VAPULA conecta la limpieza, el análisis y la presentación de resultados en el mismo laboratorio. Está pensado para responder preguntas generales sobre datos locales, con un catálogo pequeño y decisiones visibles.
+
+![VAPULA en Mac: un flujo conectado desde los datos hasta el histograma](docs/assets/promo/vapula-cover.png)
+
+**Cada corrección deja una versión recuperable.** Editar una celda, añadir una fila o rellenar ausentes crea una salida nueva. Puedes volver a la entrada y abrir otra rama sin organizar copias manuales del archivo.
+
+**Menos montaje para una pregunta estadística general.** El bundle reúne motor de datos, diez métodos y ocho gráficos en controles nativos. El usuario final no necesita instalar Python, R ni extensiones para recorrer ese flujo.
+
+**El resultado lleva su procedencia.** Versión de datos, variables, parámetros, válidos, excluidos y advertencias acompañan el análisis y su informe. La limpieza no queda separada de los números que después compartes.
+
+| Si hoy trabajas con… | Dónde ayuda VAPULA | Cuándo elegir la otra opción |
+| --- | --- | --- |
+| **Una planilla con ediciones directas** | Mantener versiones explícitas de las correcciones y sus análisis conectados. | Trabajos centrados en fórmulas y organización dentro del libro. |
+| **KNIME** | Empezar con siete familias de herramientas enfocadas en datos locales y estadística general para Mac. | Flujos que necesiten su ecosistema más amplio de integraciones. |
+| **Python con pandas** | Preparar, analizar y exportar desde formularios y cajas, sin escribir un programa para esa tarea. | Transformaciones personalizadas y automatización mediante código. |
+
+[Comparativa detallada, ejemplo reproducible, fuentes y límites](docs/COMPARISON.md). Power Query también conserva pasos y pandas también trata ausentes; el aporte de VAPULA está en reunir las tareas y sus versiones en este espacio de trabajo. La imagen del portátil es una composición promocional, distinta de las capturas reales de arriba.
 
 ## Métodos estadísticos
 
@@ -135,7 +155,7 @@ Los aportes voluntarios ayudan a mantener el desarrollo, la documentación y las
 
 ## Identidad y licencia
 
-El sello de Vapula tiene una interpretación geométrica original, con SVG, PNG, ICNS y [generador reproducible](script/make_brand.swift). La portada promocional utiliza una captura de la aplicación en una escena generada; [procedencia de las imágenes](docs/assets/promo/README.md). El modelo de trabajo toma ideas de editores de flujo como KNIME, sin reutilizar su código ni sus recursos. [Identidad](docs/BRAND.md) · [Referencia de KNIME](docs/KNIME-REFERENCE.md).
+El sello de Vapula tiene una interpretación geométrica original, con SVG, PNG, ICNS y [generador reproducible](script/make_brand.swift). La portada gráfica sigue la paleta oscura de la familia METATRON con el sello propio de VAPULA. La imagen promocional del portátil se conserva en el apartado de ventajas; [procedencia de las imágenes](docs/assets/promo/README.md). El modelo de trabajo toma ideas de editores de flujo como KNIME, sin reutilizar su código ni sus recursos. [Identidad](docs/BRAND.md) · [Referencia de KNIME](docs/KNIME-REFERENCE.md).
 
 Licencia **MIT**. Se incluyen los avisos de [DuckDB y sus componentes](THIRD_PARTY_NOTICES.md). No existe afiliación con Apple, KNIME o los proyectos citados.
 

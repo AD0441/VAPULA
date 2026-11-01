@@ -12,12 +12,16 @@
 
 **Enlace:** https://github.com/AD0441/VAPULA/releases/tag/v0.1.0
 
-**Imagen principal:** [vapula-web.png](../assets/promo/vapula-web.png)
+**Imagen para la tarjeta de Desarrollos:** [vapula-web.png](../assets/promo/vapula-web.png)
 
 **Texto alternativo:** MacBook mostrando VAPULA, con un flujo de análisis por nodos y un histograma.
 
 **Icono para superponer como en las otras tarjetas:** [app-icon.png](../assets/brand/app-icon.png)
 
-**Formato de portada horizontal para GitHub:** [vapula-cover.png](../assets/promo/vapula-cover.png)
+**Portada gráfica principal para GitHub:** [vapula-portada.png](../assets/promo/vapula-portada.png)
 
-La imagen principal es una composición promocional generada a partir de una captura real de VAPULA. Las capturas funcionales sin modificar se encuentran en `docs/screenshots`. Este archivo prepara el contenido para el sitio; no modifica ni publica la página web.
+**Imagen horizontal para explicar el producto y sus ventajas:** [vapula-cover.png](../assets/promo/vapula-cover.png)
+
+**Texto ampliado para ese apartado:** [VAPULA-detalle.md](VAPULA-detalle.md)
+
+La imagen de la tarjeta y la del apartado de detalle son composiciones promocionales generadas a partir de una captura real de VAPULA. La portada gráfica usa el sello propio y la referencia oscura de METATRON. Las capturas funcionales sin modificar se encuentran en `docs/screenshots`. Este archivo prepara el contenido para el sitio; no modifica ni publica la página web.

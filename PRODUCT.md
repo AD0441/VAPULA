@@ -27,3 +27,8 @@ The user accepted the separate native canvas prototype and requested the real ex
 ## Public presentation — 2026-11-01
 
 The author requested GitHub publication under AD0441/VAPULA with the same README structure and philosophy as METATRON: original icon/cover, real synthetic-data screenshots, useful feature explanations, reproducible validation, explicit limits and the canonical Ko-fi link from METATRON. Public preview 0.1.0 retains ad-hoc signing and the documented host-only validation. Website card artwork and short copy follow the author’s Desarrollos page; website content is prepared as an asset, not published to the site.
+
+
+## Corrección de portada — 2026-11-01
+
+El autor aportó la portada gráfica de METATRON como referencia y pidió conservar la imagen del portátil en un apartado de explicación y ventajas. La cabecera principal usa el sello propio en una composición oscura con detalle y profundidad; el texto comparativo identifica tareas donde VAPULA encaja mejor y reconoce las capacidades de otras herramientas, sin inventar benchmarks de superioridad.

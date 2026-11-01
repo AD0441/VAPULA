@@ -9,3 +9,8 @@ The author subsequently requested richer chart forms and editable colors. The ap
 ## Integrated canvas
 
 Use the accepted CanvasPrototype topology for the actual application. Dense options live in the selected box’s inspector; the toolbar stays at seven understandable families. The main canvas is the place to compose the process. Node previews use real row counts, summaries and histogram data. New nodes keep the current zoom and focus into view; fit is an explicit action. Color distinguishes operation families and analytical marks, with adaptive text/backgrounds. Bottom data editing uses native table selection and dedicated forms rather than editable-looking static text.
+
+
+## Presentación pública
+
+La cabecera de GitHub sigue la composición gráfica de METATRON, con el sello propio de VAPULA: azul noche oscuro, texto marfil y matices teal discretos. La referencia del autor fija la estructura; su corrección pide una portada cuidada con luz, profundidad y detalle geométrico, sin un fondo plano de texto sobre negro. La foto del portátil se reserva para explicar el flujo y sus ventajas. Las capturas funcionales permanecen sin retocar. Esta dirección de documentación no cambia los colores ni la interfaz de la aplicación.
