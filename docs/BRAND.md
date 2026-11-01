@@ -15,6 +15,15 @@ METATRON's geometry discipline, PAIMON/RAZIEL's documentation structure and nati
 
 ## Portada pública
 
-La portada principal es `docs/assets/promo/vapula-portada.png`. Sigue la referencia de METATRON aportada por el autor: fondo navy oscuro, tipografía marfil a la izquierda y sello propio a la derecha. El autor pidió profundidad y detalle, evitando una composición plana de texto sobre negro; la imagen utiliza un relieve contenido, luz discreta y conexiones geométricas. Es una ilustración promocional generada, no una captura ni una nueva geometría del icono. La portada negra sencilla que emite `make_brand.swift` se conserva como recurso anterior y no es la cabecera pública actual.
+La portada pública anterior se conserva en `docs/assets/promo/vapula-portada.png`. Sigue la referencia de METATRON aportada por el autor: fondo navy oscuro, tipografía marfil a la izquierda y sello propio a la derecha. El autor pidió profundidad y detalle, evitando una composición plana de texto sobre negro; la imagen utiliza un relieve contenido, luz discreta y conexiones geométricas. Es una ilustración promocional generada, no una captura ni una nueva geometría del icono. La portada negra sencilla que emite `make_brand.swift` se conserva como recurso anterior y no es la cabecera pública actual.
 
 La fotografía generada del Mac permanece sin cambios en el apartado de ventajas y el material de detalle. Procedencia y prompts: [imágenes promocionales](assets/promo/README.md). El icono y las variantes SVG/PNG del sello siguen utilizando la geometría original reproducible.
+
+
+## Portada y mensaje de familia · noviembre de 2026
+
+La cabecera pública actual del README es `docs/assets/brand/family-cover.png`. Adopta el sistema común de [NABERIUS, RAZIEL, METATRON, PAIMON y VAPULA](FAMILY.md): azul petróleo, marfil, acento azul apagado, mensaje a la izquierda y sello propio a la derecha.
+
+**Simplicidad con impacto. Concéntrate en lo que vale la pena.** El eslogan específico de VAPULA es **De los datos a la evidencia.**
+
+Es una ilustración promocional generada con imagegen sobre los recursos de marca existentes. El [prompt y la procedencia](assets/brand/family-cover-prompt.md) documentan su elaboración. Los iconos de aplicación, la geometría vectorial original, las capturas reales y los recursos anteriores se conservan. Los generadores históricos siguen produciendo sus archivos originales; la nueva portada se mantiene como recurso independiente.

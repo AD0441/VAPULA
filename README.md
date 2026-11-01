@@ -2,23 +2,38 @@
   <img src="docs/assets/brand/app-icon.png" width="112" alt="Icono de VAPULA">
   <h1>VAPULA</h1>
   <p><strong>De los datos a la evidencia.</strong></p>
-  <p>Prepara datos, conecta análisis y comparte resultados desde un laboratorio nativo para Mac.</p>
+  <p>Prepara datos, conecta análisis y comparte resultados en tu Mac.</p>
   <p>
-    <img alt="macOS 14 o posterior" src="https://img.shields.io/badge/macOS-14%2B-183B4A?logo=apple&logoColor=white">
-    <img alt="Swift 6" src="https://img.shields.io/badge/Swift-6-365D72?logo=swift&logoColor=white">
-    <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple_Silicon-M1_tested-476957">
-    <a href="LICENSE"><img alt="Licencia MIT" src="https://img.shields.io/badge/license-MIT-58616B"></a>
+    <img alt="macOS 14 o posterior" src="https://img.shields.io/badge/macOS-14%2B-183B4A?style=flat-square&amp;logo=apple&amp;logoColor=white">
+    <img alt="Apple Silicon" src="https://img.shields.io/badge/Apple_Silicon-arm64-365D72?style=flat-square">
+    <img alt="Versión 0.1.0" src="https://img.shields.io/badge/versi%C3%B3n-0.1.0-58616B?style=flat-square">
   </p>
-  <p><a href="#empezar">Empezar</a> · <a href="#en-uso">En uso</a> · <a href="#ventajas-para-el-trabajo-diario">Ventajas</a> · <a href="#un-flujo-siete-familias-de-herramientas">El flujo</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="CONTRIBUTING.md">Contribuir</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
+  <p><a href="https://github.com/AD0441/VAPULA/releases/tag/v0.1.0">Descargar 0.1.0</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#en-uso">En uso</a> · <a href="#empezar">Empezar</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
 </div>
 
-![VAPULA — De los datos a la evidencia](docs/assets/promo/vapula-portada.png)
+![VAPULA · Simplicidad con impacto. De los datos a la evidencia. Concéntrate en lo que vale la pena.](docs/assets/brand/family-cover.png)
 
 **VAPULA** reúne preparación, calidad de datos y estadística en un escritorio de cajas conectadas. Importa una tabla, revisa los valores ausentes, corrige lo necesario y conecta análisis, gráficos e informes. Cada transformación crea una versión nueva; las fuentes originales se conservan.
 
-**Creado por Sebastián Pastén F.** Forma parte de la misma familia de herramientas para Mac que [METATRON](https://github.com/AD0441/METATRON), [PAIMON](https://github.com/AD0441/PAIMON) y [RAZIEL](https://github.com/AD0441/RadioWorkbench). Su motor usa [DuckDB Swift oficial](https://github.com/duckdb/duckdb-swift); la interfaz, el flujo y la identidad son propios.
+**Creado por Sebastián Pastén F.** Forma parte de la misma familia de herramientas para Mac que [METATRON](https://github.com/AD0441/METATRON), [PAIMON](https://github.com/AD0441/PAIMON) y [RAZIEL](https://github.com/AD0441/RAZIEL). Su motor usa [DuckDB Swift oficial](https://github.com/duckdb/duckdb-swift); la interfaz, el flujo y la identidad son propios.
 
 **Versión preliminar: [VAPULA 0.1.0, para Apple Silicon](https://github.com/AD0441/VAPULA/releases/tag/v0.1.0).** Incluye diez métodos estadísticos, ocho formas de gráfico y exportación PDF/Markdown con figuras. La validación local comprende **53 pruebas optimizadas** y un recorrido real de la aplicación con datos sintéticos. Consulta [validación y cobertura](docs/VALIDATION.md), [límites efectivos](docs/LIMITATIONS.md) e [historial de cambios](CHANGELOG.md).
+
+## Simplicidad con impacto
+
+**Concéntrate en lo que vale la pena.** Creamos herramientas nativas para Mac que reúnen lo necesario en un flujo claro: menos pasos repetidos, decisiones visibles y control sobre tu trabajo. En VAPULA, eso significa seguir una pregunta desde la tabla original hasta un resultado con procedencia.
+
+Compartimos una filosofía y una [identidad visual](docs/FAMILY.md); cada aplicación conserva su propósito, su sello y sus límites.
+
+## Qué nos diferencia
+
+| Lo que necesitas | Nuestra ventaja práctica | Alcance que debes conocer |
+| --- | --- | --- |
+| Corregir conservando el punto de partida | Cada transformación produce una versión nueva; puedes abrir otra rama desde la entrada. | Las versiones ocupan espacio en disco. |
+| Analizar sin preparar un entorno de programación | Motor integrado, siete familias de herramientas, diez métodos y ocho gráficos. | El catálogo se concentra en estadística general y datos locales. |
+| Compartir algo más que un número | Informes con versión de datos, variables, parámetros, exclusiones y advertencias. | Los supuestos y los efectos de la imputación siguen requiriendo revisión. |
+
+Frente a una planilla con ediciones directas, VAPULA pone las versiones y sus análisis en el mismo flujo. Frente a **KNIME** o **pandas**, ofrece un recorrido acotado con controles nativos, sin instalar Python ni R para usar la app. Sus ecosistemas son más amplios; **Power Query** también registra pasos y **pandas** también trata ausentes. [Comparativa con fuentes oficiales y límites](docs/COMPARISON.md).
 
 ## En uso
 
@@ -155,11 +170,13 @@ Los aportes voluntarios ayudan a mantener el desarrollo, la documentación y las
 
 ## Identidad y licencia
 
-El sello de Vapula tiene una interpretación geométrica original, con SVG, PNG, ICNS y [generador reproducible](script/make_brand.swift). La portada gráfica sigue la paleta oscura de la familia METATRON con el sello propio de VAPULA. La imagen promocional del portátil se conserva en el apartado de ventajas; [procedencia de las imágenes](docs/assets/promo/README.md). El modelo de trabajo toma ideas de editores de flujo como KNIME, sin reutilizar su código ni sus recursos. [Identidad](docs/BRAND.md) · [Referencia de KNIME](docs/KNIME-REFERENCE.md).
+El sello de Vapula tiene una interpretación geométrica original, con SVG, PNG, ICNS y [generador reproducible](script/make_brand.swift). La portada actual adopta la [identidad común de la familia](docs/FAMILY.md) con el sello propio de VAPULA. La imagen promocional del portátil se conserva en el apartado de ventajas; [procedencia de esas imágenes](docs/assets/promo/README.md). El modelo de trabajo toma ideas de editores de flujo como KNIME, sin reutilizar su código ni sus recursos. [Identidad](docs/BRAND.md) · [Referencia de KNIME](docs/KNIME-REFERENCE.md).
 
 Licencia **MIT**. Se incluyen los avisos de [DuckDB y sus componentes](THIRD_PARTY_NOTICES.md). No existe afiliación con Apple, KNIME o los proyectos citados.
 
 <div align="center">
-  <picture><source media="(prefers-color-scheme: dark)" srcset="docs/assets/brand/symbol-dark.svg"><img src="docs/assets/brand/symbol-light.svg" width="70" alt="Símbolo de VAPULA"></picture>
+  <p><strong>Simplicidad con impacto.</strong><br>Concéntrate en lo que vale la pena.</p>
+  <p><a href="https://github.com/AD0441/NABERIUS">NABERIUS</a> · <a href="https://github.com/AD0441/RAZIEL">RAZIEL</a> · <a href="https://github.com/AD0441/METATRON">METATRON</a> · <a href="https://github.com/AD0441/PAIMON">PAIMON</a> · <a href="https://github.com/AD0441/VAPULA">VAPULA</a></p>
   <p><strong>Creado por Sebastián Pastén F.</strong></p>
+  <p><a href="https://www.sebastianpasten.com/desarrollos-aplicaciones-para-mac-software-sdr">Más aplicaciones para Mac</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar en Ko-fi</a></p>
 </div>
