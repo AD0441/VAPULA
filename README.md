@@ -11,7 +11,9 @@
   <p><a href="https://github.com/AD0441/VAPULA/releases/tag/v0.1.1">Descargar 0.1.1</a> · <a href="#qué-nos-diferencia">Ventajas</a> · <a href="#en-uso">En uso</a> · <a href="#empezar">Empezar</a> · <a href="docs/LIMITATIONS.md">Alcance</a> · <a href="docs/REQUIREMENTS.md">Requisitos</a> · <a href="docs/STATUS.md">Pendientes</a> · <a href="https://ko-fi.com/C0C51WQ1T0">Apoyar</a></p>
 </div>
 
-![VAPULA · Simplicidad con impacto. De los datos a la evidencia. Concéntrate en lo que vale la pena.](docs/assets/brand/family-cover.png)
+![VAPULA: aplicación en su entorno de trabajo, logo sobre el nombre y eslogan. Simplicidad con impacto.](docs/assets/promo/photographic-cover.png)
+
+*Composición promocional generada con IA a partir de recursos reales de la app. [Procedencia y capturas originales](docs/assets/promo/photographic-cover.md).*
 
 **VAPULA** reúne preparación, calidad de datos y estadística en un escritorio de cajas conectadas. Importa una tabla, revisa los valores ausentes, corrige lo necesario y conecta análisis, gráficos e informes. Cada transformación crea una versión nueva; las fuentes originales se conservan.
 
@@ -176,7 +178,7 @@ Los aportes voluntarios ayudan a mantener el desarrollo, la documentación y las
 
 ## Identidad y licencia
 
-El sello de Vapula tiene una interpretación geométrica original, con SVG, PNG, ICNS y [generador reproducible](script/make_brand.swift). La portada actual adopta la [identidad común de la familia](docs/FAMILY.md) con el sello propio de VAPULA. La imagen promocional del portátil se conserva en el apartado de ventajas; [procedencia de esas imágenes](docs/assets/promo/README.md). El modelo de trabajo toma ideas de editores de flujo como KNIME, sin reutilizar su código ni sus recursos. [Identidad](docs/BRAND.md) · [Referencia de KNIME](docs/KNIME-REFERENCE.md).
+El sello de Vapula tiene una interpretación geométrica original, con SVG, PNG, ICNS y [generador reproducible](script/make_brand.swift). La portada fotográfica actual sigue la [identidad común de la familia](docs/FAMILY.md), con el logo propio sobre el nombre. La imagen promocional del portátil se conserva en el apartado de ventajas; [procedencia de esas imágenes](docs/assets/promo/README.md). El modelo de trabajo toma ideas de editores de flujo como KNIME, sin reutilizar su código ni sus recursos. [Identidad](docs/BRAND.md) · [Referencia de KNIME](docs/KNIME-REFERENCE.md).
 
 Licencia **MIT**. Se incluyen los avisos de [DuckDB y sus componentes](THIRD_PARTY_NOTICES.md). No existe afiliación con Apple, KNIME o los proyectos citados.
 
