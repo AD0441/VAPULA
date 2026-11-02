@@ -65,6 +65,7 @@ public struct WorkflowNode: Codable, Equatable, Identifiable, Sendable {
   public var outputResultID: UUID?
   public var qualityFindings: [QualityFinding]?
   public var lastError: String?
+  public var castApproval: CastApproval?
   public var kind: WorkflowKind { task.kind }
   public init(name: String, task: WorkflowTask, inputs: [UUID] = [], position: WorkflowPoint) {
     self.name = name; self.task = task; self.inputs = inputs; self.position = position

@@ -7,6 +7,21 @@ struct ContentView: View {
     VStack(spacing: 0) {
       WorkbenchHeader(workspace: workspace)
       Divider()
+      if let notice = workspace.recoveryNotice {
+        VStack(alignment: .leading, spacing: 7) {
+          HStack {
+            Label(notice.interrupted ? "Sesión interrumpida: proyecto verificado" : "Proyecto verificado: datos adicionales conservados", systemImage: "checkmark.shield").font(.headline)
+            Spacer()
+            Button("Entendido") { workspace.recoveryNotice = nil }
+          }
+          Text("Se verificaron \(notice.verifiedVersions) versiones guardadas. Puedes continuar desde el último paso completo.")
+          if notice.unreferencedTables > 0 {
+            Text("Hay \(notice.unreferencedTables) tablas sin referencia en el historial. Se conservan en el paquete; no se borró información para recuperar el proyecto.")
+          }
+          Text("Cierra el proyecto antes de copiar el paquete como respaldo.").foregroundStyle(.secondary)
+        }.font(.callout).padding(14).background(.quaternary.opacity(0.35))
+        Divider()
+      }
       if workspace.project == nil { ProjectView(workspace: workspace).frame(maxWidth: .infinity, maxHeight: .infinity) }
       else { WorkbenchView(workspace: workspace) }
       Divider()
@@ -15,10 +30,11 @@ struct ContentView: View {
         Text(workspace.status.isEmpty ? "Procesamiento local · tus fuentes se conservan" : workspace.status).lineLimit(1)
         Spacer()
         if workspace.busy { Button("Cancelar", action: workspace.cancel).controlSize(.small) }
-        else { Text(workspace.workflowUnsaved ? "Cambios del flujo por guardar" : "VAPULA · local").foregroundStyle(.secondary) }
+        else { Text(!workspace.inspectorDrafts.isEmpty ? "Borradores sin ejecutar: \(workspace.inspectorDrafts.count)" : workspace.workflowUnsaved ? "Cambios del flujo por guardar" : "VAPULA · local").foregroundStyle(.secondary) }
       }.font(.system(size: 10.5)).padding(.horizontal, 16).frame(height: 30)
     }.tint(WorkbenchInk.accent)
       .sheet(isPresented: $workspace.showImport) { ImportView(workspace: workspace).interactiveDismissDisabled(workspace.busy) }
+      .sheet(item: $workspace.reportExportRequest) { request in ReportExportView(workspace: workspace, request: request) }
       .sheet(item: $workspace.editRequest) { request in DataEditingView(workspace: workspace, request: request).interactiveDismissDisabled(workspace.busy) }
       .sheet(item: $workspace.evidenceFinding) { finding in
         VStack(alignment: .leading, spacing: 16) {

@@ -35,7 +35,7 @@ struct VapulaApp: App {
           workspace.dataset == nil || workspace.busy)
         Button("Exportar Parquet…") { workspace.exportData(parquet: true) }.disabled(
           workspace.dataset == nil || workspace.busy)
-        Button("Exportar informe…") { workspace.exportReport(csv: false) }.keyboardShortcut("e")
+        Button("Exportar informe…") { workspace.requestReportExport() }.keyboardShortcut("e")
           .disabled(workspace.project == nil || workspace.busy)
       }
       CommandMenu("Flujo") {
@@ -60,9 +60,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
   func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
     guard let workspace else { return .terminateNow }
     if !workspace.busy {
-      guard workspace.workflowUnsaved else { return .terminateNow }
+      guard workspace.confirmDiscardDrafts() else { return .terminateCancel }
       Task { @MainActor in
-        do { try await workspace.savePendingWorkflow(); sender.reply(toApplicationShouldTerminate: true) }
+        do {
+          try await workspace.savePendingWorkflow()
+          await workspace.engine.close()
+          sender.reply(toApplicationShouldTerminate: true)
+        }
         catch { workspace.error = error.localizedDescription; sender.reply(toApplicationShouldTerminate: false) }
       }
       return .terminateLater

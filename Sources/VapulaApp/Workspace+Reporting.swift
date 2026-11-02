@@ -4,47 +4,57 @@ import VapulaCore
 import VapulaData
 import VapulaReports
 
+struct ReportExportRequest: Identifiable {
+  let id = UUID()
+  let scope: ReportScope
+  let format: ReportExportFormat
+}
 extension Workspace {
+  func requestReportExport(scope: ReportScope? = nil, format: ReportExportFormat = .pdf) {
+    guard !busy, project != nil else { return }
+    let selection = workflowNode.flatMap { [.analyze, .quality, .chart, .report].contains($0.kind) ? ReportScope.node($0.id) : nil }
+    reportExportRequest = ReportExportRequest(scope: scope ?? selection ?? .project, format: format)
+  }
   func exportWorkflowReport(nodeID: UUID, format: ReportExportFormat) {
-    guard !busy, let node = workflow.nodes.first(where: { $0.id == nodeID }), !node.dirty, project != nil else { return }
-    let panel = NSSavePanel()
-    panel.nameFieldStringValue = "informe\(format.fileExtension)"
-    guard panel.runModal() == .OK, let url = panel.url else { return }
-    run("Preparando y exportando informe…") {
-      guard var snapshot = self.project else { return }
-      let order = Set(try self.workflow.executionOrder(through: nodeID))
-      let included = self.workflow.nodes.filter { order.contains($0.id) }
-      guard included.allSatisfy({ !$0.dirty }) else { throw VapulaError.invalid("Actualiza las salidas del informe antes de exportar.") }
-      let results = Set(included.compactMap(\.outputResultID))
-      snapshot.results = snapshot.results.filter { results.contains($0.id) }
-      snapshot.findings = included.flatMap { $0.qualityFindings ?? [] }
-      var versionIDs = Set(included.compactMap(\.outputDatasetID))
-      versionIDs.formUnion(snapshot.results.map(\.datasetID))
-      versionIDs.formUnion(snapshot.findings.map(\.datasetID))
-      var figures: [ReportFigure] = []
-      if format != .csv {
-        let charts = included.filter { $0.kind == .chart }
-        guard charts.count <= 32 else { throw VapulaError.invalid("Selecciona hasta 32 gráficos por informe.") }
-        for item in charts {
-          try Task.checkCancellation()
-          guard case .chart(let request?) = item.task, let input = self.workflowInput(item) else { continue }
-          let output = try await self.engine.workflowChart(datasetID: input.id, request: request)
-          self.workflowCharts[item.id] = output; versionIDs.insert(output.datasetID)
-          figures.append(try self.reportFigure(output))
+    requestReportExport(scope: .node(nodeID), format: format)
+  }
+  func reportScopeTitle(_ scope: ReportScope) -> String {
+    switch scope {
+    case .project: "Proyecto completo"
+    case .node(let id): "Caja: " + (workflow.nodes.first { $0.id == id }?.name ?? "No disponible")
+    case .result: "Resultado individual"
+    }
+  }
+  func confirmReportExport(scope: ReportScope, format: ReportExportFormat) {
+    guard !busy, let project else { return }
+    let plan: ReportPlan
+    do { plan = try ReportSelection.plan(project: project, workflow: workflow, scope: scope) }
+    catch { self.error = error.localizedDescription; return }
+    let title = reportScopeTitle(scope)
+    let profiles = scope == .project ? self.profiles : []
+    let profileID = datasetID
+    reportExportRequest = nil
+    Task { @MainActor in
+      await Task.yield()
+      guard !self.busy, self.project?.id == project.id else { return }
+      let panel = NSSavePanel()
+      panel.title = "Exportar · \(title)"
+      panel.nameFieldStringValue = "informe\(format.fileExtension)"
+      guard panel.runModal() == .OK, let url = panel.url else { return }
+      self.run("Exportando · \(title)…") {
+        var figures: [ReportFigure] = []
+        if format != .csv {
+          for job in plan.charts {
+            try Task.checkCancellation()
+            let output = try await self.engine.workflowChart(datasetID: job.datasetID, request: job.request)
+            figures.append(try self.reportFigure(output))
+          }
         }
-      }
-      let byID = Dictionary(snapshot.datasets.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
-      var pending = Array(versionIDs)
-      while let id = pending.popLast() {
-        if let parent = byID[id]?.parentID, versionIDs.insert(parent).inserted { pending.append(parent) }
-      }
-      snapshot.datasets = snapshot.datasets.filter { versionIDs.contains($0.id) }
-      let sourceIDs = Set(snapshot.datasets.map(\.sourceID))
-      snapshot.sources = snapshot.sources.filter { sourceIDs.contains($0.id) }
-      switch format {
-      case .pdf: try PDFReport.data(project: snapshot, figures: figures).write(to: url, options: .withoutOverwriting)
-      case .markdown: try Reports.writeMarkdown(snapshot, figures: figures, to: url)
-      case .csv: try Reports.writeNew(Reports.csv(snapshot.results), to: url)
+        switch format {
+        case .pdf: try PDFReport.data(project: plan.project, figures: figures).write(to: url, options: .withoutOverwriting)
+        case .markdown: try Reports.writeMarkdown(plan.project, profiles: profiles, profileDatasetID: profileID, figures: figures, to: url)
+        case .csv: try Reports.writeNew(Reports.csv(plan.project.results), to: url)
+        }
       }
     }
   }

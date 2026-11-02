@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.1 — 2026-11-02 · Integrity preview
+
+- Added exclusive project writer leases, interrupted-session checks and conservative recovery notices.
+- Added conversion loss previews and exact input-bound approval, enforced by the engine and workflow executor.
+- Preserved inspector drafts within the session and added explicit discard/execute/close decisions.
+- Unified report selection and export scope across boxes, individual results and ⌘E; kept Markdown profiles and local figures.
+- Added actionable import diagnostics without internal SQL and validation of the one-sample reference mean.
+- Verified 69 release tests in 15 suites, two full repeats, four real SIGKILL scenarios and native synthetic-data review. See docs/INTEGRITY-STAGE.md for evidence and limits.
+
 ## 0.1.0 — 2026-11-01 · Public preview
 
 - Native integrated Data Studio / Statistical Lab with local DuckDB projects.

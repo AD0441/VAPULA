@@ -41,6 +41,9 @@ struct WorkflowExecutionTests {
     #expect(rerun.project.workflow?.nodes.first { $0.id == report.id }?.dirty == true)
     #expect(rerun.project.results.last?.metrics["mean"] == 6)
     await engine.close()
+    if let path = ProcessInfo.processInfo.environment["VAPULA_WORKFLOW_EXAMPLE"] {
+      try FileManager.default.copyItem(at: package, to: URL(fileURLWithPath: path))
+    }
   }
   @Test func graphValidationRejectsCyclesAndWrongKinds() throws {
     let dataID = UUID()

@@ -8,6 +8,8 @@ public actor DataEngine {
   var connection: Connection?
   var location: URL?
   var project: VapulaProject?
+  private var session: ProjectSession?
+  public private(set) var recoveryNotice: ProjectRecoveryNotice?
   let repository: any ProjectRepository
   public init(repository: any ProjectRepository = JSONProjectRepository()) {
     self.repository = repository
@@ -32,11 +34,16 @@ public actor DataEngine {
     else { throw VapulaError.invalid("Choose a new .vapula package path.") }
     try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false)
     do {
+      let session = try ProjectSession(at: url)
       let db = try Self.configuredDatabase(at: url.appendingPathComponent("data.duckdb"))
       let p = VapulaProject(name: name)
       try repository.save(p, at: url)
+      let c = try db.connect()
+      try session.begin()
+      close()
       database = db
-      connection = try db.connect()
+      connection = c
+      self.session = session
       location = url
       project = p
       return p
@@ -46,11 +53,26 @@ public actor DataEngine {
     }
   }
   public func open(at url: URL) throws -> VapulaProject {
+    if location?.resolvingSymlinksInPath().standardizedFileURL == url.resolvingSymlinksInPath().standardizedFileURL,
+      let project { return project }
     guard url.isFileURL,
       FileManager.default.fileExists(atPath: url.appendingPathComponent("data.duckdb").path)
     else { throw VapulaError.invalid("Missing project database.") }
-    let p = try repository.load(at: url)
-    let db = try Self.configuredDatabase(at: url.appendingPathComponent("data.duckdb"))
+    let session = try ProjectSession(at: url)
+    let p: VapulaProject
+    do { p = try repository.load(at: url) }
+    catch {
+      throw VapulaError.invalid("No se pudo leer el manifiesto del proyecto. Conserva este paquete y prueba una copia de respaldo. No se ha reemplazado su contenido.\n\(error.localizedDescription)")
+    }
+    let db: Database
+    do { db = try Self.configuredDatabase(at: url.appendingPathComponent("data.duckdb")) }
+    catch {
+      let message = error.localizedDescription.lowercased()
+      if message.contains("lock") {
+        throw VapulaError.invalid("Otro proceso está usando la base de datos del proyecto. Cierra ese proyecto en las otras instancias y vuelve a intentarlo. No borres archivos de bloqueo ni el WAL.")
+      }
+      throw VapulaError.invalid("No se pudo abrir la base de datos del proyecto. Conserva el paquete, comprueba sus permisos y prueba una copia de respaldo; no se han eliminado datos para repararlo.")
+    }
     let c = try db.connect()
     for v in p.datasets {
       // Only physical internal tables can be addressed by a manifest. Views are not accepted.
@@ -58,18 +80,40 @@ public actor DataEngine {
         "SELECT count(*)::BIGINT FROM duckdb_tables() WHERE table_name=\(SQL.literal(v.tableName)) AND internal=false"
       )
       guard r[0].cast(to: Int.self)[0] == 1 else {
-        throw VapulaError.invalid("Dataset table is missing or is not a physical table.")
+        throw VapulaError.invalid("Falta la tabla de una versión guardada: \(v.name). Conserva el paquete y abre una copia de respaldo; no se eliminarán datos para intentar repararlo.")
+      }
+      let columns = try c.read("DESCRIBE \(v.tableName)")
+      let savedRows = session.interrupted ? try scalarInt("SELECT count(*)::BIGINT FROM \(v.tableName)", c) : v.rowCount
+      guard columns.rowCount == v.columns.count,
+        (0..<columns.rowCount).allSatisfy({ i in
+          columns[0].cast(to: String.self)[i] == v.columns[i].name && columns[1].cast(to: String.self)[i] == v.columns[i].physicalType
+        }), savedRows == v.rowCount else {
+        throw VapulaError.invalid("La versión «\(v.name)» no coincide con sus metadatos guardados. Conserva el paquete y revisa una copia de respaldo. No se ha descartado ninguna versión.")
       }
     }
+    let tables = try c.read("SELECT table_name FROM duckdb_tables() WHERE internal=false")
+    let referenced = Set(p.datasets.map(\.tableName))
+    let orphanCount = (0..<tables.rowCount).compactMap { tables[0].cast(to: String.self)[$0] }.filter {
+      $0.hasPrefix("v_") && $0.count == 34 && $0.dropFirst(2).allSatisfy { $0.isHexDigit } && !referenced.contains($0)
+    }.count
+    let notice = session.interrupted || orphanCount > 0
+      ? ProjectRecoveryNotice(interrupted: session.interrupted, verifiedVersions: p.datasets.count, unreferencedTables: orphanCount) : nil
+    try session.begin()
+    close()
     database = db
     connection = c
     location = url
     project = p
+    self.session = session
+    recoveryNotice = notice
     return p
   }
   public func close() {
     connection = nil
     database = nil
+    session?.finish()
+    session = nil
+    recoveryNotice = nil
     location = nil
     project = nil
   }
@@ -146,6 +190,13 @@ public actor DataEngine {
   public func preview(_ url: URL, options: ImportOptions) throws -> (
     columns: [ColumnDefinition], rows: [DataRow]
   ) {
+    do { return try previewReading(url, options: options) }
+    catch is CancellationError { throw CancellationError() }
+    catch { throw VapulaError.invalid(ImportDiagnostic.message(error.localizedDescription, filename: url.lastPathComponent, options: options)) }
+  }
+  private func previewReading(_ url: URL, options: ImportOptions) throws -> (
+    columns: [ColumnDefinition], rows: [DataRow]
+  ) {
     try Task.checkCancellation()
     let db = try Self.configuredDatabase(at: nil)
     let c = try db.connect()
@@ -166,6 +217,11 @@ public actor DataEngine {
     return (columns, Self.rows(result, offset: 0))
   }
   public func importFile(_ url: URL, options: ImportOptions) throws -> DatasetVersion {
+    do { return try importReading(url, options: options) }
+    catch is CancellationError { throw CancellationError() }
+    catch { throw VapulaError.invalid(ImportDiagnostic.message(error.localizedDescription, filename: url.lastPathComponent, options: options)) }
+  }
+  private func importReading(_ url: URL, options: ImportOptions) throws -> DatasetVersion {
     try Task.checkCancellation()
     let (c, _, p) = try context()
     let attrs = try FileManager.default.attributesOfItem(atPath: url.path)

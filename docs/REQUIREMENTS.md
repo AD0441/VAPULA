@@ -1,6 +1,6 @@
 # VAPULA — Requerimientos del producto
 
-**Versión de la especificación:** 1.0 · **Fecha:** 1 de noviembre de 2026, America/Santiago.
+**Versión de la especificación:** 1.1 · **Fecha:** 2 de noviembre de 2026, America/Santiago.
 
 **Producto:** VAPULA · preparación, estadística y presentación de datos para macOS.
 
@@ -12,7 +12,7 @@
 
 Consolida lo conversado, lo construido y lo que todavía debemos resolver. Toma de [NABERIUS](https://github.com/AD0441/NABERIUS/blob/main/docs/REQUIREMENTS.md) la organización por decisiones, requisitos, prioridades y aceptación; conserva el propósito, formato y arquitectura propios de VAPULA.
 
-La cobertura real está en [STATUS.md](STATUS.md), separada de esta especificación. **La publicación preliminar 0.1.0 no certifica el cumplimiento de todos los P0.** Este inventario tampoco autoriza por sí solo a implementar todas las ampliaciones: las propuestas requieren priorización del autor.
+La cobertura real está en [STATUS.md](STATUS.md), separada de esta especificación. **La publicación preliminar no certifica el cumplimiento de todos los P0.** Este inventario tampoco autoriza por sí solo a implementar todas las ampliaciones: las propuestas requieren priorización del autor.
 
 | Etiqueta | Significado |
 | --- | --- |
@@ -96,7 +96,7 @@ Fuera del alcance vigente: plataforma universal de ciencia de datos, ejecución 
 | IMP-01 | P0 · B | Vista previa de CSV, TSV y Parquet antes de importar. | Revisar cabecera, delimitador, decimal, fecha y opción de texto; la importación final utiliza los parámetros elegidos. |
 | IMP-02 | P0 · B | Aceptar UTF-8 con/sin BOM e informar codificaciones no soportadas. | Abrir ejemplos regionales válidos y rechazar entradas no UTF-8 con una explicación que permita corregir el archivo. |
 | IMP-03 | P0 · B | Materializar la fuente seleccionada dentro del proyecto. | Tras cerrar y retirar la fuente externa, el proyecto mantiene sus datos importados. |
-| IMP-04 | P0 · D | Diagnosticar la ubicación y causa de fallos de lectura o conversión. | Un archivo problemático señala columna/fila o muestra disponible y el parámetro a revisar; no obliga a interpretar una consulta interna. |
+| IMP-04 | P0 · D | Diagnosticar la ubicación y causa de fallos de lectura o conversión. | Un archivo problemático señala columna/fila o muestra cuando el lector aporta ese contexto, y el parámetro a revisar; si no hay ubicación concreta, lo indica. No obliga a interpretar una consulta interna. |
 | IMP-05 | P1 · D | Explicar antes de importar las restricciones de anchura, rutas y almacenamiento. | Avisar del máximo de 256 columnas, rutas no admitidas y materialización; no iniciar un trabajo que ya se sabe incompatible. |
 
 ## 7. Tabla, perfiles y metadatos

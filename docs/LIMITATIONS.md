@@ -10,11 +10,11 @@ Explicit limits:
 - Cancellation waits for the current synchronous DuckDB query to finish; successful query work is discarded before commit when cancelled. Progress reports phases, not a fictitious percentage.
 - Import always materializes into the project database. Keeping an external reference or optional raw copy is deferred. Large imports/versions can require substantial free disk; no size estimator or compaction UI yet.
 - No arbitrary SQL/expression language, joins, Excel, AI, multiple regression, arbitrary executable workflow nodes or plugin execution. PDF report nodes include statistical results, quality findings, provenance and embedded chart PNGs; text is vector, plots are raster. No post-hoc/multiple-comparison correction, exact Mann–Whitney p-values, Welch ANOVA or Fisher exact test.
-- Derived columns support arithmetic with one finite scalar. TRY_CAST may create NULLs; a warning asks the user to review the profile. A dedicated cast-loss count is deferred.
+- Derived columns support arithmetic with one finite scalar. TRY_CAST may create NULLs; a warning asks the user to review the profile. Conversion previews now count new NULLs and show up to five examples; approval is required for losses and is bound to the exact input. Other rounding/precision changes are not detected.
 - Scale defaults to unknown and metadata editing is deferred. Type inconsistency is exposed through strict import failures or explicit TRY_CAST/profile comparisons, not a separate per-cell type rule.
 - Pearson/Spearman report coefficients and valid n without p-values. Regression reports coefficients, R², residual sum/scale and slope SE; full residual export/diagnostic plots and coefficient confidence intervals are deferred. For constant X or Y, paired analyses explain why the requested coefficient/R² is undefined.
 - Existing export destinations are always protected; choose a new name even if the native panel offers replacement. No source can be overwritten through app exports.
-- Projects are single-writer. Crash recovery may leave an unreferenced table; manifests refer only to committed tables. Closing before moving/copying a package is required.
+- Projects are single-writer. A kernel writer lease rejects another instance, and interrupted sessions are checked before reopening. Recovery may leave an unreferenced table; it is counted and preserved, never silently deleted. Inconsistent metadata is rejected; physical corruption is not repaired. Closing before moving/copying a package is required.
 - Main navigation/controls have ES/EN catalogs. Some technical procedure text, system dialogs, dynamic copy and engine errors remain English/Spanish; full localization QA is pending.
 - Minimum deployment target is macOS 14. Actual host coverage and distribution-signing limitations are in VALIDATION.md; untested OS versions are not presented as validated.
 - Paths containing glob metacharacters (`*?[]{}`) are rejected so DuckDB cannot expand one explicitly selected path into additional files; rename the file/folder before importing.
@@ -30,3 +30,11 @@ Explicit limits:
 - Chart style must be saved explicitly. Histogram interval changes require data refresh. Color is optional presentation, not a change in results.
 
 - Backward loading is supported for schema-1 projects without workflow fields. Older VAPULA binaries cannot read the new missing/manual transformation cases; reopen those projects with this updated app.
+
+## Integrity stage — 0.1.1
+
+Inspector drafts are preserved by project/node/input version during the session. Normal close/project switching asks to resolve them; forced termination can lose unapplied forms. Applied workflow configuration and completed dataset/result versions are persisted separately. Executing a branch requires resolving its current input-bound drafts.
+
+Report boxes, individual results and ⌘E share one selection plan and scope confirmation. Whole-project export includes historical results and only ready charts; pending chart omissions are explicit. CSV contains metrics, not figures/findings. Profiles remain available in global Markdown; report-node profiles and PDF profile tables are still deferred.
+
+See INTEGRITY-STAGE.md for the actual 69-test/native review coverage and the initial concurrent exit-test failure, process bound and subsequent complete passes. These checks do not certify all keyboard/VoiceOver/theme/language variants, power-loss recovery, network filesystems or macOS 14 execution.

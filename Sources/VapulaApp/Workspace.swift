@@ -19,6 +19,10 @@ final class Workspace {
   var busy = false
   var status = ""
   var error: String?
+  var reportExportRequest: ReportExportRequest?
+  var recoveryNotice: ProjectRecoveryNotice?
+  var inspectorDrafts = InspectorDraftStore()
+  var inspectorRevision = 0
   var selectedSection: WorkspaceSection? = .projects
   var importURL: URL?
   var showImport = false
@@ -89,6 +93,7 @@ final class Workspace {
     panel.canCreateDirectories = true
     guard panel.runModal() == .OK, let url = panel.url else { return }
     let target = url.pathExtension == "vapula" ? url : url.appendingPathExtension("vapula")
+    guard confirmDiscardDrafts() else { return }
     run("Creando proyecto…") {
       try await self.savePendingWorkflow()
       let p = try await self.engine.create(
@@ -107,15 +112,20 @@ final class Workspace {
     openProject(at: url)
   }
   func openProject(at url: URL) {
+    if projectURL?.resolvingSymlinksInPath().standardizedFileURL == url.resolvingSymlinksInPath().standardizedFileURL { return }
+    guard !busy, confirmDiscardDrafts() else { return }
     run("Abriendo proyecto…") {
       try await self.savePendingWorkflow()
       let p = try await self.engine.open(at: url)
       self.reset(p, url: url)
+      self.recoveryNotice = await self.engine.recoveryNotice
       try await self.refresh()
     }
   }
   func reset(_ p: VapulaProject, url: URL) {
     project = p
+    recoveryNotice = nil; reportExportRequest = nil
+    inspectorDrafts.removeAll(); inspectorRevision += 1
     projectURL = url
     datasetID = p.datasets.last?.id
     resetDataPresentation()
@@ -149,10 +159,12 @@ final class Workspace {
     selectedDataRows = []
   }
   func closeProject() {
+    guard !busy, confirmDiscardDrafts() else { return }
     run("Cerrando…") {
       try await self.savePendingWorkflow()
       await self.engine.close()
       self.project = nil
+      self.recoveryNotice = nil; self.inspectorDrafts.removeAll()
       self.projectURL = nil
       self.datasetID = nil
       self.page = DataPage(rows: [], matchingRows: 0)
@@ -274,10 +286,10 @@ final class Workspace {
       self.evidenceFinding = finding
     }
   }
-  func transform(_ operation: Transformation) {
+  func transform(_ operation: Transformation, castApproval: CastApproval? = nil) {
     guard let datasetID else { return }
     run("Creando versión…") {
-      let v = try await self.engine.transform(datasetID: datasetID, operation: operation)
+      let v = try await self.engine.transform(datasetID: datasetID, operation: operation, castApproval: castApproval)
       self.project = try await self.engine.snapshot()
       self.datasetID = v.id
       self.resetDataPresentation()
@@ -339,33 +351,16 @@ final class Workspace {
       self.project = try await self.engine.snapshot()
     }
   }
-  func exportReport(csv: Bool) { exportReport(format: csv ? .csv : .markdown) }
+  func exportReport(csv: Bool) { requestReportExport(scope: .project, format: csv ? .csv : .markdown) }
   func exportReport(format: ReportExportFormat, result: AnalysisResult? = nil) {
-    guard var project else { return }
-    if let result { project.results = [result] }
-    let panel = NSSavePanel()
-    panel.nameFieldStringValue = "\(result==nil ? "informe":"resultado")\(format.fileExtension)"
-    guard panel.runModal() == .OK, let url = panel.url else { return }
-    run("Exportando informe…") {
-      switch format {
-      case .markdown:
-        try Reports.writeNew(
-          Reports.markdown(
-            project, profiles: result == nil ? self.profiles : [], profileDatasetID: self.datasetID),
-          to: url)
-      case .csv: try Reports.writeNew(Reports.csv(project.results), to: url)
-      case .pdf:
-        let data = try PDFReport.data(project: project)
-        try data.write(to: url, options: .withoutOverwriting)
-      }
-    }
+    requestReportExport(scope: result.map { .result($0.id) } ?? .project, format: format)
   }
   func useVersion(_ id: UUID, section: WorkspaceSection) {
     selectVersion(id)
     selectedSection = section
   }
 }
-enum ReportExportFormat: Equatable {
+enum ReportExportFormat: Hashable {
   case pdf, markdown, csv
   var fileExtension: String {
     switch self {

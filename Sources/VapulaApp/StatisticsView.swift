@@ -4,6 +4,9 @@ import VapulaCore
 struct StatisticsView: View {
   let workspace: Workspace
   let dataset: DatasetVersion
+  var draftKey: InspectorDraftKey? = nil
+  @State private var draftRevision = -1
+  @State private var draftBaseline: StatisticsDraft?
   var initial: AnalysisSpecification? = nil
   var onCalculate: ((AnalysisSpecification) -> Void)? = nil
   var compact = false
@@ -111,7 +114,12 @@ struct StatisticsView: View {
           alpha = initial.alpha; referenceMean = String(initial.hypothesizedMean ?? 0)
         }
         seedVariables()
+        draftRevision = workspace.inspectorRevision
+        draftBaseline = currentDraft
+        if let draftKey, case .statistics(let draft) = workspace.inspectorDrafts[draftKey] { restoreDraft(draft) }
       }
+      .onChange(of: currentDraft) { cacheDraft() }
+      .onDisappear { cacheDraft() }
       .onChange(of: method) { seedVariables() }
       .task(id: "\(method.rawValue):\(group)") {
         guard method.needsGrouping, group.isEmpty == false else { return }
@@ -148,12 +156,50 @@ struct StatisticsView: View {
         ?? ""
     }
   }
+  private var currentDraft: StatisticsDraft {
+    var draft = StatisticsDraft()
+    draft.method = method
+    draft.x = x
+    draft.y = y
+    draft.group = group
+    draft.groupA = groupA
+    draft.groupB = groupB
+    draft.referenceMean = referenceMean
+    draft.alpha = alpha
+    return draft
+  }
+  private func restoreDraft(_ draft: StatisticsDraft) {
+    method = draft.method
+    x = draft.x
+    y = draft.y
+    group = draft.group
+    groupA = draft.groupA
+    groupB = draft.groupB
+    referenceMean = draft.referenceMean
+    alpha = draft.alpha
+  }
+  private func cacheDraft() {
+    guard let draftBaseline, draftRevision == workspace.inspectorRevision else { return }
+    workspace.recordDraft(currentDraft == draftBaseline ? nil : .statistics(currentDraft), for: draftKey)
+  }
+  private func acceptDraft() {
+    draftBaseline = currentDraft; workspace.recordDraft(nil, for: draftKey)
+  }
   private func calculate() {
+    let mean: Double
+    if method == .oneSampleT {
+      guard let value = Double(referenceMean), value.isFinite else {
+        workspace.error = "La media de referencia debe ser un número finito. Revisa el valor antes de calcular."
+        return
+      }
+      mean = value
+    } else { mean = 0 }
     let specification = AnalysisSpecification(
         method: method, x: x, y: method.needsPair ? y : "",
         group: method.needsGrouping ? group : "", groupA: method.needsTwoGroups ? groupA : "",
         groupB: method.needsTwoGroups ? groupB : "", alpha: alpha,
-        hypothesizedMean: Double(referenceMean) ?? 0)
+        hypothesizedMean: mean)
+    acceptDraft()
     if let onCalculate { onCalculate(specification) } else { workspace.analyze(specification) }
   }
 }

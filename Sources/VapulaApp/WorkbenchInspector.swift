@@ -26,9 +26,13 @@ struct WorkbenchInspector: View {
             }
           }
           if let error = node.lastError { Text(error).font(.system(size: 11)).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true) }
+          if let key = workspace.draftKey(nodeID: node.id, datasetID: node.kind == .report ? nil : workspace.workflowInput(node)?.id), workspace.inspectorDrafts[key] != nil {
+            Label("Borrador conservado · sin ejecutar", systemImage: "pencil.circle").font(.caption).foregroundStyle(.secondary)
+            Button("Descartar este borrador") { workspace.discardDraft(for: key) }.font(.caption).disabled(workspace.busy)
+          }
         }.padding(16)
         Divider()
-        InspectorBody(workspace: workspace, node: node).id("\(node.id)-\(workspace.workflowInput(node)?.id.uuidString ?? "")")
+        InspectorBody(workspace: workspace, node: node).id("\(node.id)-\(workspace.workflowInput(node)?.id.uuidString ?? "")-\(workspace.inspectorRevision)")
           .frame(maxWidth: .infinity, maxHeight: .infinity)
         Divider()
         HStack {
@@ -54,7 +58,7 @@ private struct InspectorBody: View {
       switch node.task {
       case .prepare(let operation):
         if case .missing = operation {
-          MissingValuesView(workspace: workspace, dataset: version, initial: operation) {
+          MissingValuesView(workspace: workspace, dataset: version, draftKey: workspace.draftKey(nodeID: node.id, datasetID: version.id), initial: operation) {
             workspace.updateAndRunWorkflowNode(node.id, task: .prepare($0))
           }
         } else if manual(operation) {
@@ -66,16 +70,16 @@ private struct InspectorBody: View {
             }.padding(16)
           }
         } else {
-          PreparationView(workspace: workspace, dataset: version, initial: operation,
-            onApply: { workspace.updateAndRunWorkflowNode(node.id, task: .prepare($0)) },
+          PreparationView(workspace: workspace, dataset: version, draftKey: workspace.draftKey(nodeID: node.id, datasetID: version.id), initial: operation,
+            onApply: { operation, approval in workspace.updateAndRunWorkflowNode(node.id, task: .prepare(operation), castApproval: approval) },
             compact: true, purpose: .transform)
         }
       case .quality(let rules):
-        PreparationView(workspace: workspace, dataset: version,
+        PreparationView(workspace: workspace, dataset: version, draftKey: workspace.draftKey(nodeID: node.id, datasetID: version.id),
           onAudit: { workspace.updateAndRunWorkflowNode(node.id, task: .quality($0)) },
           compact: true, purpose: .quality, initialRules: rules)
       case .analyze(let specification):
-        StatisticsView(workspace: workspace, dataset: version, initial: specification,
+        StatisticsView(workspace: workspace, dataset: version, draftKey: workspace.draftKey(nodeID: node.id, datasetID: version.id), initial: specification,
           onCalculate: { workspace.updateAndRunWorkflowNode(node.id, task: .analyze($0)) }, compact: true)
       case .chart(let chart):
         WorkbenchChartInspector(workspace: workspace, node: node, dataset: version, initial: chart)
@@ -134,10 +138,15 @@ private struct WorkbenchChartInspector: View {
   let node: WorkflowNode
   let dataset: DatasetVersion
   @State private var request: WorkflowChart
+  @State private var baseline: WorkflowChart
+  let draftRevision: Int
+  private var draftKey: InspectorDraftKey? { workspace.draftKey(nodeID: node.id, datasetID: dataset.id) }
   init(workspace: Workspace, node: WorkflowNode, dataset: DatasetVersion, initial: WorkflowChart?) {
-    self.workspace = workspace; self.node = node; self.dataset = dataset
+    self.workspace = workspace; self.node = node; self.dataset = dataset; self.draftRevision = workspace.inspectorRevision
     var value = initial ?? WorkflowChart(x: dataset.columns.first(where: \.isNumeric)?.name ?? dataset.columns.first?.name ?? "")
     if !dataset.columns.contains(where: { $0.name == value.x }) { value.x = dataset.columns.first(where: \.isNumeric)?.name ?? dataset.columns.first?.name ?? "" }
+    _baseline = State(initialValue: value)
+    if let key = workspace.draftKey(nodeID: node.id, datasetID: dataset.id), case .chart(let draft) = workspace.inspectorDrafts[key] { value = draft }
     _request = State(initialValue: value)
   }
   var body: some View {
@@ -158,13 +167,25 @@ private struct WorkbenchChartInspector: View {
       ChartStylePanel(configuration: $request.style, isBusy: workspace.busy, save: apply,
         saveTitle: "Aplicar y actualizar gráfico").padding(.trailing, 15)
     }.disabled(workspace.busy)
+      .onChange(of: request) { cacheDraft() }
+      .onDisappear { cacheDraft() }
   }
-  private func apply() { workspace.updateAndRunWorkflowNode(node.id, task: .chart(request)) }
+  private func cacheDraft() {
+    guard draftRevision == workspace.inspectorRevision else { return }
+    workspace.recordDraft(request == baseline ? nil : .chart(request), for: draftKey)
+  }
+  private func apply() {
+    baseline = request; workspace.recordDraft(nil, for: draftKey)
+    workspace.updateAndRunWorkflowNode(node.id, task: .chart(request))
+  }
 }
 private struct ReportInspector: View {
   let workspace: Workspace
   let node: WorkflowNode
   @State private var inputs = Set<UUID>()
+  @State private var baseline: Set<UUID>?
+  @State private var draftRevision = -1
+  private var draftKey: InspectorDraftKey? { workspace.draftKey(nodeID: node.id, datasetID: nil) }
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 17) {
@@ -179,11 +200,22 @@ private struct ReportInspector: View {
           guard let index = workspace.workflow.nodes.firstIndex(where: { $0.id == node.id }) else { return }
           workspace.rememberWorkflow()
           workspace.workflow.nodes[index].inputs = workspace.workflow.nodes.filter { inputs.contains($0.id) }.map(\.id)
+          baseline = inputs; workspace.recordDraft(nil, for: draftKey)
+          workspace.inspectorRevision += 1
           workspace.workflow.invalidate(node.id); workspace.executeWorkflowNode(node.id)
         }.buttonStyle(.borderedProminent).disabled(inputs.isEmpty)
         Text("Los pasos que ya están listos se conservan. Se ejecutan las entradas que necesiten actualizarse.").font(.caption).foregroundStyle(.secondary)
       }.padding(16)
-    }.disabled(workspace.busy).onAppear { inputs = Set(node.inputs) }
-      .onChange(of: node.inputs) { inputs = Set(node.inputs) }
+    }.disabled(workspace.busy).onAppear {
+      draftRevision = workspace.inspectorRevision
+      inputs = Set(node.inputs); baseline = inputs
+      if let draftKey, case .report(let draft) = workspace.inspectorDrafts[draftKey] { inputs = draft }
+    }
+      .onChange(of: inputs) { cacheDraft() }
+      .onDisappear { cacheDraft() }
+  }
+  private func cacheDraft() {
+    guard let baseline, draftRevision == workspace.inspectorRevision else { return }
+    workspace.recordDraft(inputs == baseline ? nil : .report(inputs), for: draftKey)
   }
 }

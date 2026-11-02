@@ -134,7 +134,11 @@ struct ProjectDataTests {
       .derive(column: "x", operation: .multiply, value: 2, name: "twice"),
       .sort(column: "x", ascending: false), .aggregate(group: "g", column: "x", function: .count),
     ] {
-      let next = try await engine.transform(datasetID: v.id, operation: op)
+      let approval: CastApproval?
+      if case .cast(let name, let type) = op {
+        approval = try await engine.castImpact(datasetID: v.id, column: name, type: type).approval
+      } else { approval = nil }
+      let next = try await engine.transform(datasetID: v.id, operation: op, castApproval: approval)
       #expect(next.parentID == v.id)
       #expect(next.operation == op)
     }

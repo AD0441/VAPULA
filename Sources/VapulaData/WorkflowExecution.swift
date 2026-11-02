@@ -50,7 +50,7 @@ extension DataEngine {
           _ = try version(versionID); node.outputDatasetID = versionID
         case .prepare(let operation):
           guard let operation else { throw VapulaError.invalid("Configura la operación en el inspector antes de ejecutar.") }
-          let result = try transform(datasetID: inputVersion(), operation: operation)
+          let result = try transform(datasetID: inputVersion(), operation: operation, castApproval: node.castApproval)
           node.outputDatasetID = result.id
         case .analyze(let specification):
           guard let specification else { throw VapulaError.invalid("Elige la prueba y sus variables en el inspector.") }

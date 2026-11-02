@@ -4,6 +4,9 @@ import VapulaCore
 struct MissingValuesView: View {
   let workspace: Workspace
   let dataset: DatasetVersion
+  var draftKey: InspectorDraftKey? = nil
+  @State private var draftRevision = -1
+  @State private var draftBaseline: MissingDraft?
   let initial: Transformation?
   let apply: (Transformation) -> Void
   @State private var selected = Set<String>()
@@ -82,6 +85,7 @@ struct MissingValuesView: View {
           case "constant": action = .constant(constant); case "dropRows": action = .dropRows
           case "dropColumns": action = .dropColumns; default: action = .mean
           }
+          acceptDraft()
           apply(.missing(columns: selected.sorted(), action: action, policy: MissingPolicy(blankText: blanks, nonFiniteNumbers: nonfinite)))
         }.buttonStyle(.borderedProminent).disabled(checking || impact == nil || impact?.affectedCells == 0 || selected.isEmpty || (method == "constant" && constant.isEmpty) || (["mean", "median"].contains(method) && !numericOnly))
       }.font(.system(size: 12)).padding(16)
@@ -99,7 +103,12 @@ struct MissingValuesView: View {
         let first = dataset.columns.first { $0.isNumeric && $0.name.lowercased() != "id" } ?? dataset.columns.first
         selected = Set(first.map { [$0.name] } ?? []); method = first?.isNumeric == true ? "mean" : "mode"
       }
+      draftRevision = workspace.inspectorRevision
+      draftBaseline = currentDraft
+      if let draftKey, case .missing(let draft) = workspace.inspectorDrafts[draftKey] { restoreDraft(draft) }
     }
+    .onChange(of: currentDraft) { cacheDraft() }
+    .onDisappear { cacheDraft() }
     .onChange(of: numericOnly) { if !numericOnly && ["mean", "median"].contains(method) { method = "mode" } }
     .task(id: key) {
       impact = nil; issue = nil; checking = false
@@ -111,6 +120,29 @@ struct MissingValuesView: View {
         try Task.checkCancellation(); impact = value
       } catch is CancellationError {} catch { issue = error.localizedDescription }
     }
+  }
+  private var currentDraft: MissingDraft {
+    var draft = MissingDraft()
+    draft.selected = selected
+    draft.method = method
+    draft.constant = constant
+    draft.blanks = blanks
+    draft.nonfinite = nonfinite
+    return draft
+  }
+  private func restoreDraft(_ draft: MissingDraft) {
+    selected = draft.selected
+    method = draft.method
+    constant = draft.constant
+    blanks = draft.blanks
+    nonfinite = draft.nonfinite
+  }
+  private func cacheDraft() {
+    guard let draftBaseline, draftRevision == workspace.inspectorRevision else { return }
+    workspace.recordDraft(currentDraft == draftBaseline ? nil : .missing(currentDraft), for: draftKey)
+  }
+  private func acceptDraft() {
+    draftBaseline = currentDraft; workspace.recordDraft(nil, for: draftKey)
   }
 }
 private struct MissingPreviewKey: Hashable {

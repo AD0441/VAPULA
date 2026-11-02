@@ -21,6 +21,7 @@ fi
 rm -rf "$APP_BUNDLE"
 mkdir -p "$APP_BUNDLE/Contents/MacOS" "$APP_BUNDLE/Contents/Resources" "$APP_BUNDLE/Contents/Frameworks"
 cp "$BUILD_DIR/VAPULA" "$APP_BUNDLE/Contents/MacOS/VAPULA"
+cmp "$BUILD_DIR/VAPULA" "$APP_BUNDLE/Contents/MacOS/VAPULA"
 for resource in "$BUILD_DIR"/VAPULA_VapulaApp.bundle; do
   if test -d "$resource"; then cp -R "$resource" "$APP_BUNDLE/Contents/Resources/"; for locale in "$resource"/*.lproj; do if test -d "$locale"; then cp -R "$locale" "$APP_BUNDLE/Contents/Resources/"; fi; done; fi
 done
@@ -39,7 +40,7 @@ cat > "$APP_BUNDLE/Contents/Info.plist" <<'PLIST'
 <key>CFBundleDevelopmentRegion</key><string>es</string><key>CFBundleLocalizations</key><array><string>es</string><string>en</string></array>
 <key>CFBundleName</key><string>VAPULA</string><key>CFBundleExecutable</key><string>VAPULA</string>
 <key>CFBundleIdentifier</key><string>cl.sebastianpasten.VAPULA</string><key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleShortVersionString</key><string>0.1.0</string><key>CFBundleVersion</key><string>1</string>
+<key>CFBundleShortVersionString</key><string>0.1.1</string><key>CFBundleVersion</key><string>2</string>
 <key>LSMinimumSystemVersion</key><string>14.0</string><key>NSPrincipalClass</key><string>NSApplication</string>
 <key>CFBundleIconFile</key><string>AppIcon</string><key>NSHighResolutionCapable</key><true/>
 <key>CFBundleDocumentTypes</key><array><dict><key>CFBundleTypeName</key><string>VAPULA Project</string><key>CFBundleTypeRole</key><string>Editor</string><key>LSItemContentTypes</key><array><string>cl.sebastianpasten.vapula-project</string></array></dict></array>

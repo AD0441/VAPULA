@@ -1,14 +1,14 @@
 # VAPULA — Estado de los requerimientos
 
-**Corte:** 1 de noviembre de 2026, America/Santiago.
+**Corte:** 2 de noviembre de 2026, America/Santiago.
 
-**Línea base:** [REQUIREMENTS.md v1.0](REQUIREMENTS.md).
+**Línea base:** [REQUIREMENTS.md v1.1](REQUIREMENTS.md).
 
-**Aplicación pública:** [0.1.0 preliminar](https://github.com/AD0441/VAPULA/releases/tag/v0.1.0), fuentes del paquete en [`3c9d2a6`](https://github.com/AD0441/VAPULA/commit/3c9d2a69c7668cca7591c5b63e59c7b695a09f6e).
+**Aplicación:** [0.1.1 preliminar](https://github.com/AD0441/VAPULA/releases/tag/v0.1.1), [fuentes del tag](https://github.com/AD0441/VAPULA/tree/v0.1.1). Lote 1 sobre la base `4982dd1`. La release anterior 0.1.0 conserva su evidencia histórica.
 
 **Documentación/identidad revisada:** [`7caa136`](https://github.com/AD0441/VAPULA/commit/7caa1364daf87f4d4e480924c399bae8f79ea4fd), incorporando después este inventario.
 
-Se revisaron el repositorio, las pruebas existentes y la evidencia registrada. Esta entrega organiza requisitos y estado; no añade funciones ni ejecuta de nuevo las pruebas de la aplicación. El corte permite distinguir lo que vimos, lo que mejoramos y lo que falta, siguiendo la separación usada en [NABERIUS](https://github.com/AD0441/NABERIUS/blob/main/docs/STATUS.md).
+Esta matriz conserva la separación entre requisitos y cobertura usada en [NABERIUS](https://github.com/AD0441/NABERIUS/blob/main/docs/STATUS.md). El [lote 1 de integridad](INTEGRITY-STAGE.md) implementa PRY-05, IMP-04, EDT-03, FLU-07 e INF-04, con pruebas y revisión nativa. Los demás pendientes y propuestas conservan su alcance.
 
 ## Cómo interpretar el estado
 
@@ -19,24 +19,24 @@ Se revisaron el repositorio, las pruebas existentes y la evidencia registrada. E
 | Pendiente | Falta la capacidad descrita o su cierre verificable. |
 | Propuesto | Ampliación sin alcance aprobado; requiere priorización antes de implementarse. |
 
-P0/P1/P2 expresan prioridad, no aprobación de una propuesta. Los orígenes C/B/D/P están definidos en la especificación. **La release 0.1.0 no cierra todos los P0.** Las pruebas automatizadas no sustituyen una auditoría de teclado/VoiceOver, una comprobación en otro Mac ni una revisión visual exhaustiva.
+P0/P1/P2 expresan prioridad, no aprobación de una propuesta. Los orígenes C/B/D/P están definidos en la especificación. **La release preliminar no cierra todos los P0.** Las pruebas automatizadas no sustituyen una auditoría de teclado/VoiceOver, una comprobación en otro Mac ni una revisión visual exhaustiva.
 
 | Prioridad | Implementado | Parcial | Pendiente | Propuesto | Total |
 | --- | --- | --- | --- | --- | --- |
-| P0 | 45 | 15 | 0 | 0 | 60 |
+| P0 | 50 | 10 | 0 | 0 | 60 |
 | P1 | 2 | 10 | 7 | 4 | 23 |
 | P2 | 0 | 0 | 0 | 1 | 1 |
-| **Total** | **47** | **25** | **7** | **5** | **84** |
+| **Total** | **52** | **20** | **7** | **5** | **84** |
 
-Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance ni una estimación de esfuerzo. Los 15 P0 parciales señalan trabajo de consolidación pendiente.
+Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance ni una estimación de esfuerzo. Los 10 P0 parciales señalan trabajo de consolidación pendiente.
 
 ## Evidencia disponible y sus límites
 
-- **Núcleo e integración:** 53 funciones Swift Testing en nueve suites, ejecutadas en release; incluyen persistencia, edición, ausentes, ejecución del grafo e informes. [Salida final][tests], [registro de validación][validation]. Es un registro previo, no una nueva ejecución de esta entrega documental.
+- **Núcleo e integración:** 69 funciones Swift Testing en 15 suites, ejecutadas en release y repetidas dos veces completas. Incluyen los casos previos y recuperación, consentimiento de conversiones, diagnósticos y selección de informes. [Salida final][tests], [registro del lote][integritystage].
 - **Estadística:** 1.356 valores escalares de referencia independientes, con definiciones y tolerancias. No equivalen a 1.356 pruebas visuales. [Validación estadística][numerical].
-- **Aplicación real:** importación de 31 filas sintéticas, relleno por media, corrección versionada, adición/retirada de filas y columna, descriptivos, histograma, PDF/MD, reapertura, movimiento y quitar/deshacer rama. [Registro nativo][native], [capturas reales][screenshots], [PDF final][pdfsample]. No se revisaron todas las combinaciones de métodos, estilos, idiomas y temas.
-- **Distribución:** ZIP arm64, SHA-256, extracción limpia, firma estricta ad hoc y comparación de 36 archivos. [Integridad][integrity], [notas de release][release]. No hay Developer ID/notarización ni calificación en otro Mac/macOS mínimo.
-- **CI:** ejecuciones satisfactorias de [main del código publicado](https://github.com/AD0441/VAPULA/actions/runs/41325036372), [tag 0.1.0](https://github.com/AD0441/VAPULA/actions/runs/41325199928) y [documentación de familia](https://github.com/AD0441/VAPULA/actions/runs/41332703840). CI no demuestra accesibilidad ni compatibilidad visual con todos los sistemas.
+- **Aplicación real:** el recorrido base de 31 filas sigue registrado. El lote 1 añade borradores, conversión con cuatro pérdidas/cancelación/aceptación, recuperación visible y PDF/MD selectivos sobre cuatro filas sintéticas. [Lote 1][integritystage], [registro base][native], [capturas base][screenshots]. No se revisaron todas las combinaciones de métodos, estilos, idiomas y temas.
+- **Distribución:** ZIP arm64, SHA-256, extracción limpia, firma estricta ad hoc y comparación de archivos. [Integridad 0.1.1][integrity], [notas de release][release]. No hay Developer ID/notarización ni calificación en otro Mac/macOS mínimo.
+- **CI histórica:** ejecuciones satisfactorias de [main del código publicado](https://github.com/AD0441/VAPULA/actions/runs/41325036372), [tag 0.1.0](https://github.com/AD0441/VAPULA/actions/runs/41325199928) y [documentación de familia](https://github.com/AD0441/VAPULA/actions/runs/41332703840). CI no demuestra accesibilidad ni compatibilidad visual con todos los sistemas.
 
 ## 1. Proyecto, versiones y recuperación
 
@@ -46,7 +46,7 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 | PRY-02 | P0 | Implementado | Versiones físicas y procedencia; hash original intacto en integración y revisión nativa. [Pruebas][projecttests], [revisión][validation]. |
 | PRY-03 | P0 | Implementado | Manifiesto atómico y prueba de fallo de escritura sin versión parcial referenciada. Una tabla huérfana tras caída sigue siendo posible. [Pruebas][projecttests], [límites][limits]. |
 | PRY-04 | P0 | Implementado | Compatibilidad aditiva de esquema 1 sin flujo y rechazo de esquema futuro. No existe un marco general de migraciones ni lectura por binarios antiguos. [Pruebas][projecttests], [grafo][workflowtests]. |
-| PRY-05 | P0 | Parcial | Modelo de un escritor y guardas de base de datos; faltan diálogo de conflicto, ensayos sistemáticos de cierre forzado y recuperación guiada. [Límites][limits]. |
+| PRY-05 | P0 | Implementado | Reserva exclusiva de escritura, detección de sesión interrumpida, comprobación de versiones y rechazo de incoherencias sin borrar datos. Cuatro SIGKILL reales, conflicto entre escritores y apertura fallida probados; no reconstruye corrupción física. [Lote 1][integritystage], [pruebas][sessiontests]. |
 | PRY-06 | P1 | Pendiente | Sin estimador de espacio, coste de versiones ni interfaz de compactación/limpieza. [Límites][limits]. |
 
 ## 2. Lienzo y ejecución del flujo
@@ -59,7 +59,7 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 | FLU-04 | P0 | Implementado | Antecesores selectivos, invalidación y ramas independientes verificadas con ejecución real del motor. [Pruebas][workflowtests]. |
 | FLU-05 | P0 | Implementado | Fases/errores por caja, compromisos previos conservados y cancelación cooperativa. Espera la consulta síncrona; no hay interrupción inmediata de DuckDB. [Ejecución][execution], [límites][limits]. |
 | FLU-06 | P0 | Implementado | Quitar/deshacer rama conserva seis versiones físicas en la revisión nativa. Deshacer restaura configuración del grafo; no borra datos ni ofrece rehacer. [Revisión][validation], [controlador][workflowui]. |
-| FLU-07 | P0 | Parcial | Ejecución y estilos aplicados son explícitos; falta conservar o resolver todos los borradores al cambiar de caja. [Inspector][inspector], [gráficos][chartpanel]. |
+| FLU-07 | P0 | Implementado | Borradores por proyecto/caja/entrada durante la sesión, indicador, descarte y guardas al ejecutar/cerrar. Ausentes y título de gráfico conservados al cambiar de caja en revisión real. No son autoguardado de formularios ante SIGKILL. [Modelo][draftmodel], [revisión][integritystage]. |
 | FLU-08 | P1 | Propuesto | Nombres/notas, duplicado, selección múltiple y rehacer requieren selección de alcance; no se presentan como disponibles. |
 
 ## 3. Importación
@@ -69,7 +69,7 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 | IMP-01 | P0 | Implementado | CSV/TSV/Parquet, vista previa y parámetros manuales; ejemplos regionales/BOM probados. [Pruebas][projecttests], [motor][engine]. |
 | IMP-02 | P0 | Implementado | UTF-8/BOM y rechazo explícito de otras codificaciones. El diagnóstico aún necesita traducción completa en UX-04. [Motor][engine]. |
 | IMP-03 | P0 | Implementado | Materialización en el paquete y reapertura sin referencia externa; no hay modo de enlace ni copia cruda opcional. [Pruebas][projecttests]. |
-| IMP-04 | P0 | Parcial | Hay errores de importación y opciones para corregir lectura; falta normalizar mensajes con columna/fila/ejemplos y orientación, sin detalles SQL internos. [Motor][engine], [límites][limits]. |
+| IMP-04 | P0 | Implementado | Mensajes por tipo de fallo y contexto disponible de fila/columna/ejemplo, sin SQL interno. Si el lector no informa ubicación concreta, se indica y se orienta el reintento. [Diagnósticos][importdiagnostic], [integración][importtests], [lote 1][integritystage]. |
 | IMP-05 | P1 | Parcial | Límites y rutas están protegidos en el motor/documentados; falta anticiparlos de manera uniforme en la confirmación de importación. [Límites][limits], [motor][engine]. |
 
 ## 4. Tabla, perfiles y metadatos
@@ -88,7 +88,7 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 | --- | --- | --- | --- |
 | EDT-01 | P0 | Implementado | Transformaciones tipadas reproducibles, constantes finitas y protección de identificadores/valores. [Pruebas][projecttests], [preparación][preparation]. |
 | EDT-02 | P0 | Implementado | Corrección, filas/columnas nuevas y retirada por identidad tras búsqueda/ordenación. Columna real `rowid` requiere renombrar; no hay pegado de matrices. [Pruebas][cleaningtests], [revisión][validation]. |
-| EDT-03 | P0 | Parcial | TRY_CAST avisa que puede producir NULL y pide revisar el perfil; faltan conteo específico y ejemplos de pérdidas antes de aceptar. [Límites][limits], [preparación][preparation]. |
+| EDT-03 | P0 | Implementado | Conteo exacto de nuevos NULL, previos y hasta cinco ejemplos. Aceptación explícita ligada a entrada/columna/tipo/cantidad, comprobada también por el motor; cambia la entrada y exige revisar otra vez. No detecta todos los redondeos. [Pruebas][casttests], [revisión][integritystage]. |
 | EDT-04 | P1 | Parcial | Motor con ambos sentidos y agregación count/mean/sum/min/max; la preparación visible fija ascendente. La tabla sí permite ordenar su vista. [Preparación][preparation], [pruebas][projecttests]. |
 | EDT-05 | P1 | Implementado | Selección nativa de columnas a conservar y adición tipada; retirar columnas se hace mediante selección, no con un comando directo de borrado. [Preparación][preparation], [edición][editing], [pruebas][cleaningtests]. |
 
@@ -143,7 +143,7 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 | INF-01 | P0 | Implementado | PDF de texto vectorial, tablas paginadas y figuras PNG; Unicode, pies, selección y páginas largas probados/renderizados. Figuras raster, no vectoriales. [PDF][pdfdocs], [pruebas][pdftests], [muestra][pdfsample]. |
 | INF-02 | P0 | Implementado | MD y PNG con referencias relativas; exportación nativa y protección de sidecars comprobadas. Los archivos asociados deben viajar juntos. [Pruebas][pdftests], [revisión][validation]. |
 | INF-03 | P0 | Implementado | Informe del flujo con salidas alcanzables, procedencia y máximo 32 figuras; rechazo de referencias ajenas. [Puente de exportación][reportui], [pruebas][pdftests]. |
-| INF-04 | P0 | Parcial | La caja exporta su selección; el atajo general conserva una ruta global heredada. Falta unificar o explicar inequívocamente su alcance. [Puente][reportui], [espacio de trabajo][workspace], [comandos][commands]. |
+| INF-04 | P0 | Implementado | Selector y plan comunes para caja/resultado/proyecto; resumen previo, históricos y gráficos pendientes explícitos. ⌘E y PDF/MD reales verificados, con exclusión de ramas ajenas. [Selección][reportselection], [pruebas][selectiontests], [revisión][integritystage]. |
 | INF-05 | P1 | Parcial | MD global admite perfiles; la caja Informe no los pasa y PDF no ofrece esas tablas. Falta paridad PDF/MD desde el flujo. [Informes][reports], [puente][reportui]. |
 | INF-06 | P0 | Implementado | CSV/Parquet de datos, CSV de resultados y destinos protegidos; pruebas de fallo/rollback y figuras existentes. [Pruebas de datos][projecttests], [pruebas de informes][pdftests]. |
 
@@ -179,7 +179,7 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 
 | Código | Prioridad | Estado | Cobertura real y pendiente |
 | --- | --- | --- | --- |
-| VAL-01 | P0 | Implementado | Suite release y referencias independientes registradas, también CI del código publicado. No se repitió por cambios solo documentales. [Salida][tests], [referencias][numerical]. |
+| VAL-01 | P0 | Implementado | 69 funciones en 15 suites release, más dos repeticiones completas. Referencias anteriores incluidas; exit tests acotados y estado SIGKILL exacto comprobado. [Salida][tests], [repeticiones y alcance][integritystage], [referencias][numerical]. |
 | VAL-02 | P0 | Implementado | Recorrido real, exportaciones abiertas y límites anotados. No sustituye GRA-05, UX-02/04 o VAL-03. [Registro][validation], [evidencia nativa][native], [PDF][pdfsample]. |
 | VAL-03 | P0 | Parcial | ZIP/suma/firma ad hoc y extracción limpia probados en M1/macOS 27.2; faltan otro Mac sin desarrollo y ejecución real en macOS 14. [Integridad][integrity], [release][release]. |
 | VAL-04 | P1 | Pendiente | Developer ID y notarización no realizados. Requiere recursos/cuenta autorizados al programar ese lote. [Release][release]. |
@@ -206,12 +206,12 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 
 | Lote propuesto | Requisitos | Resultado esperado para revisar |
 | --- | --- | --- |
-| 1. Integridad y decisiones visibles | PRY-05, IMP-04, EDT-03, FLU-07, INF-04 | Recuperación/conflictos comprensibles, pérdidas de conversión cuantificadas, borradores protegidos y exportación sin ambigüedad. |
+| 1. Integridad y decisiones visibles — entregado | PRY-05, IMP-04, EDT-03, FLU-07, INF-04 | Implementado y comprobado dentro del [alcance del lote 1](INTEGRITY-STAGE.md). Continúa el lote 2. |
 | 2. Terminar de pulir el uso real | UX-01 a UX-05, GRA-02, GRA-05, SEG-01, VAL-03 | Recorridos con teclado/VoiceOver, idiomas/temas/ventana mínima, colores inválidos, ocho gráficos, uso desconectado y paquete en otro Mac. |
 | 3. Trabajo diario y entrega | DAT-04/05, EDT-04, CAL-03/04, EST-08, INF-05, PUB-03 | Metadatos y comparación, orden descendente visible, evidencia revisable, orientación y perfiles en ambos informes; enlaces coherentes. |
 | 4. Medir antes de ampliar | PRY-06, REN-02/03, UX-06 | Coste de versiones, medidas repetibles y tropiezos de usuarios; decidir después FLU-08 y EXT-01 a EXT-04. |
 
-No se abren issues ni se implementan estas propuestas automáticamente por publicar la matriz. El orden es una recomendación de trabajo, revisable por el autor.
+El autor autorizó continuar con la siguiente etapa el 2 de noviembre; se entregó el lote 1. Los lotes restantes y las ampliaciones propuestas conservan su prioridad y alcance pendientes de programación. No se abren issues automáticamente por actualizar la matriz.
 
 ## Condiciones para cerrar una fila
 
@@ -220,14 +220,14 @@ No se abren issues ni se implementan estas propuestas automáticamente por publi
 3. Corregir limitaciones y documentación si cambió el comportamiento. Conservar registros históricos con su fecha.
 4. Actualizar esta matriz sin convertir pruebas del núcleo en afirmaciones de interfaz, seguridad o compatibilidad no verificadas.
 
-[tests]: evidence/test-integrated-release-final.txt
+[tests]: evidence/test-integrity-release.txt
 [validation]: VALIDATION.md
 [numerical]: STATISTICAL-VALIDATION.md
 [native]: evidence/integrated-native-review.json
 [screenshots]: screenshots/README.md
 [pdfsample]: evidence/VAPULA-flujo-final.pdf
-[integrity]: evidence/bundle-integrity-integrated.json
-[release]: RELEASE-0.1.0.md
+[integrity]: evidence/bundle-integrity-0.1.1.json
+[release]: RELEASE-0.1.1.md
 [limits]: LIMITATIONS.md
 [projecttests]: ../Tests/VapulaTests/ProjectDataTests.swift
 [workflowtests]: ../Tests/VapulaTests/WorkflowExecutionTests.swift
@@ -275,3 +275,12 @@ No se abren issues ni se implementan estas propuestas automáticamente por publi
 [webshort]: website/VAPULA.md
 [webdetail]: website/VAPULA-detalle.md
 [promo]: assets/promo/README.md
+
+[integritystage]: INTEGRITY-STAGE.md
+[sessiontests]: ../Tests/VapulaTests/Data/ProjectSessionTests.swift
+[importdiagnostic]: ../Sources/VapulaCore/ImportDiagnostic.swift
+[importtests]: ../Tests/VapulaTests/Data/ImportFailureTests.swift
+[casttests]: ../Tests/VapulaTests/Data/CastPreviewTests.swift
+[draftmodel]: ../Sources/VapulaCore/InspectorDrafts.swift
+[reportselection]: ../Sources/VapulaReports/ReportSelection.swift
+[selectiontests]: ../Tests/VapulaTests/Reports/ReportSelectionTests.swift

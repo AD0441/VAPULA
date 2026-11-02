@@ -64,7 +64,7 @@ extension DataEngine {
         q1: r[8].cast(to: Double.self)[0], q3: r[9].cast(to: Double.self)[0])
     }
   }
-  public func transform(datasetID: UUID, operation: Transformation) throws -> DatasetVersion {
+  public func transform(datasetID: UUID, operation: Transformation, castApproval: CastApproval? = nil) throws -> DatasetVersion {
     let (c, _, p) = try context()
     let v = try version(datasetID)
     var out = DatasetVersion(
@@ -109,6 +109,10 @@ extension DataEngine {
         "SELECT \(try v.columns.map{ $0.name==name ? "\(try column(name,in:v)) AS \(try SQL.identifier(newName))" : try column($0.name,in:v) }.joined(separator:",")) FROM \(v.tableName)"
     case .cast(let name, let type):
       _ = try column(name, in: v)
+      let impact = try castImpact(datasetID: datasetID, column: name, type: type)
+      guard impact.newNulls == 0 || castApproval == impact.approval else {
+        throw VapulaError.invalid("La conversión de «\(name)» produciría \(impact.newNulls) nuevos NULL. Revisa el impacto en el inspector y confirma esta versión de entrada antes de ejecutarla.")
+      }
       sql =
         "SELECT * REPLACE (TRY_CAST(\(try column(name,in:v)) AS \(type.rawValue)) AS \(try SQL.identifier(name))) FROM \(v.tableName)"
     case .derive(let name, let op, let value, let newName):

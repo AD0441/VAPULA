@@ -4,8 +4,11 @@ import VapulaCore
 struct PreparationView: View {
   let workspace: Workspace
   let dataset: DatasetVersion
+  var draftKey: InspectorDraftKey? = nil
+  @State private var draftRevision = -1
+  @State private var draftBaseline: PreparationDraft?
   var initial: Transformation? = nil
-  var onApply: ((Transformation) -> Void)? = nil
+  var onApply: ((Transformation, CastApproval?) -> Void)? = nil
   var onAudit: (([QualityRule]) -> Void)? = nil
   var compact = false
   var purpose = PreparationPurpose.all
@@ -24,6 +27,11 @@ struct PreparationView: View {
   @State private var lower = ""
   @State private var upper = ""
   @State private var rangeEnabled = false
+  @State private var castImpact: CastImpact?
+  @State private var castChecking = false
+  @State private var castIssue: String?
+  @State private var confirmCast = false
+  private var castKey: CastPreviewKey { CastPreviewKey(datasetID: dataset.id, column: column, type: physicalType, active: action == "cast") }
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 24) {
@@ -57,8 +65,16 @@ struct PreparationView: View {
               ForEach(PhysicalType.allCases, id: \.self) { Text($0.rawValue).tag($0) }
             }
             Text(
-              "Los valores incompatibles se convierten en NULL. Revisa el perfil de la nueva versión antes de continuar."
+              "Revisa cuántos valores pasarían a NULL antes de crear la nueva versión. La entrada se conserva."
             ).font(.caption).foregroundStyle(.secondary)
+            if castChecking { ProgressView("Comprobando conversión…").controlSize(.small) }
+            if let castImpact {
+              Text("Nuevos NULL: \(castImpact.newNulls) · NULL previos: \(castImpact.existingNulls)").font(.callout.weight(.medium))
+              if !castImpact.examples.isEmpty {
+                Text("Ejemplos no convertibles: " + castImpact.examples.joined(separator: " · ")).font(.caption).textSelection(.enabled)
+              }
+            }
+            if let castIssue { Text(castIssue).font(.caption).foregroundStyle(.red) }
           }
           if action == "derive" {
             Picker("Aritmética", selection: $arithmetic) {
@@ -82,6 +98,7 @@ struct PreparationView: View {
           }
         }.formStyle(.grouped)
         Button("Crear versión", action: apply).buttonStyle(.borderedProminent).tint(.primary)
+          .disabled(action == "cast" && (castChecking || castImpact == nil))
         }
         if purpose != .transform {
         Divider()
@@ -101,6 +118,7 @@ struct PreparationView: View {
           }.textFieldStyle(.roundedBorder)
         }
         Button("Revisar calidad") {
+          acceptDraft()
           if let onAudit {
             var rules = dataset.columns.map { QualityRule.missing($0.name) }
             rules += dataset.columns.filter(\.isNumeric).flatMap { [QualityRule.nonFinite($0.name), .outlier($0.name)] }
@@ -151,16 +169,83 @@ struct PreparationView: View {
         default: break
         }
       }
+      draftRevision = workspace.inspectorRevision
+      draftBaseline = currentDraft
+      if let draftKey, case .preparation(let draft) = workspace.inspectorDrafts[draftKey] { restoreDraft(draft) }
+    }
+    .onChange(of: currentDraft) { cacheDraft() }
+    .onDisappear { cacheDraft() }
+    .task(id: castKey) {
+      castImpact = nil; castIssue = nil; castChecking = false
+      guard castKey.active, !castKey.column.isEmpty else { return }
+      let key = castKey; castChecking = true
+      defer { if !Task.isCancelled { castChecking = false } }
+      do {
+        let impact = try await workspace.engine.castImpact(datasetID: key.datasetID, column: key.column, type: key.type)
+        try Task.checkCancellation(); castImpact = impact
+      } catch is CancellationError {} catch { castIssue = error.localizedDescription }
+    }
+    .alert("La conversión crea valores ausentes", isPresented: $confirmCast) {
+      Button("Conservar entrada", role: .cancel) {}
+      Button("Crear versión (nuevos NULL: \(castImpact?.newNulls ?? 0))", role: .destructive) { apply(confirmed: true) }
+    } message: {
+      Text("\(castImpact?.newNulls ?? 0) valores de «\(column)» no se pueden convertir a \(physicalType.rawValue). Se guardará una versión nueva; la entrada permanecerá intacta.")
     }
   }
-  private func apply() {
+  private var currentDraft: PreparationDraft {
+    var draft = PreparationDraft()
+    draft.column = column
+    draft.action = action
+    draft.comparison = comparison
+    draft.value = value
+    draft.newName = newName
+    draft.physicalType = physicalType
+    draft.arithmetic = arithmetic
+    draft.aggregate = aggregate
+    draft.group = group
+    draft.selectedColumns = selectedColumns
+    draft.duplicateKeys = duplicateKeys
+    draft.lower = lower
+    draft.upper = upper
+    draft.rangeEnabled = rangeEnabled
+    return draft
+  }
+  private func restoreDraft(_ draft: PreparationDraft) {
+    column = draft.column
+    action = draft.action
+    comparison = draft.comparison
+    value = draft.value
+    newName = draft.newName
+    physicalType = draft.physicalType
+    arithmetic = draft.arithmetic
+    aggregate = draft.aggregate
+    group = draft.group
+    selectedColumns = draft.selectedColumns
+    duplicateKeys = draft.duplicateKeys
+    lower = draft.lower
+    upper = draft.upper
+    rangeEnabled = draft.rangeEnabled
+  }
+  private func cacheDraft() {
+    guard let draftBaseline, draftRevision == workspace.inspectorRevision else { return }
+    workspace.recordDraft(currentDraft == draftBaseline ? nil : .preparation(currentDraft), for: draftKey)
+  }
+  private func acceptDraft() {
+    draftBaseline = currentDraft; workspace.recordDraft(nil, for: draftKey)
+  }
+  private func apply() { apply(confirmed: false) }
+  private func apply(confirmed: Bool) {
     let operation: Transformation
     switch action {
     case "select":
       operation = .select(
         columns: dataset.columns.map(\.name).filter { selectedColumns.contains($0) })
     case "rename": operation = .rename(column: column, name: newName)
-    case "cast": operation = .cast(column: column, type: physicalType)
+    case "cast":
+      guard let castImpact, castImpact.approval.datasetID == dataset.id,
+        castImpact.approval.column == column, castImpact.approval.type == physicalType else { return }
+      if castImpact.newNulls > 0 && !confirmed { confirmCast = true; return }
+      operation = .cast(column: column, type: physicalType)
     case "derive":
       guard let number = Double(value), number.isFinite else {
         workspace.error = "La constante debe ser numérica (usa punto decimal)."
@@ -171,7 +256,9 @@ struct PreparationView: View {
     case "aggregate": operation = .aggregate(group: group, column: column, function: aggregate)
     default: operation = .filter(column: column, comparison: comparison, value: value)
     }
-    if let onApply { onApply(operation) } else { workspace.transform(operation) }
+    acceptDraft()
+    let approval = action == "cast" ? castImpact?.approval : nil
+    if let onApply { onApply(operation, approval) } else { workspace.transform(operation, castApproval: approval) }
   }
 }
 struct ColumnChecklist: View {
@@ -193,3 +280,6 @@ struct ColumnChecklist: View {
 }
 
 enum PreparationPurpose { case all, transform, quality }
+private struct CastPreviewKey: Hashable {
+  let datasetID: UUID; let column: String; let type: PhysicalType; let active: Bool
+}

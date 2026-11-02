@@ -59,6 +59,7 @@ extension Workspace {
   func undoWorkflow() {
     guard !busy, let previous = workflowHistory.popLast() else { return }
     workflow = previous; workflowUndoAvailable = !workflowHistory.isEmpty
+    inspectorRevision += 1
     workflowNodeID = workflow.nodes.last?.id; persistWorkflow()
     workflowFitRequest += 1
   }
@@ -106,9 +107,11 @@ extension Workspace {
     workflowTab = kind == .chart ? .chart : kind == .report ? .report : .data
     persistWorkflow()
   }
-  func updateAndRunWorkflowNode(_ id: UUID, task: WorkflowTask) {
+  func updateAndRunWorkflowNode(_ id: UUID, task: WorkflowTask, castApproval: CastApproval? = nil) {
     guard !busy, let index = workflow.nodes.firstIndex(where: { $0.id == id }) else { return }
     rememberWorkflow(); workflow.nodes[index].task = task
+    inspectorRevision += 1
+    workflow.nodes[index].castApproval = castApproval
     switch task {
     case .prepare(let operation): workflow.nodes[index].name = operation?.displayTitle ?? "Preparar"
     case .analyze(let spec): workflow.nodes[index].name = spec?.method.title ?? "Analizar"
@@ -119,6 +122,15 @@ extension Workspace {
   }
   func executeWorkflowNode(_ id: UUID? = nil) {
     guard !busy, project != nil else { return }
+    let order = (try? workflow.executionOrder(through: id)) ?? []
+    let pending = workflow.nodes.filter { node in
+      order.contains(node.id) && draftKey(nodeID: node.id, datasetID: node.kind == .report ? nil : workflowInput(node)?.id)
+        .map { inspectorDrafts[$0] != nil } == true
+    }
+    guard pending.isEmpty else {
+      error = "Hay cambios sin aplicar en «\(pending[0].name)». Abre su inspector y aplícalos, o descarta ese borrador, antes de ejecutar esta rama."
+      return
+    }
     if let id { workflowNodeID = id }
     let document = workflow
     run(id == nil ? "Ejecutando los pasos pendientes…" : "Ejecutando paso y entradas…") {
