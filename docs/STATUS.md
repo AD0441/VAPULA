@@ -1,14 +1,26 @@
 # VAPULA — Estado de los requerimientos
 
-**Corte:** 2 de noviembre de 2026, America/Santiago.
+**Corte:** 3 de noviembre de 2026, America/Santiago.
 
 **Línea base:** [REQUIREMENTS.md v1.1](REQUIREMENTS.md).
 
-**Aplicación:** [0.1.3 preliminar](https://github.com/AD0441/VAPULA/releases/tag/v0.1.3), [fuentes del tag](https://github.com/AD0441/VAPULA/tree/v0.1.3). Cierre de V2 de la Gantt sobre `db6f682`. Las releases 0.1.0/0.1.1/0.1.2 conservan su evidencia histórica.
+**Descarga pública comprobada:** [0.1.2 preliminar](https://github.com/AD0441/VAPULA/releases/tag/v0.1.2). V1 conserva su cierre con [0.1.1](https://github.com/AD0441/VAPULA/releases/tag/v0.1.1).
+
+**Candidata de cierre instalada:** 0.1.3, build 4; [código `0fd6a11`](https://github.com/AD0441/VAPULA/commit/0fd6a112f459f6204e3034200299175fb07b36eb). Pruebas y exportaciones locales verificadas; ZIP cargado en borrador. La [CI del código](https://github.com/AD0441/VAPULA/actions/runs/41574435557) sigue en curso: la descarga 0.1.3 se publica sólo al pasar esa comprobación.
 
 **Documentación/identidad revisada:** [`7caa136`](https://github.com/AD0441/VAPULA/commit/7caa1364daf87f4d4e480924c399bae8f79ea4fd), incorporando después este inventario.
 
 Esta matriz conserva la separación entre requisitos y cobertura usada en [NABERIUS](https://github.com/AD0441/NABERIUS/blob/main/docs/STATUS.md). El [lote 1 de integridad](INTEGRITY-STAGE.md) implementa PRY-05, IMP-04, EDT-03, FLU-07 e INF-04, con pruebas y revisión nativa. Los demás pendientes y propuestas conservan su alcance.
+
+## Seguimiento de la Gantt — semana 1
+
+| Lote semanal | Estado al corte | Evidencia y alcance |
+| --- | --- | --- |
+| V1 · S1 · Cerrar 0.1.1 | Cerrado | Publicación confirmada, [CI satisfactoria](https://github.com/AD0441/VAPULA/actions/runs/41450849893), ZIP descargado y suma/firma/36 archivos coincidentes; arranque de la copia descargada comprobado en el Mac actual. [Integridad 0.1.1](evidence/bundle-integrity-0.1.1.json). |
+| V2 · S1 · Aceptación de integridad | Cerrado en el alcance técnico de muestras sintéticas controladas | Importar, corregir/imputar, analizar, revisar conversiones, exportar y reabrir; 79 pruebas release, cuatro SIGKILL y exportaciones reales con versión/build correctos. [Cierre V2][v2], [registro](evidence/v2-acceptance.json), [PDF final](evidence/v2-final.pdf), [MD y ocho imágenes](evidence/v2-final.md). Publicación de 0.1.3 pendiente de la CI indicada arriba. |
+| V3 · S2 · Claridad esencial | Sin cierre declarado | 0.1.2 adelantó mejoras de navegación, mensajes y exportación. Falta contrastar su aceptación con los tropiezos priorizados; no equivale a auditoría universal. |
+
+**V2 de la Gantt y «lote 2 de usabilidad» son alcances distintos.** Cerrar V2 no cierra los nueve P0 parciales ni los requisitos de VoiceOver, idiomas/temas completos u otro Mac. No se reprograman los demás proyectos.
 
 ## Cómo interpretar el estado
 
@@ -34,8 +46,9 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 
 - **Núcleo e integración:** 79 funciones Swift Testing en 17 suites en release. Incluyen los casos previos y los nuevos de identidad del exportador y aceptación portable de 31 filas. [Salida final][tests], [registro de cierre][v2].
 - **Estadística:** 1.356 valores escalares de referencia independientes, con definiciones y tolerancias. No equivalen a 1.356 pruebas visuales. [Validación estadística][numerical].
-- **Aplicación real:** el recorrido base de 31 filas sigue registrado. El lote 1 añade borradores, conversión con cuatro pérdidas/cancelación/aceptación, recuperación visible y PDF/MD selectivos sobre cuatro filas sintéticas. [Lote 1][integritystage], [registro base][native], [capturas base][screenshots]. El [lote 2][usability] añade navegación, ES/EN, diagnóstico HEX, ocho formas, PDF/MD y reapertura con ocho filas sintéticas. No se revisaron todas las combinaciones de métodos, estilos, idiomas y temas.
-- **Distribución:** ZIP arm64 0.1.3, SHA-256, extracción limpia, firma estricta ad hoc y comparación de archivos. [Integridad 0.1.3][integrity], [notas de release][release]. No hay Developer ID/notarización ni calificación en otro Mac/macOS mínimo.
+- **Aplicación real:** 0.1.3 reabrió 12 cajas/2 versiones/2 resultados y exportó 1 resultado seleccionado con 8 gráficos; MD y PDF de 10 páginas muestran la versión/build reales. [Aceptación V2][v2]. El recorrido base de 31 filas sigue registrado. El lote 1 añade borradores, conversión con cuatro pérdidas/cancelación/aceptación, recuperación visible y PDF/MD selectivos sobre cuatro filas sintéticas. [Lote 1][integritystage], [registro base][native], [capturas base][screenshots]. El [lote 2][usability] añade navegación, ES/EN, diagnóstico HEX, ocho formas, PDF/MD y reapertura con ocho filas sintéticas. No se revisaron todas las combinaciones de métodos, estilos, idiomas y temas.
+- **Distribución local:** ZIP arm64 0.1.3 en borrador, SHA-256, extracción limpia, firma estricta ad hoc y comparación de archivos. [Integridad 0.1.3][integrity], [notas de release][release]. No hay Developer ID/notarización ni calificación en otro Mac/macOS mínimo.
+- **CI de entregas recientes:** [0.1.1](https://github.com/AD0441/VAPULA/actions/runs/41450849893) y [0.1.2](https://github.com/AD0441/VAPULA/actions/runs/41569142256) satisfactorias. La 0.1.3 continúa en curso; no se atribuye un resultado todavía.
 - **CI histórica:** ejecuciones satisfactorias de [main del código publicado](https://github.com/AD0441/VAPULA/actions/runs/41325036372), [tag 0.1.0](https://github.com/AD0441/VAPULA/actions/runs/41325199928) y [documentación de familia](https://github.com/AD0441/VAPULA/actions/runs/41332703840). CI no demuestra accesibilidad ni compatibilidad visual con todos los sistemas.
 
 ## 1. Proyecto, versiones y recuperación
