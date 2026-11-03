@@ -99,11 +99,8 @@ public enum PDFReport {
       renderer.addGap(14)
     }
     if !figures.isEmpty {
-      try renderer.paragraph("Gráficos", style: .section)
-      for figure in figures {
-        try renderer.paragraph(figure.title, style: .analysis)
-        try renderer.paragraph("Versión de datos: \(figure.datasetID.uuidString)\n\(figure.caption)", style: .small)
-        try renderer.figure(figure.png)
+      for (index, figure) in figures.enumerated() {
+        try renderer.figure(figure, sectionTitle: index == 0 ? "Gráficos" : nil)
       }
     }
     let versionIDs = Set(versions.map(\.id))
@@ -402,19 +399,33 @@ public enum PDFReport {
       CTFrameDraw(frame, context)
     }
 
-    func figure(_ data: Data) throws {
+    func figure(_ figure: ReportFigure, sectionTitle: String?) throws {
       try Task.checkCancellation()
+      let data = figure.png
       guard data.count <= 20_000_000, let source = CGImageSourceCreateWithData(data as CFData, nil),
         let image = CGImageSourceCreateImageAtIndex(source, 0, nil), image.width > 0, image.height > 0,
         image.width <= 10_000, image.height <= 10_000 else { throw VapulaError.invalid("No se pudo incorporar el gráfico al PDF.") }
-      let height = min(310, contentWidth * CGFloat(image.height) / CGFloat(image.width))
-      let width = height * CGFloat(image.width) / CGFloat(image.height)
-      if cursor - height < bottom { newPage() }
+      let imageHeight = min(310, contentWidth * CGFloat(image.height) / CGFloat(image.width))
+      let width = imageHeight * CGFloat(image.width) / CGFloat(image.height)
+      let caption = "Versión de datos: \(figure.datasetID.uuidString)\n\(figure.caption)"
+      func blockHeight(_ text: String, _ style: Style) -> CGFloat {
+        guard !text.isEmpty else { return 0 }
+        return height(attributed(text, style: style), width: contentWidth) + style.spaceBefore + style.spaceAfter + 4
+      }
+      let required = blockHeight(figure.title, .analysis) + blockHeight(caption, .small)
+        + imageHeight + 16 + (sectionTitle.map { blockHeight($0, .section) } ?? 0)
+      // Keep bounded app figures with their title/caption. Oversized external text
+      // still uses normal paragraph pagination instead of clipping or dropping it.
+      if required <= contentTop - bottom, cursor - required < bottom { newPage() }
+      if let sectionTitle { try paragraph(sectionTitle, style: .section) }
+      try paragraph(figure.title, style: .analysis)
+      try paragraph(caption, style: .small)
+      if cursor - imageHeight < bottom { newPage() }
       context.saveGState()
       context.interpolationQuality = .high
-      context.draw(image, in: CGRect(x: margin + (contentWidth - width) / 2, y: cursor - height, width: width, height: height))
+      context.draw(image, in: CGRect(x: margin + (contentWidth - width) / 2, y: cursor - imageHeight, width: width, height: imageHeight))
       context.restoreGState()
-      cursor -= height + 16
+      cursor -= imageHeight + 16
     }
     func finish() throws -> Data {
       guard finished == false else { throw VapulaError.invalid("El PDF ya fue finalizado.") }

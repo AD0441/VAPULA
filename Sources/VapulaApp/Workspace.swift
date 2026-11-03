@@ -1,5 +1,6 @@
 import AppKit
 import Observation
+import UniformTypeIdentifiers
 import VapulaCore
 import VapulaData
 import VapulaReports
@@ -17,7 +18,7 @@ final class Workspace {
   var sortColumn: String?
   var ascending = true
   var busy = false
-  var status = ""
+  var status = L("")
   var error: String?
   var reportExportRequest: ReportExportRequest?
   var recoveryNotice: ProjectRecoveryNotice?
@@ -72,29 +73,29 @@ final class Workspace {
       }
       do {
         try await operation()
-        status = "Listo"
+        status = L("Listo")
       } catch is CancellationError {
-        status = "Cancelado; no se guardó el trabajo incompleto"
+        status = L("Cancelado; no se guardó el trabajo incompleto")
       } catch {
         self.error = error.localizedDescription
-        status = "Revisa el error y vuelve a intentar"
+        status = L("Revisa el error y vuelve a intentar")
       }
     }
   }
   func cancel() {
     task?.cancel()
-    status = "Cancelando al finalizar la consulta actual…"
+    status = L("Cancelando al finalizar la consulta actual…")
   }
   func createProject() {
     guard busy == false else { return }
     let panel = NSSavePanel()
-    panel.title = "Crear proyecto VAPULA"
-    panel.nameFieldStringValue = "Sin título.vapula"
+    panel.title = L("Crear proyecto VAPULA")
+    panel.nameFieldStringValue = L("Sin título.vapula")
     panel.canCreateDirectories = true
     guard panel.runModal() == .OK, let url = panel.url else { return }
     let target = url.pathExtension == "vapula" ? url : url.appendingPathExtension("vapula")
     guard confirmDiscardDrafts() else { return }
-    run("Creando proyecto…") {
+    run(L("Creando proyecto…")) {
       try await self.savePendingWorkflow()
       let p = try await self.engine.create(
         at: target, name: target.deletingPathExtension().lastPathComponent)
@@ -104,17 +105,22 @@ final class Workspace {
   func openProject() {
     guard busy == false else { return }
     let panel = NSOpenPanel()
-    panel.title = "Abrir proyecto .vapula"
+    panel.title = L("Abrir proyecto .vapula")
+    panel.treatsFilePackagesAsDirectories = false
+    panel.allowedContentTypes = [
+      UTType(exportedAs: "cl.sebastianpasten.vapula-project", conformingTo: .package), .folder,
+    ]
+    // macOS 27 recomputes selection flags when package/type options change.
+    // Set explicit file/directory choices last, also preserving older systems.
     panel.canChooseDirectories = true
     panel.canChooseFiles = true
-    panel.treatsFilePackagesAsDirectories = false
     guard panel.runModal() == .OK, let url = panel.url else { return }
     openProject(at: url)
   }
   func openProject(at url: URL) {
     if projectURL?.resolvingSymlinksInPath().standardizedFileURL == url.resolvingSymlinksInPath().standardizedFileURL { return }
     guard !busy, confirmDiscardDrafts() else { return }
-    run("Abriendo proyecto…") {
+    run(L("Abriendo proyecto…")) {
       try await self.savePendingWorkflow()
       let p = try await self.engine.open(at: url)
       self.reset(p, url: url)
@@ -160,7 +166,7 @@ final class Workspace {
   }
   func closeProject() {
     guard !busy, confirmDiscardDrafts() else { return }
-    run("Cerrando…") {
+    run(L("Cerrando…")) {
       try await self.savePendingWorkflow()
       await self.engine.close()
       self.project = nil
@@ -177,7 +183,7 @@ final class Workspace {
     guard busy == false else { return }
     datasetID = id
     resetDataPresentation()
-    run("Cargando versión…") { try await self.refresh() }
+    run(L("Cargando versión…")) { try await self.refresh() }
   }
   func refresh() async throws {
     guard let datasetID else { return }
@@ -189,14 +195,14 @@ final class Workspace {
     project = try await engine.snapshot()
   }
   func reloadPage() {
-    run("Consultando datos…") {
+    run(L("Consultando datos…")) {
       self.offset = 0
       self.activeSearch = self.search
       try await self.refresh()
     }
   }
   func turnPage(_ delta: Int) {
-    run("Cargando página…") {
+    run(L("Cargando página…")) {
       self.offset = max(0, self.offset + delta * 100)
       try await self.refresh()
     }
@@ -214,7 +220,7 @@ final class Workspace {
   func chooseImport() {
     guard project != nil, busy == false else { return }
     let panel = NSOpenPanel()
-    panel.title = "Importar CSV, TSV o Parquet"
+    panel.title = L("Importar CSV, TSV o Parquet")
     panel.allowedContentTypes = [.commaSeparatedText, .tabSeparatedText, .data]
     panel.allowsMultipleSelection = false
     guard panel.runModal() == .OK, let url = panel.url else { return }
@@ -230,7 +236,7 @@ final class Workspace {
   }
   func previewImport(_ options: ImportOptions) {
     guard let importURL else { return }
-    run("Leyendo vista previa…") {
+    run(L("Leyendo vista previa…")) {
       do {
         let preview = try await self.engine.preview(importURL, options: options)
         self.previewColumns = preview.columns
@@ -245,7 +251,7 @@ final class Workspace {
   }
   func confirmImport(_ options: ImportOptions) {
     guard let importURL else { return }
-    run("Importando y calculando SHA-256…") {
+    run(L("Importando y calculando SHA-256…")) {
       let v = try await self.engine.importFile(importURL, options: options)
       self.project = try await self.engine.snapshot()
       self.datasetID = v.id
@@ -262,13 +268,13 @@ final class Workspace {
   }
   func profile() {
     guard let datasetID else { return }
-    run("Calculando perfil completo…") {
+    run(L("Calculando perfil completo…")) {
       self.profiles = try await self.engine.profile(datasetID: datasetID)
     }
   }
   func audit(keys: [String], rangeColumn: String?, lower: Double?, upper: Double?) {
     guard let dataset else { return }
-    run("Revisando calidad…") {
+    run(L("Revisando calidad…")) {
       var rules = dataset.columns.map { QualityRule.missing($0.name) }
       for col in dataset.columns where col.isNumeric {
         rules.append(.nonFinite(col.name))
@@ -281,14 +287,14 @@ final class Workspace {
     }
   }
   func showEvidence(_ finding: QualityFinding) {
-    run("Buscando evidencias…") {
+    run(L("Buscando evidencias…")) {
       self.evidencePage = try await self.engine.evidence(finding)
       self.evidenceFinding = finding
     }
   }
   func transform(_ operation: Transformation, castApproval: CastApproval? = nil) {
     guard let datasetID else { return }
-    run("Creando versión…") {
+    run(L("Creando versión…")) {
       let v = try await self.engine.transform(datasetID: datasetID, operation: operation, castApproval: castApproval)
       self.project = try await self.engine.snapshot()
       self.datasetID = v.id
@@ -298,7 +304,7 @@ final class Workspace {
   }
   func analyze(_ specification: AnalysisSpecification) {
     guard let datasetID else { return }
-    run("Calculando análisis…") {
+    run(L("Calculando análisis…")) {
       _ = try await self.engine.analyze(datasetID: datasetID, specification: specification)
       self.project = try await self.engine.snapshot()
       self.selectedSection = .results
@@ -306,7 +312,7 @@ final class Workspace {
   }
   func charts(x: String, y: String) {
     guard let datasetID else { return }
-    run("Preparando gráficos…") {
+    run(L("Preparando gráficos…")) {
       let configuration = self.chartConfiguration.normalized()
       let profile = try await self.engine.profile(datasetID: datasetID).first {
         $0.column.name == x
@@ -337,14 +343,14 @@ final class Workspace {
     let panel = NSSavePanel()
     panel.nameFieldStringValue = parquet ? "datos.parquet" : "datos.csv"
     guard panel.runModal() == .OK, let url = panel.url else { return }
-    run("Exportando datos…") {
+    run(L("Exportando datos…")) {
       try await self.engine.exportData(datasetID: datasetID, to: url, parquet: parquet)
     }
   }
   func persistChartConfiguration() {
     guard let datasetID else { return }
     let configuration = chartConfiguration.normalized()
-    run("Guardando estilo del gráfico…") {
+    run(L("Guardando estilo del gráfico…")) {
       try await self.engine.saveChartConfiguration(
         datasetID: datasetID, configuration: configuration)
       self.chartConfiguration = configuration

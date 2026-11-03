@@ -9,9 +9,9 @@ struct WorkflowView: View {
   }
   var body: some View {
     VStack(alignment: .leading, spacing: 20) {
-      Text("Flujo de trabajo").font(.title2.weight(.semibold))
+      Text(L("Flujo de trabajo")).font(.title2.weight(.semibold))
       Text(
-        "Fuentes, versiones y análisis conectados. Cada nodo representa un paso completado; selecciona una versión para inspeccionarla o continuar desde ella."
+        L("Fuentes, versiones y análisis conectados. Cada nodo representa un paso completado; selecciona una versión para inspeccionarla o continuar desde ella.")
       ).foregroundStyle(.secondary)
       HStack(spacing: 14) {
         WorkflowAction(
@@ -43,7 +43,7 @@ struct WorkflowView: View {
         ).frame(maxHeight: .infinity)
         if project.datasets.count > 40 || project.results.count > 15 {
           Text(
-            "Se muestran las últimas 40 versiones y 15 análisis. El selector superior conserva el historial completo."
+            L("Se muestran las últimas 40 versiones y 15 análisis. El selector superior conserva el historial completo.")
           ).font(.caption).foregroundStyle(.secondary)
         }
         if let selected {
@@ -51,23 +51,23 @@ struct WorkflowView: View {
             VStack(alignment: .leading, spacing: 6) {
               Text(selected.operation?.summary ?? "Importación: \(selected.name)").font(.headline)
               Text(
-                "\(selected.rowCount) filas · \(selected.columns.count) columnas · \(selected.id.uuidString.prefix(8))"
+                L("\(selected.rowCount) filas · \(selected.columns.count) columnas · \(selected.id.uuidString.prefix(8))")
               ).foregroundStyle(.secondary).font(.callout)
               Text(
-                "Origen: \(workspace.project?.sources.first{$0.id==selected.sourceID}?.name ?? "—")"
+                L("Origen: \(workspace.project?.sources.first{$0.id==selected.sourceID}?.name ?? "—")")
               ).font(.caption).foregroundStyle(.secondary)
             }
             Spacer()
-            Button("Abrir datos") { open(.data) }
-            Button("Preparar versión") { open(.preparation) }
-            Button("Analizar versión") { open(.statistics) }
+            Button(L("Abrir datos")) { open(.data) }
+            Button(L("Preparar versión")) { open(.preparation) }
+            Button(L("Analizar versión")) { open(.statistics) }
           }.disabled(workspace.busy)
         }
       } else {
         ContentUnavailableView(
-          "El flujo empieza con tus datos", systemImage: "point.3.connected.trianglepath.dotted",
+          L("El flujo empieza con tus datos"), systemImage: "point.3.connected.trianglepath.dotted",
           description: Text(
-            "Importa un archivo local. Las versiones y los análisis aparecerán conectados aquí."))
+            L("Importa un archivo local. Las versiones y los análisis aparecerán conectados aquí.")))
       }
     }.padding(26)
   }

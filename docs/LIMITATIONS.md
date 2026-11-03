@@ -15,7 +15,7 @@ Explicit limits:
 - Pearson/Spearman report coefficients and valid n without p-values. Regression reports coefficients, R², residual sum/scale and slope SE; full residual export/diagnostic plots and coefficient confidence intervals are deferred. For constant X or Y, paired analyses explain why the requested coefficient/R² is undefined.
 - Existing export destinations are always protected; choose a new name even if the native panel offers replacement. No source can be overwritten through app exports.
 - Projects are single-writer. A kernel writer lease rejects another instance, and interrupted sessions are checked before reopening. Recovery may leave an unreferenced table; it is counted and preserved, never silently deleted. Inconsistent metadata is rejected; physical corruption is not repaired. Closing before moving/copying a package is required.
-- Main navigation/controls have ES/EN catalogs. Some technical procedure text, system dialogs, dynamic copy and engine errors remain English/Spanish; full localization QA is pending.
+- The interface has a bundled ES/EN presentation catalog with live updates and known diagnostic translation. User names/values are retained. PDF/MD report bodies and unknown technical text may remain mixed; full localization and VoiceOver QA are pending. System dialogs follow macOS language.
 - Minimum deployment target is macOS 14. Actual host coverage and distribution-signing limitations are in VALIDATION.md; untested OS versions are not presented as validated.
 - Paths containing glob metacharacters (`*?[]{}`) are rejected so DuckDB cannot expand one explicitly selected path into additional files; rename the file/folder before importing.
 - In-memory paired statistics use IEEE 754 Double. Very large integers/decimals may lose numerical resolution; raw data and profile distinct/min/max remain in their physical database type. Rescale for numerically sensitive analyses.
@@ -38,3 +38,9 @@ Inspector drafts are preserved by project/node/input version during the session.
 Report boxes, individual results and ⌘E share one selection plan and scope confirmation. Whole-project export includes historical results and only ready charts; pending chart omissions are explicit. CSV contains metrics, not figures/findings. Profiles remain available in global Markdown; report-node profiles and PDF profile tables are still deferred.
 
 See INTEGRITY-STAGE.md for the actual 69-test/native review coverage and the initial concurrent exit-test failure, process bound and subsequent complete passes. These checks do not certify all keyboard/VoiceOver/theme/language variants, power-loss recovery, network filesystems or macOS 14 execution.
+
+## Usability stage — 0.1.2
+
+The native step list and compatible input menu complement the canvas. HEX errors preserve input and block applying that custom color; low contrast warns without changing a chosen RGB. Built-in chart colors adapt to dark mode; this is not a complete contrast/colour-vision audit. Bounded app figure blocks stay together in PDF.
+
+The 76-test release and real eight-form/PDF/MD review are described in USABILITY-STAGE.md. Minimum-window qualification, full VoiceOver/keyboard-only coverage, extreme/empty data across every form/theme, physical network disconnection and another Mac remain open. One NSTableView reentrancy warning was observed during the first review; no data loss was observed and its cause remains unqualified.

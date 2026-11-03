@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import VapulaCore
 import os
 
 @main
@@ -13,38 +14,52 @@ struct VapulaApp: App {
       ContentView(workspace: workspace)
         .onAppear { delegate.workspace = workspace }
         .environment(\.locale, Locale(identifier: language))
+        .onChange(of: language) { _, value in
+          InterfacePreferences.shared.language = InterfaceLanguage(rawValue: value) ?? .spanish
+        }
         .preferredColorScheme(appearance == "dark" ? .dark : appearance == "light" ? .light : nil)
         .frame(minWidth: 1060, minHeight: 700)
     }
     .defaultSize(width: 1280, height: 820)
     .windowStyle(.hiddenTitleBar)
+    .windowResizability(.contentMinSize)
     .commands {
       CommandGroup(replacing: .newItem) {
-        Button("Nuevo proyecto…", action: workspace.createProject).keyboardShortcut("n")
-        Button("Abrir proyecto…", action: workspace.openProject).keyboardShortcut("o")
+        Button(L("Nuevo proyecto…"), action: workspace.createProject).keyboardShortcut("n")
+        Button(L("Abrir proyecto…"), action: workspace.openProject).keyboardShortcut("o")
         Divider()
-        Button("Importar datos…", action: workspace.chooseImport).keyboardShortcut("i").disabled(
+        Button(L("Importar datos…"), action: workspace.chooseImport).keyboardShortcut("i").disabled(
           workspace.project == nil || workspace.busy)
-        Button("Cerrar proyecto", action: workspace.closeProject).disabled(
+        Button(L("Cerrar proyecto"), action: workspace.closeProject).disabled(
           workspace.project == nil || workspace.busy)
       }
-      CommandMenu("Datos") {
-        Button("Calcular perfil", action: workspace.profile).disabled(
+      CommandMenu(L("Datos")) {
+        Button(L("Calcular perfil"), action: workspace.profile).disabled(
           workspace.dataset == nil || workspace.busy)
-        Button("Exportar CSV…") { workspace.exportData(parquet: false) }.disabled(
+        Button(L("Exportar CSV…")) { workspace.exportData(parquet: false) }.disabled(
           workspace.dataset == nil || workspace.busy)
-        Button("Exportar Parquet…") { workspace.exportData(parquet: true) }.disabled(
+        Button(L("Exportar Parquet…")) { workspace.exportData(parquet: true) }.disabled(
           workspace.dataset == nil || workspace.busy)
-        Button("Exportar informe…") { workspace.requestReportExport() }.keyboardShortcut("e")
+        Button(L("Exportar informe…")) { workspace.requestReportExport() }.keyboardShortcut("e")
           .disabled(workspace.project == nil || workspace.busy)
       }
-      CommandMenu("Flujo") {
-        Button("Guardar flujo", action: workspace.persistWorkflow).keyboardShortcut("s").disabled(workspace.project == nil || workspace.busy)
-        Button("Ejecutar pasos pendientes") { workspace.executeWorkflowNode() }.keyboardShortcut("r").disabled(workspace.project == nil || workspace.busy)
-        Button("Ejecutar paso seleccionado") { if let id = workspace.workflowNodeID { workspace.executeWorkflowNode(id) } }.keyboardShortcut(.return).disabled(workspace.workflowNodeID == nil || workspace.busy)
-        Button("Ajustar al lienzo") { workspace.workflowFitRequest += 1 }.keyboardShortcut("0")
+      CommandMenu(L("Flujo")) {
+        Button(L("Paso anterior")) { workspace.selectAdjacentStep(-1) }
+          .keyboardShortcut(.upArrow, modifiers: [.command, .option]).disabled(workspace.project == nil || workspace.busy)
+        Button(L("Paso siguiente")) { workspace.selectAdjacentStep(1) }
+          .keyboardShortcut(.downArrow, modifiers: [.command, .option]).disabled(workspace.project == nil || workspace.busy)
         Divider()
-        Button("Deshacer cambio del flujo", action: workspace.undoWorkflow).keyboardShortcut("z").disabled(!workspace.workflowUndoAvailable || workspace.busy)
+        Button(L("Guardar flujo"), action: workspace.persistWorkflow).keyboardShortcut("s").disabled(workspace.project == nil || workspace.busy)
+        Button(L("Ejecutar pasos pendientes")) { workspace.executeWorkflowNode() }.keyboardShortcut("r").disabled(workspace.project == nil || workspace.busy)
+        Button(L("Ejecutar paso seleccionado")) { if let id = workspace.workflowNodeID { workspace.executeWorkflowNode(id) } }.keyboardShortcut(.return).disabled(workspace.workflowNodeID == nil || workspace.busy)
+        Button(L("Ajustar al lienzo")) { workspace.workflowFitRequest += 1 }.keyboardShortcut("0")
+        Divider()
+        Button(L("Deshacer cambio del flujo"), action: workspace.undoWorkflow).keyboardShortcut("z").disabled(!workspace.workflowUndoAvailable || workspace.busy)
+      }
+      CommandMenu(L("Paneles")) {
+        Toggle(L("Biblioteca"), isOn: $workspace.workflowSidebar).keyboardShortcut("1", modifiers: [.command, .option])
+        Toggle(L("Vista previa"), isOn: $workspace.workflowPreview).keyboardShortcut("2", modifiers: [.command, .option])
+        Toggle(L("Inspector"), isOn: $workspace.workflowInspector).keyboardShortcut("3", modifiers: [.command, .option])
       }
     }
     Settings { SettingsView().environment(\.locale, Locale(identifier: language)) }
@@ -72,10 +87,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
       return .terminateLater
     }
     let alert = NSAlert()
-    alert.messageText = "Hay una operación en curso"
+    alert.messageText = L("Hay una operación en curso")
     alert.informativeText =
-      "Espera a que termine o pulsa Cancelar antes de cerrar VAPULA. Los pasos completados ya están guardados."
-    alert.addButton(withTitle: "Volver")
+      L("Espera a que termine o pulsa Cancelar antes de cerrar VAPULA. Los pasos completados ya están guardados.")
+    alert.addButton(withTitle: L("Volver"))
     alert.runModal()
     return .terminateCancel
   }
@@ -92,20 +107,20 @@ struct SettingsView: View {
   @AppStorage("appearance") private var appearance = "system"
   var body: some View {
     Form {
-      Picker("Idioma", selection: $language) {
-        Text("Español").tag("es")
-        Text("English").tag("en")
+      Picker(L("Idioma"), selection: $language) {
+        Text(L("Español")).tag("es")
+        Text(L("English")).tag("en")
       }
-      Picker("Apariencia", selection: $appearance) {
-        Text("Sistema").tag("system")
-        Text("Claro").tag("light")
-        Text("Oscuro").tag("dark")
+      Picker(L("Apariencia"), selection: $appearance) {
+        Text(L("Sistema")).tag("system")
+        Text(L("Claro")).tag("light")
+        Text(L("Oscuro")).tag("dark")
       }
-      LabeledContent("Procesamiento", value: "100 % local")
+      LabeledContent(L("Procesamiento"), value: "100 % local")
       Text(
-        "Los proyectos guardan automáticamente cada operación completada. No hay telemetría ni servicios de actualización."
+        L("Los proyectos guardan automáticamente cada operación completada. No hay telemetría ni servicios de actualización.")
       ).foregroundStyle(.secondary)
-      Text("Creado por Sebastián Pastén F.").font(.footnote)
+      Text(L("Creado por Sebastián Pastén F.")).font(.footnote)
     }.formStyle(.grouped).padding().frame(width: 470, height: 300)
   }
 }

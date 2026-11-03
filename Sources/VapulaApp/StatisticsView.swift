@@ -25,76 +25,76 @@ struct StatisticsView: View {
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 22) {
-        if !compact { Text("Laboratorio estadístico").font(.title2.weight(.semibold)) }
+        if !compact { Text(L("Laboratorio estadístico")).font(.title2.weight(.semibold)) }
         Text(
-          "Elige una pregunta, revisa sus requisitos y conserva el resultado con su versión de datos."
+          L("Elige una pregunta, revisa sus requisitos y conserva el resultado con su versión de datos.")
         ).foregroundStyle(.secondary)
         Form {
-          Picker("Prueba", selection: $method) {
-            Section("Describir") {
-              Text(AnalysisMethod.descriptive.title).tag(AnalysisMethod.descriptive)
+          Picker(L("Prueba"), selection: $method) {
+            Section(L("Describir")) {
+              Text(T(AnalysisMethod.descriptive.title)).tag(AnalysisMethod.descriptive)
             }
-            Section("Comparar medias") {
+            Section(L("Comparar medias")) {
               ForEach([AnalysisMethod.oneSampleT, .pairedT, .welch, .anova], id: \.self) {
-                Text($0.title).tag($0)
+                Text(T($0.title)).tag($0)
               }
             }
-            Section("Asociación y distribución") {
+            Section(L("Asociación y distribución")) {
               ForEach([AnalysisMethod.pearson, .spearman, .mannWhitney, .chiSquare], id: \.self) {
-                Text($0.title).tag($0)
+                Text(T($0.title)).tag($0)
               }
             }
-            Section("Modelar") {
-              Text(AnalysisMethod.regression.title).tag(AnalysisMethod.regression)
+            Section(L("Modelar")) {
+              Text(T(AnalysisMethod.regression.title)).tag(AnalysisMethod.regression)
             }
           }
-          Picker(method == .chiSquare ? "Variable categórica X" : "Variable X", selection: $x) {
+          Picker(T(method == .chiSquare ? "Variable categórica X" : "Variable X"), selection: $x) {
             ForEach(candidates) { Text($0.name).tag($0.name) }
           }
           if method.needsPair {
-            Picker(method == .chiSquare ? "Variable categórica Y" : "Variable Y", selection: $y) {
+            Picker(T(method == .chiSquare ? "Variable categórica Y" : "Variable Y"), selection: $y) {
               ForEach(candidates) { Text($0.name).tag($0.name) }
             }
           }
           if method == .oneSampleT {
-            TextField("Media de referencia μ0 (punto decimal)", text: $referenceMean)
+            TextField(L("Media de referencia μ0 (punto decimal)"), text: $referenceMean)
           }
           if method.needsGrouping {
-            Picker("Variable de grupo", selection: $group) {
+            Picker(L("Variable de grupo"), selection: $group) {
               ForEach(dataset.columns) { Text($0.name).tag($0.name) }
             }
             if method.needsTwoGroups {
               if groupLevels.isEmpty {
-                Text("Elige una columna de grupo con al menos dos categorías.").foregroundStyle(
+                Text(L("Elige una columna de grupo con al menos dos categorías.")).foregroundStyle(
                   .secondary)
               } else {
-                Picker("Grupo A", selection: $groupA) {
+                Picker(L("Grupo A"), selection: $groupA) {
                   ForEach(groupLevels, id: \.self) { Text($0).tag($0) }
                 }
-                Picker("Grupo B", selection: $groupB) {
+                Picker(L("Grupo B"), selection: $groupB) {
                   ForEach(groupLevels, id: \.self) { Text($0).tag($0) }
                 }
               }
             }
-            if let groupError { Text(groupError).foregroundStyle(.secondary) }
+            if let groupError { Text(D(groupError)).foregroundStyle(.secondary) }
           }
           if method.supportsAlpha {
-            Picker("Nivel de significación α", selection: $alpha) {
-              Text("0.01").tag(0.01)
-              Text("0.05").tag(0.05)
-              Text("0.10").tag(0.10)
+            Picker(L("Nivel de significación α"), selection: $alpha) {
+              Text(L("0.01")).tag(0.01)
+              Text(L("0.05")).tag(0.05)
+              Text(L("0.10")).tag(0.10)
             }
           }
         }.formStyle(.grouped)
         VStack(alignment: .leading, spacing: 10) {
-          Text(method.title).font(.headline)
-          Text(method.explanation).fixedSize(horizontal: false, vertical: true)
+          Text(T(method.title)).font(.headline)
+          Text(T(method.explanation)).fixedSize(horizontal: false, vertical: true)
           Label(
-            "La escala de medición debe revisarse. Nulos y valores no finitos se excluyen de forma explícita; una asociación no implica causalidad.",
+            L("La escala de medición debe revisarse. Nulos y valores no finitos se excluyen de forma explícita; una asociación no implica causalidad."),
             systemImage: "info.circle"
           ).font(.callout).foregroundStyle(.secondary)
           Text(
-            "Los análisis que materializan observaciones aceptan hasta 200.000 filas. Descriptivos, frecuencias y contingencias se consultan sobre todos los registros."
+            L("Los análisis que materializan observaciones aceptan hasta 200.000 filas. Descriptivos, frecuencias y contingencias se consultan sobre todos los registros.")
           ).font(.caption).foregroundStyle(.secondary)
         }
         ViewThatFits(in: .horizontal) {
@@ -102,7 +102,7 @@ struct StatisticsView: View {
           VStack(alignment: .leading, spacing: 10) { calculationButtons }
         }
         if let p = workspace.profiles.first(where: { $0.column.name == x }) {
-          Text("\(x): \(p.valid) válidos · \(p.missing) ausentes/no finitos").font(.callout)
+          Text(L("\(x): \(p.valid) válidos · \(p.missing) ausentes/no finitos")).font(.callout)
             .foregroundStyle(.secondary)
         }
       }.padding(compact ? 16 : 30).frame(maxWidth: compact ? .infinity : 1000, alignment: .leading)
@@ -136,9 +136,9 @@ struct StatisticsView: View {
       }
   }
   @ViewBuilder private var calculationButtons: some View {
-    Button(compact ? "Ejecutar paso" : "Calcular y guardar resultado", action: calculate)
+    Button(T(compact ? "Ejecutar paso" : "Calcular y guardar resultado"), action: calculate)
       .buttonStyle(.borderedProminent).tint(.primary).disabled(cannotCalculate).fixedSize()
-    Button("Consultar válidos y ausentes", action: workspace.profile).fixedSize()
+    Button(L("Consultar válidos y ausentes"), action: workspace.profile).fixedSize()
   }
   private var cannotCalculate: Bool {
     x.isEmpty || (method.needsPair && y.isEmpty)
@@ -189,7 +189,7 @@ struct StatisticsView: View {
     let mean: Double
     if method == .oneSampleT {
       guard let value = Double(referenceMean), value.isFinite else {
-        workspace.error = "La media de referencia debe ser un número finito. Revisa el valor antes de calcular."
+        workspace.error = L("La media de referencia debe ser un número finito. Revisa el valor antes de calcular.")
         return
       }
       mean = value

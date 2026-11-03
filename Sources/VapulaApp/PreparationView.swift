@@ -36,88 +36,88 @@ struct PreparationView: View {
     ScrollView {
       VStack(alignment: .leading, spacing: 24) {
         if purpose != .quality {
-        if !compact { Text("Preparación reproducible").font(.title2.weight(.semibold)) }
+        if !compact { Text(L("Preparación reproducible")).font(.title2.weight(.semibold)) }
         Text(
-          "Cada operación crea una versión. Puedes volver a cualquier versión desde el selector superior."
+          L("Cada operación crea una versión. Puedes volver a cualquier versión desde el selector superior.")
         ).foregroundStyle(.secondary)
         Form {
-          Picker("Operación", selection: $action) {
-            Text("Filtrar").tag("filter")
-            Text("Seleccionar columnas").tag("select")
-            Text("Renombrar").tag("rename")
-            Text("Cambiar tipo").tag("cast")
-            Text("Columna derivada").tag("derive")
-            Text("Ordenar").tag("sort")
-            Text("Agrupar y agregar").tag("aggregate")
+          Picker(L("Operación"), selection: $action) {
+            Text(L("Filtrar")).tag("filter")
+            Text(L("Seleccionar columnas")).tag("select")
+            Text(L("Renombrar")).tag("rename")
+            Text(L("Cambiar tipo")).tag("cast")
+            Text(L("Columna derivada")).tag("derive")
+            Text(L("Ordenar")).tag("sort")
+            Text(L("Agrupar y agregar")).tag("aggregate")
           }
-          Picker("Columna", selection: $column) {
+          Picker(L("Columna"), selection: $column) {
             ForEach(dataset.columns) { Text($0.name).tag($0.name) }
           }
           if action == "filter" {
-            Picker("Condición", selection: $comparison) {
+            Picker(L("Condición"), selection: $comparison) {
               ForEach(Comparison.allCases, id: \.self) { Text($0.rawValue).tag($0) }
             }
-            if comparison != .isNull { TextField("Valor", text: $value) }
+            if comparison != .isNull { TextField(L("Valor"), text: $value) }
           }
-          if action == "rename" || action == "derive" { TextField("Nuevo nombre", text: $newName) }
+          if action == "rename" || action == "derive" { TextField(L("Nuevo nombre"), text: $newName) }
           if action == "cast" {
-            Picker("Tipo", selection: $physicalType) {
+            Picker(L("Tipo"), selection: $physicalType) {
               ForEach(PhysicalType.allCases, id: \.self) { Text($0.rawValue).tag($0) }
             }
             Text(
-              "Revisa cuántos valores pasarían a NULL antes de crear la nueva versión. La entrada se conserva."
+              L("Revisa cuántos valores pasarían a NULL antes de crear la nueva versión. La entrada se conserva.")
             ).font(.caption).foregroundStyle(.secondary)
-            if castChecking { ProgressView("Comprobando conversión…").controlSize(.small) }
+            if castChecking { ProgressView(L("Comprobando conversión…")).controlSize(.small) }
             if let castImpact {
-              Text("Nuevos NULL: \(castImpact.newNulls) · NULL previos: \(castImpact.existingNulls)").font(.callout.weight(.medium))
+              Text(L("Nuevos NULL: \(castImpact.newNulls) · NULL previos: \(castImpact.existingNulls)")).font(.callout.weight(.medium))
               if !castImpact.examples.isEmpty {
-                Text("Ejemplos no convertibles: " + castImpact.examples.joined(separator: " · ")).font(.caption).textSelection(.enabled)
+                Text(L("Ejemplos no convertibles: ") + castImpact.examples.joined(separator: " · ")).font(.caption).textSelection(.enabled)
               }
             }
-            if let castIssue { Text(castIssue).font(.caption).foregroundStyle(.red) }
+            if let castIssue { Text(D(castIssue)).font(.caption).foregroundStyle(.red) }
           }
           if action == "derive" {
-            Picker("Aritmética", selection: $arithmetic) {
+            Picker(L("Aritmética"), selection: $arithmetic) {
               ForEach(Arithmetic.allCases, id: \.self) { Text($0.rawValue).tag($0) }
             }
-            TextField("Constante numérica (punto decimal)", text: $value)
+            TextField(L("Constante numérica (punto decimal)"), text: $value)
           }
           if action == "sort" {
-            Text("Orden ascendente, ausentes al final.").foregroundStyle(.secondary)
+            Text(L("Orden ascendente, ausentes al final.")).foregroundStyle(.secondary)
           }
           if action == "select" {
             ColumnChecklist(columns: dataset.columns, selected: $selectedColumns)
           }
           if action == "aggregate" {
-            Picker("Agrupar por", selection: $group) {
+            Picker(L("Agrupar por"), selection: $group) {
               ForEach(dataset.columns) { Text($0.name).tag($0.name) }
             }
-            Picker("Agregación", selection: $aggregate) {
+            Picker(L("Agregación"), selection: $aggregate) {
               ForEach(Aggregate.allCases, id: \.self) { Text($0.rawValue).tag($0) }
             }
           }
         }.formStyle(.grouped)
-        Button("Crear versión", action: apply).buttonStyle(.borderedProminent).tint(.primary)
+        Button(L("Crear versión"), action: apply).buttonStyle(.borderedProminent).tint(.primary)
           .disabled(action == "cast" && (castChecking || castImpact == nil))
         }
         if purpose != .transform {
         Divider()
-        Text("Calidad de datos").font(.title2.weight(.semibold))
+        Text(L("Calidad de datos")).font(.title2.weight(.semibold))
         Text(
-          "Nulos, valores no finitos y candidatos IQR se revisan en todas las columnas pertinentes. Define claves para duplicados o un rango adicional."
+          L("Nulos, valores no finitos y candidatos IQR se revisan en todas las columnas pertinentes. Define claves para duplicados o un rango adicional.")
         ).foregroundStyle(.secondary)
-        DisclosureGroup("Claves de duplicados") {
+        DisclosureGroup(L("Claves de duplicados")) {
           ColumnChecklist(columns: dataset.columns, selected: $duplicateKeys).padding(.top, 8)
         }
-        Toggle("Comprobar rango de la columna seleccionada", isOn: $rangeEnabled)
+        Toggle(L("Comprobar rango de la columna seleccionada"), isOn: $rangeEnabled)
         if rangeEnabled {
           HStack {
             Text(column)
-            TextField("Mínimo", text: $lower)
-            TextField("Máximo", text: $upper)
+            TextField(L("Mínimo"), text: $lower)
+            TextField(L("Máximo"), text: $upper)
           }.textFieldStyle(.roundedBorder)
         }
-        Button("Revisar calidad") {
+        Button(L("Revisar calidad")) {
           acceptDraft()
           if let onAudit {
             var rules = dataset.columns.map { QualityRule.missing($0.name) }
@@ -135,13 +135,13 @@ struct PreparationView: View {
           ForEach(workspace.findings) { finding in
             HStack {
               VStack(alignment: .leading, spacing: 5) {
-                Text(finding.rule.label).font(.headline)
+                Text(D(finding.rule.label)).font(.headline)
                 Text(
-                  "\(finding.affectedRows) filas candidatas · una detección no confirma un error"
+                  L("\(finding.affectedRows) filas candidatas · una detección no confirma un error")
                 ).foregroundStyle(.secondary).font(.caption)
               }
               Spacer()
-              Button("Ver evidencia") { workspace.showEvidence(finding) }.disabled(
+              Button(L("Ver evidencia")) { workspace.showEvidence(finding) }.disabled(
                 finding.affectedRows == 0)
             }
           }
@@ -185,11 +185,11 @@ struct PreparationView: View {
         try Task.checkCancellation(); castImpact = impact
       } catch is CancellationError {} catch { castIssue = error.localizedDescription }
     }
-    .alert("La conversión crea valores ausentes", isPresented: $confirmCast) {
-      Button("Conservar entrada", role: .cancel) {}
-      Button("Crear versión (nuevos NULL: \(castImpact?.newNulls ?? 0))", role: .destructive) { apply(confirmed: true) }
+    .alert(L("La conversión crea valores ausentes"), isPresented: $confirmCast) {
+      Button(L("Conservar entrada"), role: .cancel) {}
+      Button(L("Crear versión (nuevos NULL: \(castImpact?.newNulls ?? 0))"), role: .destructive) { apply(confirmed: true) }
     } message: {
-      Text("\(castImpact?.newNulls ?? 0) valores de «\(column)» no se pueden convertir a \(physicalType.rawValue). Se guardará una versión nueva; la entrada permanecerá intacta.")
+      Text(L("\(castImpact?.newNulls ?? 0) valores de «\(column)» no se pueden convertir a \(physicalType.rawValue). Se guardará una versión nueva; la entrada permanecerá intacta."))
     }
   }
   private var currentDraft: PreparationDraft {
@@ -248,7 +248,7 @@ struct PreparationView: View {
       operation = .cast(column: column, type: physicalType)
     case "derive":
       guard let number = Double(value), number.isFinite else {
-        workspace.error = "La constante debe ser numérica (usa punto decimal)."
+        workspace.error = L("La constante debe ser numérica (usa punto decimal).")
         return
       }
       operation = .derive(column: column, operation: arithmetic, value: number, name: newName)

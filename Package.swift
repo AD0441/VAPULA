@@ -9,7 +9,7 @@ let package = Package(
   ],
   dependencies: [.package(url: "https://github.com/duckdb/duckdb-swift.git", exact: "1.1.3")],
   targets: [
-    .target(name: "VapulaCore"),
+    .target(name: "VapulaCore", resources: [.process("Resources")]),
     .target(name: "VapulaStatistics", dependencies: ["VapulaCore"]),
     .target(
       name: "VapulaData",

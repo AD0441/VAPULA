@@ -22,37 +22,37 @@ struct DataEditingView: View {
   @State private var emptyAsNull = true
   var body: some View {
     VStack(alignment: .leading, spacing: 20) {
-      Text(title).font(.title2.weight(.semibold))
-      Text("Se creará una versión nueva de \(request.dataset.name). La entrada y las fuentes originales se conservan.").foregroundStyle(.secondary).font(.callout)
+      Text(T(title)).font(.title2.weight(.semibold))
+      Text(L("Se creará una versión nueva de \(request.dataset.name). La entrada y las fuentes originales se conservan.")).foregroundStyle(.secondary).font(.callout)
       ScrollView {
         Form {
           switch request.kind {
           case .cell:
-            Picker("Columna", selection: $column) { ForEach(request.dataset.columns) { Text($0.name).tag($0.name) } }
-            Text("Valor anterior: \(oldValue ?? "NULL")").textSelection(.enabled).foregroundStyle(.secondary)
-            Toggle("Dejar como NULL", isOn: $isNull)
-            if !isNull { TextField("Nuevo valor", text: $value).textFieldStyle(.roundedBorder) }
+            Picker(L("Columna"), selection: $column) { ForEach(request.dataset.columns) { Text($0.name).tag($0.name) } }
+            Text(L("Valor anterior: \(oldValue ?? "NULL")")).textSelection(.enabled).foregroundStyle(.secondary)
+            Toggle(L("Dejar como NULL"), isOn: $isNull)
+            if !isNull { TextField(L("Nuevo valor"), text: $value).textFieldStyle(.roundedBorder) }
           case .column:
-            TextField("Nombre de columna", text: $newName)
-            Picker("Tipo", selection: $type) { ForEach(PhysicalType.allCases, id: \.self) { Text($0.rawValue).tag($0) } }
-            Toggle("Inicializar como NULL", isOn: $isNull)
-            if !isNull { TextField("Valor inicial", text: $value) }
+            TextField(L("Nombre de columna"), text: $newName)
+            Picker(L("Tipo"), selection: $type) { ForEach(PhysicalType.allCases, id: \.self) { Text($0.rawValue).tag($0) } }
+            Toggle(L("Inicializar como NULL"), isOn: $isNull)
+            if !isNull { TextField(L("Valor inicial"), text: $value) }
           case .row:
-            Toggle("Campos vacíos como NULL", isOn: $emptyAsNull)
+            Toggle(L("Campos vacíos como NULL"), isOn: $emptyAsNull)
             ForEach(request.dataset.columns) { definition in
               TextField(definition.name, text: Binding(get: { values[definition.name] ?? "" }, set: { values[definition.name] = $0 }))
                 .help(definition.physicalType)
             }
           case .removeRows:
-            Text("\(request.rows.count) filas seleccionadas quedarán fuera de la nueva versión.")
-            Text("Las filas se identifican dentro de esta versión, incluso si la tabla estaba buscada u ordenada.").foregroundStyle(.secondary)
+            Text(L("\(request.rows.count) filas seleccionadas quedarán fuera de la nueva versión."))
+            Text(L("Las filas se identifican dentro de esta versión, incluso si la tabla estaba buscada u ordenada.")).foregroundStyle(.secondary)
           }
         }.formStyle(.grouped)
       }.frame(minHeight: 150, maxHeight: 350)
       HStack {
-        Button("Cancelar") { workspace.editRequest = nil }.keyboardShortcut(.cancelAction)
+        Button(L("Cancelar")) { workspace.editRequest = nil }.keyboardShortcut(.cancelAction)
         Spacer()
-        Button("Crear versión", action: apply).buttonStyle(.borderedProminent)
+        Button(L("Crear versión"), action: apply).buttonStyle(.borderedProminent)
           .disabled(workspace.busy || (request.kind == .column && newName.isEmpty))
       }
     }.padding(24).frame(width: 560).onAppear {
@@ -71,7 +71,7 @@ struct DataEditingView: View {
     let operation: Transformation
     switch request.kind {
     case .cell:
-      guard let id = request.row?.sourceRowID else { workspace.error = "No se dispone del identificador de esa fila. Si existe una columna rowid, renómbrala antes de editar."; return }
+      guard let id = request.row?.sourceRowID else { workspace.error = L("No se dispone del identificador de esa fila. Si existe una columna rowid, renómbrala antes de editar."); return }
       operation = .editCell(rowID: id, column: column, value: isNull ? nil : value)
     case .column: operation = .addColumn(name: newName, type: type, value: isNull ? nil : value)
     case .row:
@@ -82,7 +82,7 @@ struct DataEditingView: View {
       operation = .appendRow(values: fields)
     case .removeRows:
       let ids = request.rows.compactMap(\.sourceRowID)
-      guard ids.count == request.rows.count else { workspace.error = "No se pudo identificar una fila seleccionada."; return }
+      guard ids.count == request.rows.count else { workspace.error = L("No se pudo identificar una fila seleccionada."); return }
       operation = .removeRows(rowIDs: ids)
     }
     workspace.applyDataEdit(operation, datasetID: request.dataset.id)

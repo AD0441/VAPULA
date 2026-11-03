@@ -4,7 +4,11 @@ import VapulaCore
 import VapulaData
 
 enum WorkbenchInk {
-  static let accent = Color(red: 0.22, green: 0.40, blue: 0.35)
+  static let accent = Color(nsColor: NSColor(name: nil) { appearance in
+    appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+      ? NSColor(red: 0.48, green: 0.76, blue: 0.65, alpha: 1)
+      : NSColor(red: 0.22, green: 0.40, blue: 0.35, alpha: 1)
+  })
   static let warning = Color(nsColor: NSColor(name: nil) { appearance in
     appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
       ? NSColor(red: 0.91, green: 0.69, blue: 0.35, alpha: 1)
@@ -27,7 +31,7 @@ struct WorkbenchNodeCard: View {
       HStack(spacing: 8) {
         Image(systemName: node.kind.symbol).font(.system(size: 14, weight: .medium)).foregroundStyle(node.kind.ink)
           .frame(width: 27, height: 27).background(node.kind.ink.opacity(0.09), in: RoundedRectangle(cornerRadius: 6))
-        Text(node.name).font(.system(size: 12.5, weight: .semibold)).lineLimit(2).frame(maxWidth: .infinity, alignment: .leading)
+        Text(node.displayName).font(.system(size: 12.5, weight: .semibold)).lineLimit(2).frame(maxWidth: .infinity, alignment: .leading)
       }
       Group {
         if let result {
@@ -35,36 +39,36 @@ struct WorkbenchNodeCard: View {
           if let key, let value = result.metrics[key] {
             HStack(alignment: .firstTextBaseline, spacing: 5) {
               Text(value, format: .number.precision(.significantDigits(4))).font(.system(size: 19, weight: .medium)).monospacedDigit()
-              Text(MetricPresentation.title(key)).font(.system(size: 9.5)).foregroundStyle(.secondary).lineLimit(1)
+              Text(T(MetricPresentation.title(key))).font(.system(size: 9.5)).foregroundStyle(.secondary).lineLimit(1)
             }
           }
-        } else if let chart = workspace.workflowCharts[node.id], !chart.histogram.isEmpty {
+        } else if let chart = workspace.workflowCharts[node.id], chart.request.style.kind == .histogram, !chart.histogram.isEmpty {
           WorkbenchMiniHistogram(points: chart.histogram).frame(height: 27)
         } else if case .chart(let request?) = node.task {
-          Label("\(request.style.kind.title) · \(request.x)", systemImage: "arrow.clockwise")
+          Label(L("\(T(request.style.kind.title)) · \(request.x)"), systemImage: node.dirty ? "arrow.clockwise" : "chart.bar.xaxis")
             .font(.system(size: 10.5)).foregroundStyle(.secondary).lineLimit(1)
         } else if let version {
-          Text("\(version.rowCount) filas · \(version.columns.count) columnas").font(.system(size: 10.5)).foregroundStyle(.secondary).monospacedDigit()
+          Text(L("\(version.rowCount) filas · \(version.columns.count) columnas")).font(.system(size: 10.5)).foregroundStyle(.secondary).monospacedDigit()
         } else if let findings = node.qualityFindings {
-          Text("\(findings.filter { $0.affectedRows > 0 }.count) reglas con candidatos").font(.system(size: 10.5)).foregroundStyle(.secondary)
+          Text(L("\(findings.filter { $0.affectedRows > 0 }.count) reglas con candidatos")).font(.system(size: 10.5)).foregroundStyle(.secondary)
         } else if node.kind == .report {
-          Label("Resultados conectados", systemImage: "text.alignleft").font(.system(size: 10.5)).foregroundStyle(.secondary)
-        } else { Text("Elige sus opciones").font(.system(size: 10.5)).foregroundStyle(.secondary) }
+          Label(L("Resultados conectados"), systemImage: "text.alignleft").font(.system(size: 10.5)).foregroundStyle(.secondary)
+        } else { Text(L("Elige sus opciones")).font(.system(size: 10.5)).foregroundStyle(.secondary) }
       }.frame(height: 27, alignment: .leading)
       Spacer(minLength: 0)
       HStack(spacing: 4) {
         Image(systemName: node.lastError != nil ? "exclamationmark.circle" : node.dirty ? "circle.dashed" : "checkmark.circle.fill")
           .foregroundStyle(node.lastError != nil ? Color.red : node.dirty ? WorkbenchInk.warning : WorkbenchInk.accent)
-        Text(status)
+        Text(T(status))
         Spacer(minLength: 0)
-        if let result { Text("n = \(result.validCount)").monospacedDigit() }
-        else if let version { Text("\(version.rowCount) filas").monospacedDigit() }
+        if let result { Text(L("n = \(result.validCount)")).monospacedDigit() }
+        else if let version { Text(L("\(version.rowCount) filas")).monospacedDigit() }
       }.font(.system(size: 9.5)).foregroundStyle(.secondary)
     }.padding(13).frame(width: 192, height: 136)
       .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 10))
       .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(workspace.workflowNodeID == node.id ? WorkbenchInk.accent : Color.primary.opacity(0.16), lineWidth: workspace.workflowNodeID == node.id ? 1.7 : 1))
       .accessibilityElement(children: .combine)
-      .accessibilityLabel("\(node.name). \(status). \(version.map { "\($0.rowCount) filas" } ?? "")")
+      .accessibilityLabel(L("\(node.displayName). \(T(status)). \(version.map { "\($0.rowCount) filas" } ?? "")"))
   }
 }
 private struct WorkbenchMiniHistogram: View {

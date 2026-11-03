@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.2 — 2026-11-02 · Usability preview
+
+- Added native workflow step navigation, compatible input menus and panel/step keyboard commands.
+- Added live ES/EN interface templates, explicit accessibility labels and clearer chart identities.
+- Added actionable HEX validation and custom-color contrast warnings; improved dark-mode marks and preview sizing.
+- Kept bounded PDF figure titles, provenance, captions and images together; reproduced the pagination defect before fixing it.
+- Declared project package types in the native picker and unified app support URLs.
+- Verified 76 release tests in 16 suites, native synthetic workflows/eight forms, PDF/MD exports and project reopening. See docs/USABILITY-STAGE.md for coverage and remaining qualifications.
+
 ## 0.1.1 — 2026-11-02 · Integrity preview
 
 - Added exclusive project writer leases, interrupted-session checks and conservative recovery notices.

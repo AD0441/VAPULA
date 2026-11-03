@@ -22,18 +22,18 @@ struct MissingValuesView: View {
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 19) {
-        Text("Qué valores tratar").font(.headline)
-        Text("NULL siempre se considera ausente. Decide si también incluir textos vacíos y números no finitos.").font(.caption).foregroundStyle(.secondary)
-        Toggle("Incluir texto vacío o con espacios", isOn: $blanks)
-        Toggle("Incluir NaN e infinitos", isOn: $nonfinite)
+        Text(L("Qué valores tratar")).font(.headline)
+        Text(L("NULL siempre se considera ausente. Decide si también incluir textos vacíos y números no finitos.")).font(.caption).foregroundStyle(.secondary)
+        Toggle(L("Incluir texto vacío o con espacios"), isOn: $blanks)
+        Toggle(L("Incluir NaN e infinitos"), isOn: $nonfinite)
         Divider()
         HStack {
-          Text("Columnas").font(.headline)
+          Text(L("Columnas")).font(.headline)
           Spacer()
           Menu {
-            Button("Todas") { selected = Set(dataset.columns.map(\.name)) }
-            Button("Solo numéricas") { selected = Set(dataset.columns.filter(\.isNumeric).map(\.name)) }
-            Button("Ninguna") { selected = [] }
+            Button(L("Todas")) { selected = Set(dataset.columns.map(\.name)) }
+            Button(L("Solo numéricas")) { selected = Set(dataset.columns.filter(\.isNumeric).map(\.name)) }
+            Button(L("Ninguna")) { selected = [] }
           } label: { Image(systemName: "ellipsis.circle") }.menuStyle(.borderlessButton).fixedSize()
         }
         ScrollView {
@@ -43,42 +43,42 @@ struct MissingValuesView: View {
                 HStack {
                   Text(column.name).lineLimit(1)
                   Spacer()
-                  if let count = impact?.counts[column.name] { Text("\(count)").monospacedDigit().foregroundStyle(.secondary) }
+                  if let count = impact?.counts[column.name] { Text(L("\(count)")).monospacedDigit().foregroundStyle(.secondary) }
                 }
               }.toggleStyle(.checkbox)
             }
           }.padding(.trailing, 4)
         }.frame(maxHeight: 150)
         Divider()
-        Text("Cómo resolverlos").font(.headline)
-        Picker("Acción", selection: $method) {
-          Text("Media").tag("mean").disabled(!numericOnly)
-          Text("Mediana").tag("median").disabled(!numericOnly)
-          Text("Moda").tag("mode")
-          Text("Valor indicado").tag("constant")
-          Text("Retirar filas afectadas").tag("dropRows")
-          Text("Retirar columnas afectadas").tag("dropColumns")
+        Text(L("Cómo resolverlos")).font(.headline)
+        Picker(L("Acción"), selection: $method) {
+          Text(L("Media")).tag("mean").disabled(!numericOnly)
+          Text(L("Mediana")).tag("median").disabled(!numericOnly)
+          Text(L("Moda")).tag("mode")
+          Text(L("Valor indicado")).tag("constant")
+          Text(L("Retirar filas afectadas")).tag("dropRows")
+          Text(L("Retirar columnas afectadas")).tag("dropColumns")
         }.labelsHidden()
         if method == "constant" {
-          TextField("Valor de reemplazo", text: $constant).textFieldStyle(.roundedBorder)
-          Text("Se comprueba el tipo de cada columna. Los valores incompatibles se rechazan.").font(.caption).foregroundStyle(.secondary)
+          TextField(L("Valor de reemplazo"), text: $constant).textFieldStyle(.roundedBorder)
+          Text(L("Se comprueba el tipo de cada columna. Los valores incompatibles se rechazan.")).font(.caption).foregroundStyle(.secondary)
         }
         if method == "mean" || method == "median" {
-          Text("Media y mediana usan los valores observados de cada columna; la salida numérica pasa a DOUBLE. La imputación puede reducir la dispersión y cambiar asociaciones.").font(.caption).foregroundStyle(.secondary)
+          Text(L("Media y mediana usan los valores observados de cada columna; la salida numérica pasa a DOUBLE. La imputación puede reducir la dispersión y cambiar asociaciones.")).font(.caption).foregroundStyle(.secondary)
         }
         if method == "mode" {
-          Text("Se usa el valor observado más frecuente. En empates se elige el menor según el orden del tipo de datos.").font(.caption).foregroundStyle(.secondary)
+          Text(L("Se usa el valor observado más frecuente. En empates se elige el menor según el orden del tipo de datos.")).font(.caption).foregroundStyle(.secondary)
         }
         if let impact {
           VStack(alignment: .leading, spacing: 7) {
-            Text("Impacto antes de aplicar").font(.headline)
-            Text("\(impact.affectedCells) celdas · \(impact.affectedRows) de \(impact.totalRows) filas").monospacedDigit()
-            Text("Se creará una versión nueva. La versión de entrada se conserva.").font(.caption).foregroundStyle(.secondary)
+            Text(L("Impacto antes de aplicar")).font(.headline)
+            Text(L("\(impact.affectedCells) celdas · \(impact.affectedRows) de \(impact.totalRows) filas")).monospacedDigit()
+            Text(L("Se creará una versión nueva. La versión de entrada se conserva.")).font(.caption).foregroundStyle(.secondary)
           }.padding(12).frame(maxWidth: .infinity, alignment: .leading).background(.quaternary.opacity(0.35), in: RoundedRectangle(cornerRadius: 8))
         }
-        if checking { HStack { ProgressView().controlSize(.small); Text("Contando valores…").font(.caption) } }
-        if let issue { Text(issue).font(.caption).foregroundStyle(.secondary) }
-        Button("Aplicar y crear versión") {
+        if checking { HStack { ProgressView().controlSize(.small); Text(L("Contando valores…")).font(.caption) } }
+        if let issue { Text(D(issue)).font(.caption).foregroundStyle(.secondary) }
+        Button(L("Aplicar y crear versión")) {
           let action: MissingAction
           switch method {
           case "median": action = .median; case "mode": action = .mode

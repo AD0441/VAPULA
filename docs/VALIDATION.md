@@ -1,6 +1,8 @@
 # Validation — local expanded build
 
-**Current update — 2026-11-02:** [0.1.1 integrity stage](INTEGRITY-STAGE.md) records 69 optimized tests in 15 suites, two complete repeats, native draft/conversion/recovery/export checks and actual output files. The dated October records below remain historical. Current coverage is in [STATUS.md](STATUS.md).
+**Current update — 2026-11-02, 0.1.2:** [Usability stage](USABILITY-STAGE.md) records 76 release Swift Testing functions in 16 suites and the native synthetic review of step navigation, live language/theme changes, HEX diagnostics, eight forms, PDF/MD exports and reopening. The figure pagination regression was reproduced before the fix and passes in the final suite. That record states the remaining qualifications.
+
+**Previous stage — 2026-11-02:** [0.1.1 integrity stage](INTEGRITY-STAGE.md) records 69 optimized tests in 15 suites, two complete repeats, native draft/conversion/recovery/export checks and actual output files. The dated October records below remain historical. Current coverage is in [STATUS.md](STATUS.md).
 
 **Reading note — 2026-11-01:** the October 30–31 records below describe the local build at that time. Their statements that no repository/release had been created are historical. VAPULA was subsequently published in the [public repository](https://github.com/AD0441/VAPULA) and as the [0.1.0 preliminary release](https://github.com/AD0441/VAPULA/releases/tag/v0.1.0). Current requirement coverage and remaining work are tracked in [STATUS.md](STATUS.md), against [REQUIREMENTS.md](REQUIREMENTS.md). This documentation update does not represent a new application test run.
 

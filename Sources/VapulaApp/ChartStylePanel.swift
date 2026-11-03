@@ -7,24 +7,31 @@ struct ChartStylePanel: View {
   let isBusy: Bool
   let save: () -> Void
   var saveTitle = "Guardar estilo"
+  @Environment(\.colorScheme) private var colorScheme
 
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 22) {
-        Text("Diseño").font(.headline)
+        Text(L("Diseño")).font(.headline)
         VStack(alignment: .leading, spacing: 10) {
-          Text("Color").font(.subheadline.weight(.semibold))
-          Picker("Paleta", selection: $configuration.palette) {
+          Text(L("Color")).font(.subheadline.weight(.semibold))
+          Picker(L("Paleta"), selection: $configuration.palette) {
             ForEach(ChartPalette.allCases) { palette in
-              Text(LocalizedStringKey(palette.title)).tag(palette)
+              Text(T(palette.title)).tag(palette)
             }
           }
-          ColorPicker("Personalizado", selection: customColor, supportsOpacity: false)
+          ColorPicker(L("Personalizado"), selection: customColor, supportsOpacity: false)
           if configuration.palette == .custom {
-            TextField("Color HEX", text: $configuration.customColorHex)
+            TextField(L("Color HEX"), text: $configuration.customColorHex)
               .textFieldStyle(.roundedBorder)
-              .onSubmit { configuration = configuration.normalized() }
-              .help("Color hexadecimal de seis dígitos, por ejemplo #256A8A")
+              .help(L("Color hexadecimal de seis dígitos, por ejemplo #256A8A"))
+            if !configuration.hasValidColor {
+              Label(L("Escribe seis dígitos HEX, por ejemplo #256A8A. El color aún no se ha aplicado."), systemImage: "exclamationmark.circle")
+                .font(.caption).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
+            } else if let ratio = ChartConfiguration.contrastRatio(configuration.customColorHex, colorScheme == .dark ? "#1C1C1E" : "#FFFFFF"), min(ratio, ChartConfiguration.contrastRatio(configuration.customColorHex, "#FFFFFF") ?? 0) < 3 {
+              Label(L("Este color tiene poco contraste en pantalla o en el informe PDF claro. Elige uno más visible o cambia de paleta."), systemImage: "eye")
+                .font(.caption).foregroundStyle(WorkbenchInk.warning).fixedSize(horizontal: false, vertical: true)
+            }
           }
           if configuration.palette != .custom {
             HStack(spacing: 8) {
@@ -35,17 +42,17 @@ struct ChartStylePanel: View {
           }
         }
         VStack(alignment: .leading, spacing: 10) {
-          Text("Títulos y ejes").font(.subheadline.weight(.semibold))
-          TextField("Título del gráfico", text: $configuration.title)
-          TextField("Etiqueta X (automática si está vacía)", text: $configuration.xLabel)
-          TextField("Etiqueta Y (automática si está vacía)", text: $configuration.yLabel)
-          Toggle("Mostrar cuadrícula", isOn: $configuration.showGrid)
+          Text(L("Títulos y ejes")).font(.subheadline.weight(.semibold))
+          TextField(L("Título del gráfico"), text: $configuration.title)
+          TextField(L("Etiqueta X (automática si está vacía)"), text: $configuration.xLabel)
+          TextField(L("Etiqueta Y (automática si está vacía)"), text: $configuration.yLabel)
+          Toggle(L("Mostrar cuadrícula"), isOn: $configuration.showGrid)
         }.textFieldStyle(.roundedBorder)
         if configuration.kind == .histogram {
           VStack(alignment: .leading, spacing: 8) {
             Stepper(
-              "Intervalos: \(configuration.binCount)", value: $configuration.binCount, in: 5...100)
-            Text("Pulsa Actualizar datos después de cambiar los intervalos.")
+              L("Intervalos: \(configuration.binCount)"), value: $configuration.binCount, in: 5...100)
+            Text(L("Pulsa Actualizar datos después de cambiar los intervalos."))
               .font(.caption).foregroundStyle(.secondary)
           }
         }
@@ -53,18 +60,18 @@ struct ChartStylePanel: View {
           || configuration.kind == .area || configuration.kind == .lollipop
         {
           VStack(alignment: .leading, spacing: 10) {
-            Text("Marcas").font(.subheadline.weight(.semibold))
-            Picker("Forma", selection: $configuration.pointShape) {
+            Text(L("Marcas")).font(.subheadline.weight(.semibold))
+            Picker(L("Forma"), selection: $configuration.pointShape) {
               ForEach(ChartPointShape.allCases) { shape in
-                Text(LocalizedStringKey(shape.title)).tag(shape)
+                Text(T(shape.title)).tag(shape)
               }
             }
             LabeledContent(
-              "Tamaño",
+              L("Tamaño"),
               value: configuration.pointSize.formatted(.number.precision(.fractionLength(0))))
-            Slider(value: $configuration.pointSize, in: 8...140)
+            Slider(value: $configuration.pointSize, in: 8...140).accessibilityLabel(L("Tamaño de las marcas"))
             if configuration.kind == .line || configuration.kind == .area {
-              Toggle("Mostrar puntos", isOn: $configuration.showPoints)
+              Toggle(L("Mostrar puntos"), isOn: $configuration.showPoints)
             }
           }
         }
@@ -73,15 +80,15 @@ struct ChartStylePanel: View {
         {
           VStack(alignment: .leading, spacing: 8) {
             LabeledContent(
-              "Grosor",
+              L("Grosor"),
               value: configuration.lineWidth.formatted(.number.precision(.fractionLength(1))))
-            Slider(value: $configuration.lineWidth, in: 0.5...6)
+            Slider(value: $configuration.lineWidth, in: 0.5...6).accessibilityLabel(L("Grosor del trazo"))
           }
         }
         Divider()
-        Button(saveTitle, action: save).buttonStyle(.borderedProminent).tint(.primary)
+        Button(T(saveTitle), action: save).buttonStyle(.borderedProminent).disabled(!configuration.hasValidColor)
         Text(
-          "Se guarda con esta versión del conjunto. Cambiar el diseño no modifica los datos ni los resultados estadísticos."
+          L("Se guarda con esta versión del conjunto. Cambiar el diseño no modifica los datos ni los resultados estadísticos.")
         )
         .font(.caption).foregroundStyle(.secondary)
       }.padding(.leading, 18).padding(.vertical, 4)

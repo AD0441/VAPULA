@@ -12,25 +12,25 @@ struct VisualizationView: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
       HStack(alignment: .firstTextBaseline) {
-        Text("Estudio de gráficos").font(.title2.weight(.semibold))
+        Text(L("Estudio de gráficos")).font(.title2.weight(.semibold))
         Spacer()
-        Picker("Tipo", selection: $workspace.chartConfiguration.kind) {
-          ForEach(ChartKind.allCases) { kind in Text(LocalizedStringKey(kind.title)).tag(kind) }
+        Picker(L("Tipo"), selection: $workspace.chartConfiguration.kind) {
+          ForEach(ChartKind.allCases) { kind in Text(T(kind.title)).tag(kind) }
         }.frame(width: 260)
       }
       HStack(spacing: 14) {
-        Picker("X", selection: $x) {
+        Picker(L("X"), selection: $x) {
           ForEach(dataset.columns) { Text($0.name).tag($0.name) }
         }
-        Picker("Y", selection: $y) {
-          Text("Sin variable Y").tag("")
+        Picker(L("Y"), selection: $y) {
+          Text(L("Sin variable Y")).tag("")
           ForEach(dataset.columns.filter(\.isNumeric)) { Text($0.name).tag($0.name) }
         }
-        Button("Actualizar datos") { workspace.charts(x: x, y: y) }.fixedSize()
+        Button(L("Actualizar datos")) { workspace.charts(x: x, y: y) }.fixedSize()
       }.disabled(workspace.busy)
       if hasPendingDataChoices {
         Label(
-          "Las variables o los intervalos cambiaron. Pulsa Actualizar datos para aplicarlos.",
+          L("Las variables o los intervalos cambiaron. Pulsa Actualizar datos para aplicarlos."),
           systemImage: "arrow.clockwise"
         )
         .font(.callout).foregroundStyle(.secondary)
@@ -40,7 +40,7 @@ struct VisualizationView: View {
         VStack(alignment: .leading, spacing: 12) {
           if workspace.chartDescription.isEmpty {
             ContentUnavailableView(
-              "Elige variables y pulsa Actualizar datos", systemImage: "chart.bar"
+              L("Elige variables y pulsa Actualizar datos"), systemImage: "chart.bar"
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
           } else {

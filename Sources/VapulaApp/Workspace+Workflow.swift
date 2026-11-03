@@ -15,13 +15,18 @@ extension Workspace {
   func showHistoricalVersion(_ version: DatasetVersion) {
     guard !busy else { return }
     if let node = workflow.nodes.first(where: { $0.outputDatasetID == version.id }) { selectWorkflowNode(node.id); return }
-    guard workflow.nodes.count < 500 else { error = "Este flujo admite hasta 500 cajas."; return }
+    guard workflow.nodes.count < 500 else { error = L("Este flujo admite hasta 500 cajas."); return }
     rememberWorkflow()
     let node = WorkflowNode(name: version.name, task: .data(version.id), position: workflow.insertionPosition(after: nil))
     workflow.nodes.append(node); workflowNodeID = node.id; workflowFocusID = node.id
     persistWorkflow()
   }
   var workflowNode: WorkflowNode? { workflow.nodes.first { $0.id == workflowNodeID } }
+  func selectAdjacentStep(_ delta: Int) {
+    guard !busy, !workflow.nodes.isEmpty else { return }
+    let index = workflow.nodes.firstIndex(where: { $0.id == workflowNodeID }) ?? (delta > 0 ? -1 : workflow.nodes.count)
+    selectWorkflowNode(workflow.nodes[min(workflow.nodes.count - 1, max(0, index + delta))].id)
+  }
   func workflowInput(_ node: WorkflowNode) -> DatasetVersion? {
     guard let id = node.inputs.first, let parent = workflow.nodes.first(where: { $0.id == id }),
       let versionID = parent.outputDatasetID else { return nil }
@@ -50,7 +55,7 @@ extension Workspace {
       datasetID = version.id; resetDataPresentation()
     }
     let document = workflow
-    run("Guardando flujo…") {
+    run(L("Guardando flujo…")) {
       try await self.engine.saveWorkflow(document)
       self.project = try await self.engine.snapshot(); self.workflowUnsaved = false
       if self.datasetID != nil { try await self.refresh() }
@@ -74,13 +79,13 @@ extension Workspace {
     }
     if let version = workflowPreviewVersion(node), datasetID != version.id {
       datasetID = version.id; resetDataPresentation()
-      run("Cargando vista previa…") { try await self.refresh() }
+      run(L("Cargando vista previa…")) { try await self.refresh() }
     }
   }
   func addWorkflowNode(_ kind: WorkflowKind, after parentID: UUID? = nil) {
     guard !busy, let project else { return }
     if kind == .data { chooseImport(); return }
-    guard workflow.nodes.count < 500 else { error = "Este flujo admite hasta 500 cajas."; return }
+    guard workflow.nodes.count < 500 else { error = L("Este flujo admite hasta 500 cajas."); return }
     let explicit = parentID.flatMap { id in workflow.nodes.first { $0.id == id } }
     let parent = (explicit ?? workflowNode).flatMap { $0.kind.compatibleNext.contains(kind) ? $0 : nil }
       ?? workflow.nodes.last { $0.kind.compatibleNext.contains(kind) }
@@ -128,7 +133,7 @@ extension Workspace {
         .map { inspectorDrafts[$0] != nil } == true
     }
     guard pending.isEmpty else {
-      error = "Hay cambios sin aplicar en «\(pending[0].name)». Abre su inspector y aplícalos, o descarta ese borrador, antes de ejecutar esta rama."
+      error = L("Hay cambios sin aplicar en «\(pending[0].name)». Abre su inspector y aplícalos, o descarta ese borrador, antes de ejecutar esta rama.")
       return
     }
     if let id { workflowNodeID = id }
@@ -166,7 +171,10 @@ extension Workspace {
     if proposed.nodes[index].kind == .report {
       if proposed.nodes[index].inputs.contains(source) { return }
       proposed.nodes[index].inputs.append(source)
-    } else { proposed.nodes[index].inputs = [source] }
+    } else {
+      guard proposed.nodes[index].inputs != [source] else { return }
+      proposed.nodes[index].inputs = [source]
+    }
     do {
       try proposed.validate(datasetIDs: Set(project.datasets.map(\.id)), resultIDs: Set(project.results.map(\.id)))
       rememberWorkflow(); proposed.invalidate(id); workflow = proposed
@@ -193,7 +201,7 @@ extension Workspace {
       let source = WorkflowNode(name: version.name, task: .data(datasetID), position: workflow.insertionPosition(after: nil))
       workflow.nodes.append(source); parent = source
     }
-    guard let parent else { error = "No se encuentra la versión de datos."; return }
+    guard let parent else { error = L("No se encuentra la versión de datos."); return }
     let node = WorkflowNode(name: operation.displayTitle, task: .prepare(operation), inputs: [parent.id], position: workflow.insertionPosition(after: parent))
     workflow.nodes.append(node); workflowNodeID = node.id; workflowFocusID = node.id
     editRequest = nil; executeWorkflowNode(node.id)

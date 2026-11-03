@@ -1,0 +1,38 @@
+Building for production...
+[Computing dependencies]
+[1 / 8] Cduckdb
+[2 / 5] VapulaTests-product
+[3 / 6] VapulaTests-product
+[8 / 12] VapulaTests-product
+[10 / 12] VapulaTests-product
+Build complete! (37,14 s)
+◇ Test run started.
+↳ Testing Library Version: 2403
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite PDFReportTests started.
+◇ Test figureHeadingsStayWithTheirImages() started.
+✘ Test figureHeadingsStayWithTheirImages() recorded an issue at PDFReportTests.swift:148:7: Expectation failed: headings == images
+↳ Página 3: 2 títulos, 1 imágenes
+↳ headings == images → false
+↳   headings → 2
+↳   images → 1
+✘ Test figureHeadingsStayWithTheirImages() recorded an issue at PDFReportTests.swift:148:7: Expectation failed: headings == images
+↳ Página 4: 1 títulos, 2 imágenes
+↳ headings == images → false
+↳   headings → 1
+↳   images → 2
+✘ Test figureHeadingsStayWithTheirImages() recorded an issue at PDFReportTests.swift:148:7: Expectation failed: headings == images
+↳ Página 5: 2 títulos, 1 imágenes
+↳ headings == images → false
+↳   headings → 2
+↳   images → 1
+✘ Test figureHeadingsStayWithTheirImages() recorded an issue at PDFReportTests.swift:148:7: Expectation failed: headings == images
+↳ Página 6: 1 títulos, 2 imágenes
+↳ headings == images → false
+↳   headings → 1
+↳   images → 2
+✘ Test figureHeadingsStayWithTheirImages() failed after 0.224 seconds with 4 issues.
+✘ Suite PDFReportTests failed after 0.224 seconds with 4 issues.
+✘ Test run with 1 test in 1 suite failed after 0.224 seconds with 4 issues.
+Note: Some test targets reported failures:
+  - VapulaTests (Swift Testing)

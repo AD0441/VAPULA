@@ -25,8 +25,8 @@ struct WorkbenchCanvas: View {
             .position(x: step.position.x * zoom + pan.width, y: step.position.y * zoom + pan.height)
         }
         if workspace.workflow.nodes.isEmpty {
-          ContentUnavailableView("Tu flujo empieza aquí", systemImage: "square.stack.3d.up",
-            description: Text("Importa un CSV, TSV o Parquet local y conecta tu primer paso."))
+          ContentUnavailableView(L("Tu flujo empieza aquí"), systemImage: "square.stack.3d.up",
+            description: Text(L("Importa un CSV, TSV o Parquet local y conecta tu primer paso.")))
             .frame(width: geometry.size.width, height: geometry.size.height)
         }
         VStack {
@@ -34,24 +34,24 @@ struct WorkbenchCanvas: View {
             Label(workspace.project?.name ?? "Mi flujo", systemImage: "point.3.connected.trianglepath.dotted")
               .font(.system(size: 11, weight: .medium))
             Spacer()
-            Text("\(workspace.workflow.nodes.count) pasos").font(.system(size: 10.5)).foregroundStyle(.secondary)
+            Text(L("\(workspace.workflow.nodes.count) pasos")).font(.system(size: 10.5)).foregroundStyle(.secondary)
           }.padding(.horizontal, 18).padding(.top, 15)
           if workspace.workflowConnection != nil {
             HStack {
-              Text("Selecciona la entrada de otra caja para conectar.").font(.system(size: 11))
-              Button("Cancelar") { workspace.workflowConnection = nil }.controlSize(.small)
+              Text(L("Selecciona la entrada de otra caja para conectar.")).font(.system(size: 11))
+              Button(L("Cancelar")) { workspace.workflowConnection = nil }.controlSize(.small)
             }.padding(8).background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8)).padding(.top, 7)
           }
           Spacer()
           HStack {
-            Text("Arrastra las cajas · conecta con + · inspecciona al seleccionar").font(.system(size: 10)).foregroundStyle(.secondary)
+            Text(L("Arrastra las cajas · conecta con + · inspecciona al seleccionar")).font(.system(size: 10)).foregroundStyle(.secondary)
             Spacer()
             HStack(spacing: 0) {
-              Button { zoom = max(0.35, zoom - 0.1) } label: { Image(systemName: "minus").frame(width: 28, height: 27) }.help("Alejar")
-              Text("\(Int(zoom * 100)) %").font(.system(size: 10.5).monospacedDigit()).frame(width: 43)
-              Button { zoom = min(1.6, zoom + 0.1) } label: { Image(systemName: "plus").frame(width: 28, height: 27) }.help("Acercar")
+              Button { zoom = max(0.35, zoom - 0.1) } label: { Image(systemName: "minus").frame(width: 28, height: 27) }.help(L("Alejar")).accessibilityLabel(L("Alejar"))
+              Text(L("\(Int(zoom * 100)) %")).font(.system(size: 10.5).monospacedDigit()).frame(width: 43)
+              Button { zoom = min(1.6, zoom + 0.1) } label: { Image(systemName: "plus").frame(width: 28, height: 27) }.help(L("Acercar")).accessibilityLabel(L("Acercar"))
               Divider().frame(height: 13)
-              Button { fit(in: geometry.size) } label: { Image(systemName: "arrow.up.left.and.arrow.down.right").frame(width: 29, height: 27) }.help("Ajustar el flujo · ⌘0")
+              Button { fit(in: geometry.size) } label: { Image(systemName: "arrow.up.left.and.arrow.down.right").frame(width: 29, height: 27) }.help(L("Ajustar el flujo · ⌘0")).accessibilityLabel(L("Ajustar al lienzo"))
             }.buttonStyle(.plain).background(.regularMaterial, in: RoundedRectangle(cornerRadius: 7))
               .overlay(RoundedRectangle(cornerRadius: 7).strokeBorder(.quaternary))
           }.padding(14)
@@ -136,6 +136,11 @@ private struct MovableWorkflowStep: View {
       Button { workspace.selectWorkflowNode(step.id) } label: {
         WorkbenchNodeCard(node: step, workspace: workspace)
       }.buttonStyle(.plain).disabled(workspace.busy)
+        .accessibilityLabel(step.displayName)
+        .accessibilityValue(T(step.lastError != nil ? "Revisar" : !step.task.configured ? "Configurar" : step.dirty ? "Por ejecutar" : "Listo"))
+        .accessibilityHint(L("Sus opciones y resultados aparecerán aquí."))
+        .accessibilityAddTraits(workspace.workflowNodeID == step.id ? [.isSelected] : [])
+        .accessibilityRemoveTraits(workspace.workflowNodeID == step.id ? [] : [.isSelected])
         .simultaneousGesture(DragGesture(minimumDistance: 5).onChanged { value in
           guard !workspace.busy else { return }
           if dragStart == nil { dragStart = step.position; workspace.rememberWorkflow(); workspace.workflowNodeID = step.id }
@@ -145,32 +150,32 @@ private struct MovableWorkflowStep: View {
       if step.kind != .data {
         Button { workspace.connectWorkflow(to: step.id) } label: {
           Circle().fill(Color(nsColor: .controlBackgroundColor)).overlay(Circle().stroke(workspace.workflowConnection == nil ? Color.secondary : WorkbenchInk.accent, lineWidth: 1.5)).frame(width: 9, height: 9).padding(8)
-        }.buttonStyle(.plain).position(x: 0, y: 68).help("Entrada de \(step.name)").accessibilityLabel("Conectar entrada de \(step.name)")
+        }.buttonStyle(.plain).position(x: 0, y: 68).help(L("Entrada de \(step.displayName)")).accessibilityLabel(L("Conectar entrada de \(step.displayName)"))
       }
       if step.kind != .report {
-        Button { workspace.workflowConnection = step.id; workspace.status = "Selecciona la entrada de la caja que quieres conectar." } label: {
+        Button { workspace.workflowConnection = step.id; workspace.status = L("Selecciona la entrada de la caja que quieres conectar.") } label: {
           Circle().fill(step.kind.ink).frame(width: 9, height: 9).padding(8)
-        }.buttonStyle(.plain).position(x: 192, y: 68).help("Conectar salida").accessibilityLabel("Conectar salida de \(step.name)")
+        }.buttonStyle(.plain).position(x: 192, y: 68).help(L("Conectar salida")).accessibilityLabel(L("Conectar salida de \(step.displayName)"))
       }
       if !step.kind.compatibleNext.isEmpty {
         Menu {
           ForEach(step.kind.compatibleNext, id: \.self) { kind in
-            Button { workspace.addWorkflowNode(kind, after: step.id) } label: { Label(kind.title, systemImage: kind.symbol) }
+            Button { workspace.addWorkflowNode(kind, after: step.id) } label: { Label(T(kind.title), systemImage: kind.symbol) }
           }
         } label: { Image(systemName: "plus").font(.system(size: 10, weight: .semibold)).frame(width: 22, height: 22) }
           .disabled(workspace.busy)
           .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
           .background(.regularMaterial, in: Circle()).overlay(Circle().strokeBorder(.quaternary))
-          .position(x: 170, y: 146).help("Añadir el siguiente paso compatible")
+          .position(x: 170, y: 146).help(L("Añadir el siguiente paso compatible")).accessibilityLabel(L("Añadir el siguiente paso compatible"))
       }
     }.frame(width: 192, height: 136)
       .contextMenu {
-        Button("Ejecutar paso") { workspace.executeWorkflowNode(step.id) }
+        Button(L("Ejecutar paso")) { workspace.executeWorkflowNode(step.id) }
         ForEach(step.kind.compatibleNext, id: \.self) { kind in
-          Button("Añadir \(kind.title.lowercased())") { workspace.addWorkflowNode(kind, after: step.id) }
+          Button(L("Añadir \(T(kind.title).lowercased())")) { workspace.addWorkflowNode(kind, after: step.id) }
         }
         Divider()
-        Button("Retirar rama", role: .destructive) { workspace.removeWorkflowBranch(step.id) }
+        Button(L("Retirar rama"), role: .destructive) { workspace.removeWorkflowBranch(step.id) }
       }
   }
 }

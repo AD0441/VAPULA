@@ -4,7 +4,7 @@
 
 **Línea base:** [REQUIREMENTS.md v1.1](REQUIREMENTS.md).
 
-**Aplicación:** [0.1.1 preliminar](https://github.com/AD0441/VAPULA/releases/tag/v0.1.1), [fuentes del tag](https://github.com/AD0441/VAPULA/tree/v0.1.1). Lote 1 sobre la base `4982dd1`. La release anterior 0.1.0 conserva su evidencia histórica.
+**Aplicación:** [0.1.2 preliminar](https://github.com/AD0441/VAPULA/releases/tag/v0.1.2), [fuentes del tag](https://github.com/AD0441/VAPULA/tree/v0.1.2). Lote de usabilidad sobre `d77da2e`. Las releases 0.1.0/0.1.1 conservan su evidencia histórica.
 
 **Documentación/identidad revisada:** [`7caa136`](https://github.com/AD0441/VAPULA/commit/7caa1364daf87f4d4e480924c399bae8f79ea4fd), incorporando después este inventario.
 
@@ -23,19 +23,19 @@ P0/P1/P2 expresan prioridad, no aprobación de una propuesta. Los orígenes C/B/
 
 | Prioridad | Implementado | Parcial | Pendiente | Propuesto | Total |
 | --- | --- | --- | --- | --- | --- |
-| P0 | 50 | 10 | 0 | 0 | 60 |
+| P0 | 51 | 9 | 0 | 0 | 60 |
 | P1 | 2 | 10 | 7 | 4 | 23 |
 | P2 | 0 | 0 | 0 | 1 | 1 |
-| **Total** | **52** | **20** | **7** | **5** | **84** |
+| **Total** | **53** | **19** | **7** | **5** | **84** |
 
-Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance ni una estimación de esfuerzo. Los 10 P0 parciales señalan trabajo de consolidación pendiente.
+Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance ni una estimación de esfuerzo. Los 9 P0 parciales señalan trabajo de consolidación pendiente.
 
 ## Evidencia disponible y sus límites
 
-- **Núcleo e integración:** 69 funciones Swift Testing en 15 suites, ejecutadas en release y repetidas dos veces completas. Incluyen los casos previos y recuperación, consentimiento de conversiones, diagnósticos y selección de informes. [Salida final][tests], [registro del lote][integritystage].
+- **Núcleo e integración:** 76 funciones Swift Testing en 16 suites en release. Incluyen los casos previos y los nuevos de RGB, traducción, conexiones y paginación PDF. [Salida final][tests], [registro del lote][usability].
 - **Estadística:** 1.356 valores escalares de referencia independientes, con definiciones y tolerancias. No equivalen a 1.356 pruebas visuales. [Validación estadística][numerical].
-- **Aplicación real:** el recorrido base de 31 filas sigue registrado. El lote 1 añade borradores, conversión con cuatro pérdidas/cancelación/aceptación, recuperación visible y PDF/MD selectivos sobre cuatro filas sintéticas. [Lote 1][integritystage], [registro base][native], [capturas base][screenshots]. No se revisaron todas las combinaciones de métodos, estilos, idiomas y temas.
-- **Distribución:** ZIP arm64, SHA-256, extracción limpia, firma estricta ad hoc y comparación de archivos. [Integridad 0.1.1][integrity], [notas de release][release]. No hay Developer ID/notarización ni calificación en otro Mac/macOS mínimo.
+- **Aplicación real:** el recorrido base de 31 filas sigue registrado. El lote 1 añade borradores, conversión con cuatro pérdidas/cancelación/aceptación, recuperación visible y PDF/MD selectivos sobre cuatro filas sintéticas. [Lote 1][integritystage], [registro base][native], [capturas base][screenshots]. El [lote 2][usability] añade navegación, ES/EN, diagnóstico HEX, ocho formas, PDF/MD y reapertura con ocho filas sintéticas. No se revisaron todas las combinaciones de métodos, estilos, idiomas y temas.
+- **Distribución:** ZIP arm64 0.1.2, SHA-256, extracción limpia, firma estricta ad hoc y comparación de archivos. [Integridad 0.1.2][integrity], [notas de release][release]. No hay Developer ID/notarización ni calificación en otro Mac/macOS mínimo.
 - **CI histórica:** ejecuciones satisfactorias de [main del código publicado](https://github.com/AD0441/VAPULA/actions/runs/41325036372), [tag 0.1.0](https://github.com/AD0441/VAPULA/actions/runs/41325199928) y [documentación de familia](https://github.com/AD0441/VAPULA/actions/runs/41332703840). CI no demuestra accesibilidad ni compatibilidad visual con todos los sistemas.
 
 ## 1. Proyecto, versiones y recuperación
@@ -130,11 +130,11 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 | Código | Prioridad | Estado | Cobertura real y pendiente |
 | --- | --- | --- | --- |
 | GRA-01 | P0 | Implementado | Ocho formas en el renderizador y menú; histograma/dispersión y estilos recorridos en la app. Exhaustividad visual en GRA-05. [Gráficos][charts], [renderizador][chartrenderer], [revisión][validation]. |
-| GRA-02 | P0 | Parcial | Seis opciones de paleta contando la personalizada, selector/HEX y estilos persistidos. Un HEX inválido vuelve silenciosamente al color predeterminado; falta el diagnóstico explícito del criterio. [Panel][chartpanel], [normalización][chartmodel], [pruebas][expandedworkflow]. |
+| GRA-02 | P0 | Implementado | Paletas y estilos persistidos; HEX inválido conserva su entrada, explica el formato y bloquea aplicar. Aviso de contraste para RGB personalizados. Comprobación nativa de inválido/blanco/color válido y pruebas de RGB/contraste. [Lote de usabilidad][usability], [panel][chartpanel]. |
 | GRA-03 | P0 | Implementado | Límites y definiciones explícitos: 2.000 pares, top 30, histograma y caja; atípicos de caja contados, sin puntos dibujados. [Gráficos][charts], [límites][limits]. |
 | GRA-04 | P0 | Implementado | Parámetros por caja/versión; cache se regenera al ejecutar tras reabrir. Vista identifica tipo/variables realmente aplicados. [Revisión][validation], [controlador][workflowui]. |
-| GRA-05 | P0 | Parcial | Correcciones verificadas de intervalos, títulos y figura PDF; falta matriz completa de ocho formas × temas × casos × exportaciones. [Revisión][validation], [PDF][pdfsample]. |
-| GRA-06 | P1 | Parcial | Colores/símbolos configurables; no hay auditoría de contraste, deficiencias de visión cromática ni lectura completa de gráficos con VoiceOver. [Panel][chartpanel], [renderizador][chartrenderer]. |
+| GRA-05 | P0 | Parcial | Ocho formas ejecutadas y exportadas; título largo y categoría larga revisados. PDF final agrupa título/procedencia/imagen. Falta matriz completa de temas, tamaños, vacíos y extremos. [Revisión][usability], [PDF final][polishpdf]. |
+| GRA-06 | P1 | Parcial | Paletas integradas adaptadas a oscuro y aviso de contraste personalizado; marcas con nombres AX. Faltan auditoría cromática completa y recorrido VoiceOver de todas las figuras. [Revisión][usability]. |
 
 ## 10. Informes e intercambio
 
@@ -151,18 +151,18 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 
 | Código | Prioridad | Estado | Cobertura real y pendiente |
 | --- | --- | --- | --- |
-| UX-01 | P0 | Parcial | Maqueta y recorrido integrados, controles ajustados tras revisión; falta auditoría visual sistemática y evaluación de claridad del flujo completo. [Revisión][validation], [capturas][screenshots]. |
-| UX-02 | P0 | Parcial | Controles/comandos nativos y lectura AX acotada; recorrido completo por teclado, conexiones y VoiceOver aún no certificado. [Validación][validation]. |
-| UX-03 | P0 | Parcial | Colores semánticos y apariencia configurable; ventana mínima declarada 1060×700. Faltan recorridos exhaustivos en mínimo/oscuro/contenido largo. [Comandos/ventana][commands], [validación][validation]. |
-| UX-04 | P0 | Parcial | Catálogos ES/EN y selector; quedan textos técnicos, mensajes dinámicos y etiquetas fijas mezcladas. [Límites][limits], [interfaz][workbench]. |
-| UX-05 | P0 | Parcial | Inicio, validaciones y algunos mensajes accionables; faltan normalización y revisión de fallos/cancelación/recuperación de extremo a extremo. [Validación][validation], [límites][limits]. |
+| UX-01 | P0 | Parcial | Lista de pasos y nombres de formas, inspector más amplio y vista inferior proporcional; recorrido completo sintético y exportaciones reales. Falta evaluación sistemática de claridad con usuarios. [Lote 2][usability]. |
+| UX-02 | P0 | Parcial | Lista nativa, atajos de pasos/paneles, menú de entradas compatibles y nombres/selección AX comprobados. Falta recorrido completo sólo con teclado y VoiceOver. [Revisión][usability]. |
+| UX-03 | P0 | Parcial | Acento adaptativo, marcas claras en oscuro, paneles ajustados y restricción nativa del mínimo 1060×700. Se observó oscuro y contenido largo; no se certificó el mínimo con la captura remota ni la matriz completa. [Revisión][usability]. |
+| UX-04 | P0 | Parcial | Catálogo ES/EN con 758 entradas y cambio en vivo del recorrido principal, mensajes conocidos y ayudas. Datos/títulos propios conservados. Informes y texto técnico desconocido aún pueden mezclar idiomas; diálogos del sistema siguen macOS. [Revisión][usability], [catálogo][uitext]. |
+| UX-05 | P0 | Parcial | Diagnóstico de lectura, HEX y contraste comprobados; selector de paquete/reapertura confirmados. Faltan todos los fallos/cancelaciones y seguimiento del aviso de tabla nativa. [Revisión][usability]. |
 | UX-06 | P1 | Pendiente | No existe todavía estudio registrado de tres recorridos con usuarios ni cierre de tropiezos medidos. Las decisiones de la maqueta no sustituyen esa observación. |
 
 ## 12. Privacidad y seguridad
 
 | Código | Prioridad | Estado | Cobertura real y pendiente |
 | --- | --- | --- | --- |
-| SEG-01 | P0 | Parcial | Núcleo sin clientes HTTP/cuentas/telemetría; observación de reposo sin sockets IP. Falta recorrido completo con red desconectada; no se afirma aislamiento App Sandbox. [Privacidad][privacy]. |
+| SEG-01 | P0 | Parcial | Núcleo local sin clientes HTTP, cuentas ni telemetría. Recorrido completo con red denegada al proceso de prueba y observación sin sockets IP; falta Mac físicamente desconectado. No es una afirmación de App Sandbox. [Revisión][usability], [privacidad][privacy]. |
 | SEG-02 | P0 | Implementado | SQL cerrado, escapes/operaciones tipadas, rutas locales protegidas y extensiones/sistemas remotos deshabilitados. Pruebas de inyección y rutas. [Pruebas][projecttests], [privacidad][privacy]. |
 | SEG-03 | P0 | Implementado | Muestras/capturas sintéticas y exclusiones de datos/proyectos/builds. Debe revisarse de nuevo en cada publicación. [Normas][agents], [capturas][screenshots], [exclusiones][gitignore]. |
 | SEG-04 | P0 | Implementado | Motor oficial fijado, licencia MIT y avisos incluidos en el bundle. Cualquier dependencia futura requiere otra revisión. [Avisos][notices], [integridad][integrity]. |
@@ -179,7 +179,7 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 
 | Código | Prioridad | Estado | Cobertura real y pendiente |
 | --- | --- | --- | --- |
-| VAL-01 | P0 | Implementado | 69 funciones en 15 suites release, más dos repeticiones completas. Referencias anteriores incluidas; exit tests acotados y estado SIGKILL exacto comprobado. [Salida][tests], [repeticiones y alcance][integritystage], [referencias][numerical]. |
+| VAL-01 | P0 | Implementado | 76 funciones en 16 suites release; referencias estadísticas y SIGKILL anteriores conservados. Casos nuevos de interfaz/modelo y regresión PDF reproducida antes del arreglo. [Salida][tests], [lote 2][usability]. |
 | VAL-02 | P0 | Implementado | Recorrido real, exportaciones abiertas y límites anotados. No sustituye GRA-05, UX-02/04 o VAL-03. [Registro][validation], [evidencia nativa][native], [PDF][pdfsample]. |
 | VAL-03 | P0 | Parcial | ZIP/suma/firma ad hoc y extracción limpia probados en M1/macOS 27.2; faltan otro Mac sin desarrollo y ejecución real en macOS 14. [Integridad][integrity], [release][release]. |
 | VAL-04 | P1 | Pendiente | Developer ID y notarización no realizados. Requiere recursos/cuenta autorizados al programar ese lote. [Release][release]. |
@@ -188,9 +188,9 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 
 | Código | Prioridad | Estado | Cobertura real y pendiente |
 | --- | --- | --- | --- |
-| PUB-01 | P0 | Implementado | Cabecera oscura 2:1 de familia y sello propio; anteriores portadas conservadas como antecedentes. [Familia][family], [marca][brand]. |
+| PUB-01 | P0 | Implementado | Portada fotográfica 2:1 con logo propio y procedencia declarada; cabecera gráfica y portadas anteriores conservadas como antecedentes. [Familia][family], [marca][brand]. |
 | PUB-02 | P0 | Implementado | README, capturas reales, ventajas por tarea y comparación con fuentes/límites; imagen del Mac en detalle promocional. [README][readme], [comparación][comparison]. |
-| PUB-03 | P1 | Parcial | README/FUNDING usan Ko-fi canónico; dos enlaces de la app aún usan `ko-fi.com/sebastianpasten`. Falta unificar/verificar destino sin introducir avisos intrusivos. [Interfaz][workbench], [vista heredada][legacy], [financiación][funding]. |
+| PUB-03 | P1 | Parcial | App, README y FUNDING apuntan al Ko-fi canónico sin avisos intrusivos; la herramienta web no pudo comprobar el destino externo en este lote. [Revisión][usability], [financiación][funding]. |
 | PUB-04 | P1 | Implementado | Imagen/tarjeta y textos breve/detallado preparados. **No demuestra publicación en el sitio del autor**; esa actualización es una acción posterior distinta. [Texto breve][webshort], [detalle][webdetail], [procedencia de imágenes][promo]. |
 
 ## 16. Ampliaciones propuestas
@@ -207,11 +207,11 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 | Lote propuesto | Requisitos | Resultado esperado para revisar |
 | --- | --- | --- |
 | 1. Integridad y decisiones visibles — entregado | PRY-05, IMP-04, EDT-03, FLU-07, INF-04 | Implementado y comprobado dentro del [alcance del lote 1](INTEGRITY-STAGE.md). Continúa el lote 2. |
-| 2. Terminar de pulir el uso real | UX-01 a UX-05, GRA-02, GRA-05, SEG-01, VAL-03 | Recorridos con teclado/VoiceOver, idiomas/temas/ventana mínima, colores inválidos, ocho gráficos, uso desconectado y paquete en otro Mac. |
+| 2. Terminar de pulir el uso real — entrega preliminar y calificaciones abiertas | UX-01 a UX-05, GRA-02, GRA-05, SEG-01, VAL-03 | Entregadas navegación, traducción de interfaz, HEX y figuras PDF; [evidencia][usability]. Quedan VoiceOver, matriz visual, informes por idioma, desconexión física y otro Mac. |
 | 3. Trabajo diario y entrega | DAT-04/05, EDT-04, CAL-03/04, EST-08, INF-05, PUB-03 | Metadatos y comparación, orden descendente visible, evidencia revisable, orientación y perfiles en ambos informes; enlaces coherentes. |
 | 4. Medir antes de ampliar | PRY-06, REN-02/03, UX-06 | Coste de versiones, medidas repetibles y tropiezos de usuarios; decidir después FLU-08 y EXT-01 a EXT-04. |
 
-El autor autorizó continuar con la siguiente etapa el 2 de noviembre; se entregó el lote 1. Los lotes restantes y las ampliaciones propuestas conservan su prioridad y alcance pendientes de programación. No se abren issues automáticamente por actualizar la matriz.
+El autor autorizó continuar con la siguiente etapa el 2 de noviembre; se entregó el lote 1. El autor autorizó el lote 2 a continuación. Su entrega preliminar no cierra las calificaciones externas ni la matriz completa; los lotes siguientes y las ampliaciones conservan su alcance pendiente. No se abren issues automáticamente por actualizar la matriz.
 
 ## Condiciones para cerrar una fila
 
@@ -220,14 +220,14 @@ El autor autorizó continuar con la siguiente etapa el 2 de noviembre; se entreg
 3. Corregir limitaciones y documentación si cambió el comportamiento. Conservar registros históricos con su fecha.
 4. Actualizar esta matriz sin convertir pruebas del núcleo en afirmaciones de interfaz, seguridad o compatibilidad no verificadas.
 
-[tests]: evidence/test-integrity-release.txt
+[tests]: evidence/test-polish-release.txt
 [validation]: VALIDATION.md
 [numerical]: STATISTICAL-VALIDATION.md
 [native]: evidence/integrated-native-review.json
 [screenshots]: screenshots/README.md
 [pdfsample]: evidence/VAPULA-flujo-final.pdf
-[integrity]: evidence/bundle-integrity-0.1.1.json
-[release]: RELEASE-0.1.1.md
+[integrity]: evidence/bundle-integrity-0.1.2.json
+[release]: RELEASE-0.1.2.md
 [limits]: LIMITATIONS.md
 [projecttests]: ../Tests/VapulaTests/ProjectDataTests.swift
 [workflowtests]: ../Tests/VapulaTests/WorkflowExecutionTests.swift
@@ -284,3 +284,7 @@ El autor autorizó continuar con la siguiente etapa el 2 de noviembre; se entreg
 [draftmodel]: ../Sources/VapulaCore/InspectorDrafts.swift
 [reportselection]: ../Sources/VapulaReports/ReportSelection.swift
 [selectiontests]: ../Tests/VapulaTests/Reports/ReportSelectionTests.swift
+
+[usability]: USABILITY-STAGE.md
+[polishpdf]: evidence/usabilidad-final.pdf
+[uitext]: ../Sources/VapulaCore/Resources/Interface.en.json

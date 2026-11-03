@@ -23,7 +23,7 @@ struct DataGrid: NSViewRepresentable {
     table.target = context.coordinator
     table.doubleAction = #selector(Coordinator.editClickedCell(_:))
     table.allowsMultipleSelection = true
-    table.setAccessibilityLabel("Tabla de datos, página de hasta 100 filas")
+    table.setAccessibilityLabel(L("Tabla de datos, página de hasta 100 filas"))
     scroll.documentView = table
     context.coordinator.table = table
     return scroll
@@ -36,6 +36,7 @@ struct DataGrid: NSViewRepresentable {
     coordinator.onEdit = onEdit
     coordinator.onSelection = onSelection
     guard let table = coordinator.table else { return }
+    table.setAccessibilityLabel(L("Tabla de datos, página de hasta 100 filas"))
     if coordinator.columns != columns {
       for c in table.tableColumns { table.removeTableColumn(c) }
       for c in columns {
@@ -103,7 +104,7 @@ struct DataGrid: NSViewRepresentable {
       cell.textField?.stringValue = value ?? "∅"
       cell.textField?.textColor = value == nil ? .secondaryLabelColor : .labelColor
       cell.textField?.toolTip = value ?? "NULL"
-      cell.textField?.setAccessibilityLabel("\(name): \(value ?? "NULL")")
+      cell.textField?.setAccessibilityLabel(L("\(name): \(value ?? "NULL")"))
       return cell
     }
     func tableView(

@@ -119,6 +119,12 @@ public struct DataWorkflow: Codable, Equatable, Sendable {
     }
     return found
   }
+  /// The menu and canvas offer the same legal upstream families and never a cycle.
+  public func connectionCandidates(to id: UUID) -> [WorkflowNode] {
+    guard let target = nodes.first(where: { $0.id == id }), target.kind != .data else { return [] }
+    let excluded = descendants(of: id)
+    return nodes.filter { !excluded.contains($0.id) && $0.kind.compatibleNext.contains(target.kind) }
+  }
   public mutating func invalidate(_ id: UUID) {
     let affected = descendants(of: id)
     for index in nodes.indices where affected.contains(nodes[index].id) {

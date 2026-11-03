@@ -20,9 +20,9 @@ extension Workspace {
   }
   func reportScopeTitle(_ scope: ReportScope) -> String {
     switch scope {
-    case .project: "Proyecto completo"
-    case .node(let id): "Caja: " + (workflow.nodes.first { $0.id == id }?.name ?? "No disponible")
-    case .result: "Resultado individual"
+    case .project: L("Proyecto completo")
+    case .node(let id): L("Caja: \(workflow.nodes.first { $0.id == id }?.displayName ?? T("No disponible"))")
+    case .result: L("Resultado individual")
     }
   }
   func confirmReportExport(scope: ReportScope, format: ReportExportFormat) {
@@ -38,10 +38,10 @@ extension Workspace {
       await Task.yield()
       guard !self.busy, self.project?.id == project.id else { return }
       let panel = NSSavePanel()
-      panel.title = "Exportar · \(title)"
-      panel.nameFieldStringValue = "informe\(format.fileExtension)"
+      panel.title = L("Exportar · \(title)")
+      panel.nameFieldStringValue = L("informe\(format.fileExtension)")
       guard panel.runModal() == .OK, let url = panel.url else { return }
-      self.run("Exportando · \(title)…") {
+      self.run(L("Exportando · \(title)…")) {
         var figures: [ReportFigure] = []
         if format != .csv {
           for job in plan.charts {

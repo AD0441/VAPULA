@@ -100,8 +100,8 @@ struct PDFReportTests {
     }
   }
 
-  private func plotPNG() throws -> Data {
-    let context = try #require(CGContext(data: nil, width: 600, height: 320, bitsPerComponent: 8, bytesPerRow: 0, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
+  private func plotPNG(width: Int = 600) throws -> Data {
+    let context = try #require(CGContext(data: nil, width: width, height: 320, bitsPerComponent: 8, bytesPerRow: 0, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
     context.setFillColor(CGColor(gray: 1, alpha: 1)); context.fill(CGRect(x: 0, y: 0, width: 600, height: 320))
     context.setFillColor(CGColor(red: 0.12, green: 0.4, blue: 0.7, alpha: 1))
     for (i, height) in [70, 140, 230, 150, 80].enumerated() { context.fill(CGRect(x: 40 + i * 105, y: 30, width: 80, height: height)) }
@@ -110,6 +110,44 @@ struct PDFReportTests {
     CGImageDestinationAddImage(destination, image, nil)
     #expect(CGImageDestinationFinalize(destination))
     return data as Data
+  }
+  private func imageCount(on page: PDFPage) -> Int {
+    var resources: CGPDFDictionaryRef?, objects: CGPDFDictionaryRef?
+    guard let dictionary = page.pageRef?.dictionary,
+      CGPDFDictionaryGetDictionary(dictionary, "Resources", &resources), let resources,
+      CGPDFDictionaryGetDictionary(resources, "XObject", &objects), let objects else { return 0 }
+    var count = 0
+    withUnsafeMutablePointer(to: &count) { pointer in
+      CGPDFDictionaryApplyFunction(objects, { _, object, info in
+        var stream: CGPDFStreamRef?
+        guard CGPDFObjectGetValue(object, .stream, &stream), let stream else { return }
+        var subtype: UnsafePointer<CChar>?
+        if let streamDictionary = CGPDFStreamGetDictionary(stream),
+          CGPDFDictionaryGetName(streamDictionary, "Subtype", &subtype),
+          let subtype, String(cString: subtype) == "Image" {
+          info?.assumingMemoryBound(to: Int.self).pointee += 1
+        }
+      }, pointer)
+    }
+    return count
+  }
+  @Test func figureHeadingsStayWithTheirImages() throws {
+    let project = fixture(resultCount: 1)
+    let figures = try (0..<8).map { index in
+      ReportFigure(title: "FIGURA_\(index) " + String(repeating: "Título sintético largo para revisar la paginación. ", count: 3),
+        datasetID: project.datasets[0].id, caption: "Ocho formas con datos sintéticos. La figura debe conservar su título y su procedencia en la misma página.",
+        png: try plotPNG(width: 600 + index))
+    }
+    let document = try #require(PDFDocument(data: PDFReport.data(project: project, figures: figures)))
+    var totalImages = 0
+    for index in 0..<document.pageCount {
+      let page = try #require(document.page(at: index))
+      let text = try #require(page.string)
+      let headings = figures.indices.filter { text.contains("FIGURA_\($0) ") }.count
+      let images = imageCount(on: page); totalImages += images
+      #expect(headings == images, "Página \(index + 1): \(headings) títulos, \(images) imágenes")
+    }
+    #expect(totalImages == 8)
   }
   @Test func figuresTravelWithPDFAndMarkdownWithoutOverwritingFiles() throws {
     let project = fixture(), png = try plotPNG()

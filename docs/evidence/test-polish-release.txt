@@ -1,0 +1,236 @@
+Building for production...
+[Computing dependencies]
+[1 / 4]
+[1 / 11] Cduckdb
+[2 / 5] VAPULA-product
+[3 / 6] VAPULA-product
+[5 / 6] VAPULA-product
+[6 / 6] VAPULA-product
+Build complete! (38,62 s)
+Test Suite 'All tests' started at 2026-11-02 23:32:07.181.
+Test Suite 'All tests' passed at 2026-11-02 23:32:07.184.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.003) seconds
+◇ Test run started.
+↳ Testing Library Version: 2403
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Suite CleaningTests started.
+◇ Suite InterfacePolishTests started.
+◇ Suite ReportSelectionTests started.
+◇ Suite PerformanceTests started.
+◇ Suite ImportDiagnosticTests started.
+◇ Suite ImportFailureTests started.
+◇ Suite PDFReportTests started.
+◇ Suite InspectorDraftsTests started.
+◇ Suite WorkflowExecutionTests started.
+◇ Suite CastPreviewTests started.
+◇ Suite StatisticsTests started.
+◇ Suite ProjectDataTests started.
+◇ Suite ProjectSessionTests started.
+◇ Suite ExpandedStatisticsTests started.
+◇ Suite PersistenceFailureTests started.
+◇ Suite ExpandedWorkflowTests started.
+◇ Test validRGBIsCanonical(_:) started.
+◇ Test contrastMatchesBlackWhiteAndRejectsInvalidInput() started.
+◇ Test keyboardConnectionsExcludeDescendantsAndIncompatibleFamilies() started.
+◇ Test translatedTemplatesNeverDropOrAddSubstitutions() started.
+◇ Test staleOrForeignSelectionsCannotBeExported() started.
+◇ Test invalidRGBDoesNotBecomeAnAppliedColor(_:) started.
+◇ Test translationPreservesInterpolatedUserContentAndCanSwitchBack() started.
+◇ Test reportBoxAndIndividualResultExcludeUnrelatedBranches() started.
+◇ Test addedValuesAreTypedAndNeverExecuteUserText() started.
+◇ Test manualCorrectionUsesSourceIdentityAfterSearchingAndSorting() started.
+◇ Test modeKeepsLargeIntegerPrecisionAndBreaksTiesDeterministically() started.
+◇ Test userRowidColumnCannotRedirectCellEdits() started.
+◇ Test wholeProjectIncludesHistoryAndCountsChartsNotYetExecuted() started.
+◇ Test missingPreviewAndAllReplacementMethodsPreserveTheSource() started.
+◇ Test removalIsExplicitAndCannotDropEveryColumn() started.
+◇ Test foreignAndInvalidFiguresFailExplicitly() started.
+◇ Test nonfinitePolicyIsVisibleAndEmptyNumericColumnsDoNotInventAverages() started.
+◇ Test figureHeadingsStayWithTheirImages() started.
+➜ Test millionRowsImportProfileAndPage() skipped.
+◇ Test malformedInputExplainsHowToRetryWithoutPublishingInternalSQL() started.
+◇ Test figuresTravelWithPDFAndMarkdownWithoutOverwritingFiles() started.
+◇ Test pdfContainsReadableResultsAndProvenance() started.
+◇ Test diagnosticKeepsReadingContextAndOmitsInternalQueries() started.
+◇ Test sourceIdentityMustMatchItsDeclaredOutput() started.
+◇ Test emptyProjectIsAValidDocumentAndInvalidSelectionsFail() started.
+◇ Test longReportsPaginateWithoutDroppingLastResultOrFooter() started.
+◇ Test supportedFailureCategoriesHaveActionableMessages(input:) started.
+◇ Test graphValidationRejectsCyclesAndWrongKinds() started.
+◇ Test selectedResultExportDoesNotLeakOtherResults() started.
+◇ Test actualWorkflowRunsBothBranchesAndKeepsThePortableGraph() started.
+◇ Test oldProjectsAcquireAProvenanceGraphWithoutRewritingTables() started.
+◇ Test draftsAreIsolatedByProjectNodeAndInputVersion() started.
+◇ Test previewCountsOnlyNewNullsAndRequiresMatchingApproval() started.
+◇ Test workflowCannotReuseApprovalAfterUpstreamVersionChanges() started.
+◇ Test case passing 1 argument input → "256A8A" to validRGBIsCanonical(_:) started.
+◇ Test case passing 1 argument input → "#256a8a" to validRGBIsCanonical(_:) started.
+◇ Test case passing 1 argument input → "000000" to validRGBIsCanonical(_:) started.
+◇ Test case passing 1 argument input → "#FFFFFF" to validRGBIsCanonical(_:) started.
+◇ Test case passing 1 argument input → "" to invalidRGBDoesNotBecomeAnAppliedColor(_:) started.
+◇ Test case passing 1 argument input → "#00000000" to invalidRGBDoesNotBecomeAnAppliedColor(_:) started.
+◇ Test case passing 1 argument input → "#FFF" to invalidRGBDoesNotBecomeAnAppliedColor(_:) started.
+◇ Test case passing 1 argument input → "+12345" to invalidRGBDoesNotBecomeAnAppliedColor(_:) started.
+◇ Test case passing 1 argument input → "#GG1234" to invalidRGBDoesNotBecomeAnAppliedColor(_:) started.
+◇ Test case passing 1 argument input → "１２３４５６" to invalidRGBDoesNotBecomeAnAppliedColor(_:) started.
+◇ Test case passing 1 argument input → " #123456" to invalidRGBDoesNotBecomeAnAppliedColor(_:) started.
+◇ Test anotherWriterIsRejectedAndCleanCloseReleasesTheLease() started.
+◇ Test extremeFiniteInputsRefuseOverflow() started.
+◇ Test noFiniteObservationsFails(_:) started.
+◇ Test oneObservationDoesNotPretendToHaveSampleVariance() started.
+◇ Test constantsAndIncorrectPairLengthsFail() started.
+◇ Test descriptiveCorrelationsAndOLSMatchSciPy() started.
+◇ Test pairedTMatchesIndependentSciPyReferences() started.
+◇ Test independenceReturnsZeroChiSquareAndUnitProbability() started.
+◇ Test ranksUseAverageTies() started.
+◇ Test tTestsRejectInvalidAlpha(_:) started.
+◇ Test case passing 1 argument input → ("UTF-8", "Convierte") to supportedFailureCategoriesHaveActionableMessages(input:) started.
+◇ Test chiSquareRejectsMalformedNegativeEmptyMarginalAndHugeCounts() started.
+◇ Test futureManifestSchemaIsRejected() started.
+◇ Test case passing 1 argument input → ("Wildcard characters", "Renombra") to supportedFailureCategoriesHaveActionableMessages(input:) started.
+◇ Test allTypedTransformationsAreReproducible() started.
+◇ Test oneSampleTRejectsInsufficientNonfiniteAndConstantData(_:) started.
+◇ Test identifierAndValueInjectionCannotExecuteSQL() started.
+◇ Test largeIntegerDistinctCountsAreExactAndRemoteAndGlobPathsAreRejected() started.
+◇ Test case passing 1 argument input → ("at most 256 columns", "Divide") to supportedFailureCategoriesHaveActionableMessages(input:) started.
+◇ Test failedManifestWriteLeavesNoReferencedPartialVersion() started.
+◇ Test regionalCSVAndBOMAreAccepted() started.
+◇ Test chartStylesPersistWithProjectAndHistogramUsesRequestedBins() started.
+◇ Test welchMatchesIndependentReference() started.
+◇ Test case passing 1 argument input → ("Permission denied", "permiso") to supportedFailureCategoriesHaveActionableMessages(input:) started.
+◇ Test nullsAndNonfiniteAreExcludedExplicitly() started.
+◇ Test preCancelledImportCannotCommit() started.
+◇ Test earlierSchemaOneProjectsWithoutOptionalPresentationFieldsStillDecode() started.
+◇ Test mannWhitneyRejectsNonfiniteAndAllTiedSamples() started.
+◇ Test failedImportIsRecoverableAndExistingExportsAreProtected() started.
+◇ Test case passing 1 argument input → ("Parquet footer", "completo") to supportedFailureCategoriesHaveActionableMessages(input:) started.
+◇ Test studentDistributionAndQuantilesMatchSciPy() started.
+◇ Test classicalANOVAMatchesIndependentSciPyReferences() started.
+◇ Test endToEndPortableProjectKeepsOriginalAndResults() started.
+◇ Test newGeneralTestsUseTheSelectedVersionAndExplicitExclusions() started.
+◇ Test mannWhitneyMatchesTieCorrectedAsymptoticSciPyReferences() started.
+◇ Test pairedTRejectsUnmatchedOrDegenerateDifferences() started.
+◇ Test mannWhitneyDirectionAndTwoSidedProbabilityRemainConsistent() started.
+◇ Test oneSampleTRejectsInvalidReferenceAndOverflow() started.
+◇ Test ANOVARejectsMissingGroupsNonfiniteDataAndZeroWithinVariation() started.
+◇ Test oneSampleTMatchesIndependentSciPyReferences() started.
+◇ Test chiSquareMatchesUncorrectedSciPyReferencesAndSparseDiagnostics() started.
+✔ Test validRGBIsCanonical(_:) with 4 test cases passed after 0.110 seconds.
+✔ Test keyboardConnectionsExcludeDescendantsAndIncompatibleFamilies() passed after 0.110 seconds.
+✔ Test invalidRGBDoesNotBecomeAnAppliedColor(_:) with 7 test cases passed after 0.110 seconds.
+✔ Test contrastMatchesBlackWhiteAndRejectsInvalidInput() passed after 0.110 seconds.
+✔ Test staleOrForeignSelectionsCannotBeExported() passed after 0.110 seconds.
+✔ Test wholeProjectIncludesHistoryAndCountsChartsNotYetExecuted() passed after 0.110 seconds.
+✔ Test reportBoxAndIndividualResultExcludeUnrelatedBranches() passed after 0.110 seconds.
+✔ Test translatedTemplatesNeverDropOrAddSubstitutions() passed after 0.110 seconds.
+✔ Test userRowidColumnCannotRedirectCellEdits() passed after 0.110 seconds.
+✔ Test modeKeepsLargeIntegerPrecisionAndBreaksTiesDeterministically() passed after 0.110 seconds.
+✔ Test manualCorrectionUsesSourceIdentityAfterSearchingAndSorting() passed after 0.123 seconds.
+✔ Test addedValuesAreTypedAndNeverExecuteUserText() passed after 0.123 seconds.
+✔ Test removalIsExplicitAndCannotDropEveryColumn() passed after 0.123 seconds.
+✔ Test malformedInputExplainsHowToRetryWithoutPublishingInternalSQL() passed after 0.123 seconds.
+◇ Test case passing 1 argument values → [] to noFiniteObservationsFails(_:) started.
+◇ Test case passing 1 argument values → [nil] to noFiniteObservationsFails(_:) started.
+◇ Test case passing 1 argument values → [Optional(nan)] to noFiniteObservationsFails(_:) started.
+✔ Test diagnosticKeepsReadingContextAndOmitsInternalQueries() passed after 0.123 seconds.
+✔ Test sourceIdentityMustMatchItsDeclaredOutput() passed after 0.123 seconds.
+Observed maximum absolute numerical differences: ["descriptive": 7.815970093361102e-14, "ols": 2.2737367544323206e-13, "pearson": 3.845925372767128e-16, "spearman": 5.551115123125783e-16]
+Observed expanded numerical difference: paired_t=3.907985046680551e-14
+✔ Test translationPreservesInterpolatedUserContentAndCanSwitchBack() passed after 0.131 seconds.
+✔ Test missingPreviewAndAllReplacementMethodsPreserveTheSource() passed after 0.131 seconds.
+✔ Test nonfinitePolicyIsVisibleAndEmptyNumericColumnsDoNotInventAverages() passed after 0.131 seconds.
+◇ Test case passing 1 argument alpha → 0.0 to tTestsRejectInvalidAlpha(_:) started.
+◇ Test case passing 1 argument alpha → -0.1 to tTestsRejectInvalidAlpha(_:) started.
+◇ Test case passing 1 argument alpha → 1.0 to tTestsRejectInvalidAlpha(_:) started.
+✔ Test supportedFailureCategoriesHaveActionableMessages(input:) with 5 test cases passed after 0.131 seconds.
+✔ Suite PerformanceTests passed after 0.132 seconds.
+◇ Test case passing 1 argument alpha → nan to tTestsRejectInvalidAlpha(_:) started.
+◇ Test case passing 1 argument alpha → inf to tTestsRejectInvalidAlpha(_:) started.
+✔ Test graphValidationRejectsCyclesAndWrongKinds() passed after 0.131 seconds.
+◇ Test case passing 1 argument sample → [] to oneSampleTRejectsInsufficientNonfiniteAndConstantData(_:) started.
+◇ Test case passing 1 argument sample → [1.0] to oneSampleTRejectsInsufficientNonfiniteAndConstantData(_:) started.
+◇ Test case passing 1 argument sample → [2.0, 2.0] to oneSampleTRejectsInsufficientNonfiniteAndConstantData(_:) started.
+◇ Test case passing 1 argument sample → [nan, 1.0] to oneSampleTRejectsInsufficientNonfiniteAndConstantData(_:) started.
+◇ Test case passing 1 argument sample → [inf, 2.0] to oneSampleTRejectsInsufficientNonfiniteAndConstantData(_:) started.
+Observed maximum absolute numerical differences: ["welch": 8.348877145181177e-14]
+Observed maximum absolute numerical differences: ["student_quantile": 1.6753265441593612e-12, "student_probability": 2.6700863742235015e-13]
+✔ Test foreignAndInvalidFiguresFailExplicitly() passed after 0.190 seconds.
+Observed expanded numerical difference: one_way_anova=3.5433913581073284e-09
+✔ Test oldProjectsAcquireAProvenanceGraphWithoutRewritingTables() passed after 0.191 seconds.
+✔ Test previewCountsOnlyNewNullsAndRequiresMatchingApproval() passed after 0.191 seconds.
+✔ Test draftsAreIsolatedByProjectNodeAndInputVersion() passed after 0.191 seconds.
+✔ Test actualWorkflowRunsBothBranchesAndKeepsThePortableGraph() passed after 0.192 seconds.
+Observed expanded numerical difference: mann_whitney=1.3877787807814457e-16
+✔ Test workflowCannotReuseApprovalAfterUpstreamVersionChanges() passed after 0.192 seconds.
+✔ Test extremeFiniteInputsRefuseOverflow() passed after 0.145 seconds.
+✔ Test oneObservationDoesNotPretendToHaveSampleVariance() passed after 0.144 seconds.
+✔ Test constantsAndIncorrectPairLengthsFail() passed after 0.144 seconds.
+✔ Test noFiniteObservationsFails(_:) with 3 test cases passed after 0.145 seconds.
+✔ Test pairedTMatchesIndependentSciPyReferences() passed after 0.144 seconds.
+✔ Test descriptiveCorrelationsAndOLSMatchSciPy() passed after 0.144 seconds.
+✔ Test ranksUseAverageTies() passed after 0.141 seconds.
+✔ Test anotherWriterIsRejectedAndCleanCloseReleasesTheLease() passed after 0.158 seconds.
+✔ Test independenceReturnsZeroChiSquareAndUnitProbability() passed after 0.141 seconds.
+✔ Test tTestsRejectInvalidAlpha(_:) with 5 test cases passed after 0.141 seconds.
+✔ Test chiSquareRejectsMalformedNegativeEmptyMarginalAndHugeCounts() passed after 0.140 seconds.
+✔ Test futureManifestSchemaIsRejected() passed after 0.140 seconds.
+✔ Test oneSampleTRejectsInsufficientNonfiniteAndConstantData(_:) with 5 test cases passed after 0.140 seconds.
+✔ Test identifierAndValueInjectionCannotExecuteSQL() passed after 0.140 seconds.
+✔ Test allTypedTransformationsAreReproducible() passed after 0.140 seconds.
+✔ Test emptyProjectIsAValidDocumentAndInvalidSelectionsFail() passed after 0.192 seconds.
+✔ Test largeIntegerDistinctCountsAreExactAndRemoteAndGlobPathsAreRejected() passed after 0.140 seconds.
+✔ Test selectedResultExportDoesNotLeakOtherResults() passed after 0.192 seconds.
+✔ Test pdfContainsReadableResultsAndProvenance() passed after 0.192 seconds.
+✔ Test nullsAndNonfiniteAreExcludedExplicitly() passed after 0.140 seconds.
+✔ Test welchMatchesIndependentReference() passed after 0.140 seconds.
+✔ Test earlierSchemaOneProjectsWithoutOptionalPresentationFieldsStillDecode() passed after 0.140 seconds.
+✔ Test mannWhitneyRejectsNonfiniteAndAllTiedSamples() passed after 0.140 seconds.
+✔ Test studentDistributionAndQuantilesMatchSciPy() passed after 0.140 seconds.
+✔ Test regionalCSVAndBOMAreAccepted() passed after 0.141 seconds.
+✔ Test figureHeadingsStayWithTheirImages() passed after 0.192 seconds.
+✔ Test figuresTravelWithPDFAndMarkdownWithoutOverwritingFiles() passed after 0.192 seconds.
+✔ Test failedImportIsRecoverableAndExistingExportsAreProtected() passed after 0.140 seconds.
+✔ Test pairedTRejectsUnmatchedOrDegenerateDifferences() passed after 0.140 seconds.
+✔ Test mannWhitneyDirectionAndTwoSidedProbabilityRemainConsistent() passed after 0.140 seconds.
+✔ Test oneSampleTRejectsInvalidReferenceAndOverflow() passed after 0.105 seconds.
+✔ Test ANOVARejectsMissingGroupsNonfiniteDataAndZeroWithinVariation() passed after 0.105 seconds.
+✔ Test classicalANOVAMatchesIndependentSciPyReferences() passed after 0.141 seconds.
+✔ Test failedManifestWriteLeavesNoReferencedPartialVersion() passed after 0.141 seconds.
+✔ Suite ReportSelectionTests passed after 0.193 seconds.
+✔ Suite InterfacePolishTests passed after 0.193 seconds.
+✔ Test mannWhitneyMatchesTieCorrectedAsymptoticSciPyReferences() passed after 0.141 seconds.
+✔ Suite CleaningTests passed after 0.193 seconds.
+✔ Suite ImportFailureTests passed after 0.193 seconds.
+✔ Suite ImportDiagnosticTests passed after 0.193 seconds.
+✔ Suite WorkflowExecutionTests passed after 0.193 seconds.
+✔ Suite CastPreviewTests passed after 0.193 seconds.
+✔ Suite InspectorDraftsTests passed after 0.193 seconds.
+✔ Suite StatisticsTests passed after 0.193 seconds.
+✔ Suite PersistenceFailureTests passed after 0.193 seconds.
+◇ Test failedOpenKeepsTheCurrentProjectAndReleasesTheCandidateLease() started.
+✔ Test preCancelledImportCannotCommit() passed after 0.144 seconds.
+Observed expanded numerical difference: chi_square=1.0913936421275139e-11
+✔ Test chiSquareMatchesUncorrectedSciPyReferencesAndSparseDiagnostics() passed after 0.111 seconds.
+Observed expanded numerical difference: one_sample_t=4.800604358479177e-13
+✔ Test oneSampleTMatchesIndependentSciPyReferences() passed after 0.112 seconds.
+✔ Suite ExpandedStatisticsTests passed after 0.199 seconds.
+✔ Test chartStylesPersistWithProjectAndHistogramUsesRequestedBins() passed after 0.153 seconds.
+✔ Test newGeneralTestsUseTheSelectedVersionAndExplicitExclusions() passed after 0.166 seconds.
+✔ Suite ExpandedWorkflowTests passed after 0.218 seconds.
+✔ Test failedOpenKeepsTheCurrentProjectAndReleasesTheCandidateLease() passed after 0.026 seconds.
+◇ Test interruptedProjectWithInconsistentMetadataIsNotSilentlyRepaired() started.
+✔ Test endToEndPortableProjectKeepsOriginalAndResults() passed after 0.175 seconds.
+✔ Suite ProjectDataTests passed after 0.228 seconds.
+✔ Test longReportsPaginateWithoutDroppingLastResultOrFooter() passed after 0.239 seconds.
+✔ Suite PDFReportTests passed after 0.240 seconds.
+✔ Test interruptedProjectWithInconsistentMetadataIsNotSilentlyRepaired() passed after 0.035 seconds.
+◇ Test forcedExitDuringImportKeepsThePreviousManifest() started.
+✔ Test forcedExitDuringImportKeepsThePreviousManifest() passed after 0.092 seconds.
+◇ Test forcedExitAfterTransformCommitPreservesBothPhysicalTables() started.
+✔ Test forcedExitAfterTransformCommitPreservesBothPhysicalTables() passed after 0.093 seconds.
+◇ Test forcedExitAfterAtomicSaveRecoversTheNewVersion() started.
+✔ Test forcedExitAfterAtomicSaveRecoversTheNewVersion() passed after 0.094 seconds.
+◇ Test forcedExitDuringTransactionDiscardsOnlyUncommittedWork() started.
+✔ Test forcedExitDuringTransactionDiscardsOnlyUncommittedWork() passed after 0.093 seconds.
+✔ Suite ProjectSessionTests passed after 0.629 seconds.
+✔ Test run with 76 tests in 16 suites passed after 0.629 seconds.

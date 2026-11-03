@@ -19,33 +19,33 @@ struct ReportExportView: View {
   }
   var body: some View {
     VStack(alignment: .leading, spacing: 20) {
-      Text("Exportar informe").font(.title2.weight(.semibold))
-      Picker("Qué incluir", selection: $scope) {
+      Text(L("Exportar informe")).font(.title2.weight(.semibold))
+      Picker(L("Qué incluir"), selection: $scope) {
         ForEach(scopes, id: \.self) { Text(workspace.reportScopeTitle($0)).tag($0) }
       }
-      Picker("Formato", selection: $format) {
-        Text("PDF").tag(ReportExportFormat.pdf)
-        Text("Markdown + imágenes").tag(ReportExportFormat.markdown)
-        Text("CSV de resultados").tag(ReportExportFormat.csv)
+      Picker(L("Formato"), selection: $format) {
+        Text(L("PDF")).tag(ReportExportFormat.pdf)
+        Text(L("Markdown + imágenes")).tag(ReportExportFormat.markdown)
+        Text(L("CSV de resultados")).tag(ReportExportFormat.csv)
       }
       switch plan {
       case .success(let plan):
         VStack(alignment: .leading, spacing: 9) {
-          Text("Resultados: \(plan.project.results.count) · Hallazgos: \(plan.project.findings.count) · Gráficos: \(plan.charts.count)").font(.headline)
-          Text(scope == .project
+          Text(L("Resultados: \(plan.project.results.count) · Hallazgos: \(plan.project.findings.count) · Gráficos: \(plan.charts.count)")).font(.headline)
+          Text(T(scope == .project
             ? "Todos los resultados y hallazgos guardados del proyecto, incluidos los históricos. Los gráficos corresponden a cajas ejecutadas."
-            : "Solo las salidas de esta selección y sus versiones de origen. Los resultados de otras ramas quedan fuera.")
-          if plan.omittedCharts > 0 { Text("Gráficos pendientes excluidos: \(plan.omittedCharts). Actualiza sus cajas para incluirlos.") }
-          if format == .csv { Text("CSV contiene las métricas de los resultados, sin figuras ni hallazgos de calidad.") }
-          if format == .markdown { Text("Las imágenes PNG asociadas deben viajar junto al archivo Markdown.") }
-          Text("Los borradores del inspector no se ejecutan al exportar.").foregroundStyle(.secondary)
+            : "Solo las salidas de esta selección y sus versiones de origen. Los resultados de otras ramas quedan fuera."))
+          if plan.omittedCharts > 0 { Text(L("Gráficos pendientes excluidos: \(plan.omittedCharts). Actualiza sus cajas para incluirlos.")) }
+          if format == .csv { Text(L("CSV contiene las métricas de los resultados, sin figuras ni hallazgos de calidad.")) }
+          if format == .markdown { Text(L("Las imágenes PNG asociadas deben viajar junto al archivo Markdown.")) }
+          Text(L("Los borradores del inspector no se ejecutan al exportar.")).foregroundStyle(.secondary)
         }.font(.callout).fixedSize(horizontal: false, vertical: true)
-      case .failure(let error): Text(error.localizedDescription).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
+      case .failure(let error): Text(D(error.localizedDescription)).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true)
       }
       HStack {
-        Button("Cancelar") { workspace.reportExportRequest = nil }.keyboardShortcut(.cancelAction)
+        Button(L("Cancelar")) { workspace.reportExportRequest = nil }.keyboardShortcut(.cancelAction)
         Spacer()
-        Button("Elegir destino…") { workspace.confirmReportExport(scope: scope, format: format) }
+        Button(L("Elegir destino…")) { workspace.confirmReportExport(scope: scope, format: format) }
           .keyboardShortcut(.defaultAction).disabled(ifFailure)
       }
     }.padding(26).frame(width: 520)

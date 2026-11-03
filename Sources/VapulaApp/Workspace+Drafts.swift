@@ -15,10 +15,10 @@ extension Workspace {
   func confirmDiscardDrafts() -> Bool {
     guard !inspectorDrafts.isEmpty else { return true }
     let alert = NSAlert()
-    alert.messageText = "Hay borradores sin ejecutar"
-    alert.informativeText = "Formularios editados en esta sesión: \(inspectorDrafts.count). Vuelve al inspector para aplicarlos o descártalos para salir del proyecto. Las versiones y resultados guardados se conservan."
-    alert.addButton(withTitle: "Volver al proyecto")
-    alert.addButton(withTitle: "Descartar borradores")
+    alert.messageText = L("Hay borradores sin ejecutar")
+    alert.informativeText = L("Formularios editados en esta sesión: \(inspectorDrafts.count). Vuelve al inspector para aplicarlos o descártalos para salir del proyecto. Las versiones y resultados guardados se conservan.")
+    alert.addButton(withTitle: L("Volver al proyecto"))
+    alert.addButton(withTitle: L("Descartar borradores"))
     guard alert.runModal() == .alertSecondButtonReturn else { return false }
     inspectorDrafts.removeAll(); inspectorRevision += 1; return true
   }
