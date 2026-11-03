@@ -12,7 +12,7 @@ public struct ReportFigure: Sendable {
 }
 extension Reports {
   /// Creates the Markdown and its local figures exclusively; rolls back only files created here.
-  public static func writeMarkdown(_ project: VapulaProject, profiles: [ColumnProfile] = [], profileDatasetID: UUID? = nil, figures: [ReportFigure], to url: URL) throws {
+  public static func writeMarkdown(_ project: VapulaProject, profiles: [ColumnProfile] = [], profileDatasetID: UUID? = nil, figures: [ReportFigure], to url: URL, software: ReportSoftware = .current) throws {
     guard url.isFileURL, !FileManager.default.fileExists(atPath: url.path) else { throw VapulaError.invalid("Elige un nombre nuevo para el informe.") }
     let datasetIDs = Set(project.datasets.map(\.id))
     guard figures.allSatisfy({ datasetIDs.contains($0.datasetID) }) else { throw VapulaError.invalid("El gráfico no pertenece al proyecto.") }
@@ -21,7 +21,7 @@ extension Reports {
     guard targets.allSatisfy({ !FileManager.default.fileExists(atPath: $0.path) }) else { throw VapulaError.invalid("Ya existe una imagen del informe. Elige otro nombre.") }
     var created: [URL] = []
     do {
-      var text = markdown(project, profiles: profiles, profileDatasetID: profileDatasetID)
+      var text = markdown(project, profiles: profiles, profileDatasetID: profileDatasetID, software: software)
       if !figures.isEmpty { text += "\n## Gráficos\n\n" }
       for (figure, target) in zip(figures, targets) {
         try Task.checkCancellation()

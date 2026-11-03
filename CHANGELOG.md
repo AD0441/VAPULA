@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.3 — 2026-11-03 · V2 acceptance
+
+- Read the exporting application version/build from its bundle for Markdown, PDF body and PDF Creator; preserve historical project/result metadata.
+- Declare missing bundle identity in development/test hosts instead of inventing a public version.
+- Added producing-build regressions and a 31-row acceptance with correction, imputation, conversion consent, portable reopening and selective MD/PDF export.
+- Passed 79 release tests in 17 suites, including four SIGKILL recovery cases; verified native MD/eight PNG and ten-page PDF exports. See docs/ACCEPTANCE-V2.md for the bounded closeout.
+
 ## 0.1.2 — 2026-11-02 · Usability preview
 
 - Added native workflow step navigation, compatible input menus and panel/step keyboard commands.

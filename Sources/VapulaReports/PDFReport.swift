@@ -10,7 +10,8 @@ public enum PDFReport {
   /// Exports the project, or an explicitly selected set of its analysis results.
   /// Sources and dataset ancestors are retained to keep each result traceable.
   public static func data(
-    project: VapulaProject, results selection: [AnalysisResult]? = nil, figures: [ReportFigure] = []
+    project: VapulaProject, results selection: [AnalysisResult]? = nil, figures: [ReportFigure] = [],
+    software: ReportSoftware = .current
   ) throws -> Data {
     try Task.checkCancellation()
     let results = selection ?? project.results
@@ -25,7 +26,7 @@ public enum PDFReport {
     else {
       throw VapulaError.invalid("El resultado seleccionado no pertenece a este proyecto.")
     }
-    let renderer = try Renderer(projectName: project.name)
+    let renderer = try Renderer(projectName: project.name, software: software)
     guard figures.allSatisfy({ figure in project.datasets.contains { $0.id == figure.datasetID } }) else {
       throw VapulaError.invalid("Un gráfico no pertenece a las versiones del informe.")
     }
@@ -37,6 +38,7 @@ public enum PDFReport {
       style: .body)
     try renderer.paragraph(
       "Proyecto: \(project.id.uuidString) · esquema \(project.schemaVersion)", style: .small)
+    try renderer.paragraph("Exportado con \(software.label) · DuckDB 1.1.3", style: .small)
     try renderer.paragraph(
       "Los resultados describen los datos y procedimientos declarados. Una asociación no establece causalidad; una detección de calidad no confirma un error.",
       style: .note)
@@ -211,7 +213,7 @@ public enum PDFReport {
     private var contentWidth: CGFloat { page.width - 2 * margin }
     private var contentTop: CGFloat { page.height - 87 }
 
-    init(projectName: String) throws {
+    init(projectName: String, software: ReportSoftware) throws {
       self.projectName = projectName
       guard let consumer = CGDataConsumer(data: data as CFMutableData),
         let context = CGContext(
@@ -219,7 +221,7 @@ public enum PDFReport {
           [
             kCGPDFContextTitle: "VAPULA - \(projectName)",
             kCGPDFContextAuthor: "Sebastián Pastén F.",
-            kCGPDFContextCreator: "VAPULA - native CoreGraphics/CoreText",
+            kCGPDFContextCreator: "\(software.label) - native CoreGraphics/CoreText",
           ] as CFDictionary)
       else { throw VapulaError.invalid("No se pudo crear el documento PDF.") }
       self.context = context

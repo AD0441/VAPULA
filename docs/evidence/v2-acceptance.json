@@ -1,0 +1,49 @@
+{
+  "date": "2026-11-03",
+  "timezone": "America/Santiago",
+  "version": "0.1.3",
+  "build": "4",
+  "base_source": "db6f682a27ed6f5862d417159692aa7ba0612f05",
+  "gantt_task": "V2 S1: integrity acceptance",
+  "status": "closed within controlled synthetic scope",
+  "tests": 79,
+  "suites": 17,
+  "configuration": "release",
+  "recovery_exit_tests": "four SIGKILL cases passed in the final suite",
+  "native": {
+    "reopened_nodes": 12,
+    "dataset_versions": 2,
+    "saved_results": 2,
+    "exported_results": 1,
+    "exported_findings": 0,
+    "exported_figures": 8,
+    "selected_result": "555CF5EC-9F90-4696-B8EF-CF4A401577F2",
+    "excluded_historical_result": "51AF23B8-A219-48B6-8314-4A4248B4A2EA",
+    "clean_close": true,
+    "source_sha256": "06fc1299abef1df68eb2fce48f8a40b125c679100b3ca34da0823edf6d1d5226",
+    "page_footers_present": true,
+    "pdf_pages": 10,
+    "producer": "VAPULA 0.1.3 (build 4) - native CoreGraphics/CoreText",
+    "selected_result_only": true,
+    "version_in_body": true
+  },
+  "not_qualified": [
+    "production/domain dataset",
+    "all accessibility and visual variants",
+    "another Mac or actual macOS 14",
+    "physical database corruption or power loss",
+    "Developer ID and notarization"
+  ],
+  "files": {
+    "v2-final.md": "98f4817451c4842661c4dac8d88fa077f5da665e13a6d25c9ca8d7ed75b0619f",
+    "v2-final.pdf": "c0cd32c1692d9697a14e1ea7bc756698329bea310e60285e69593609d7f0ed7b",
+    "v2-final-grafico-1.png": "376dd1a98fcf513766913924820c17930d6030966cd739477ea490396e4516fa",
+    "v2-final-grafico-2.png": "c566cebf00c12a1d289e780071240c5014b4472d0b99783ea0764193a0b5f65e",
+    "v2-final-grafico-3.png": "c9b98a6aa35c8e99dd1bf507160e505cc75b909c6c9c0c28617e56622fe10090",
+    "v2-final-grafico-4.png": "f457df996bb0492a4d040fb19186993baf9f5bb1ebddc6c978250ee4bad5ac0d",
+    "v2-final-grafico-5.png": "d1f75105164da945a807f7fbe1604b959a7cd81bfd89d664700999d77a95b8d4",
+    "v2-final-grafico-6.png": "3a54078bc77b9dbde62c8a009c2ffd2a7cfb2d2ea858a45f860f3a39744a0e88",
+    "v2-final-grafico-7.png": "e3dfa15e7df471e3927a3981f9043e088b7a1c1e6ee048f0761b3484177b79a1",
+    "v2-final-grafico-8.png": "58a5660a9d708b35f3be1b7b7f3fd5d056bd98a90d2dcc51ff8b69c560143c01"
+  }
+}

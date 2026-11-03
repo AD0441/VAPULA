@@ -6,10 +6,11 @@ public enum Reports {
     s.replacingOccurrences(of: "|", with: "\\|").replacingOccurrences(of: "\n", with: " ")
   }
   public static func markdown(
-    _ project: VapulaProject, profiles: [ColumnProfile] = [], profileDatasetID: UUID? = nil
+    _ project: VapulaProject, profiles: [ColumnProfile] = [], profileDatasetID: UUID? = nil,
+    software: ReportSoftware = .current
   ) -> String {
     var s =
-      "# VAPULA — \(escape(project.name))\n\nData & Statistical Laboratory · Creado por Sebastián Pastén F.\n\nProject: `\(project.id)` · schema \(project.schemaVersion) · DuckDB 1.1.3 · VAPULA 0.1 development\n\n"
+      "# VAPULA — \(escape(project.name))\n\nData & Statistical Laboratory · Creado por Sebastián Pastén F.\n\nProject: `\(project.id)` · schema \(project.schemaVersion) · DuckDB 1.1.3 · Exported with \(escape(software.label))\n\n"
     s += "## Sources\n\n| Source | Bytes | SHA-256 |\n|---|---:|---|\n"
     for source in project.sources {
       s += "| \(escape(source.name)) | \(source.bytes) | `\(source.sha256)` |\n"

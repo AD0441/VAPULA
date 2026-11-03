@@ -40,7 +40,7 @@ cat > "$APP_BUNDLE/Contents/Info.plist" <<'PLIST'
 <key>CFBundleDevelopmentRegion</key><string>es</string><key>CFBundleLocalizations</key><array><string>es</string><string>en</string></array>
 <key>CFBundleName</key><string>VAPULA</string><key>CFBundleExecutable</key><string>VAPULA</string>
 <key>CFBundleIdentifier</key><string>cl.sebastianpasten.VAPULA</string><key>CFBundlePackageType</key><string>APPL</string>
-<key>CFBundleShortVersionString</key><string>0.1.2</string><key>CFBundleVersion</key><string>3</string>
+<key>CFBundleShortVersionString</key><string>0.1.3</string><key>CFBundleVersion</key><string>4</string>
 <key>LSMinimumSystemVersion</key><string>14.0</string><key>NSPrincipalClass</key><string>NSApplication</string>
 <key>CFBundleIconFile</key><string>AppIcon</string><key>NSHighResolutionCapable</key><true/>
 <key>CFBundleDocumentTypes</key><array><dict><key>CFBundleTypeName</key><string>VAPULA Project</string><key>CFBundleTypeRole</key><string>Editor</string><key>LSItemContentTypes</key><array><string>cl.sebastianpasten.vapula-project</string></array></dict></array>

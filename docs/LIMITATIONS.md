@@ -44,3 +44,7 @@ See INTEGRITY-STAGE.md for the actual 69-test/native review coverage and the ini
 The native step list and compatible input menu complement the canvas. HEX errors preserve input and block applying that custom color; low contrast warns without changing a chosen RGB. Built-in chart colors adapt to dark mode; this is not a complete contrast/colour-vision audit. Bounded app figure blocks stay together in PDF.
 
 The 76-test release and real eight-form/PDF/MD review are described in USABILITY-STAGE.md. Minimum-window qualification, full VoiceOver/keyboard-only coverage, extreme/empty data across every form/theme, physical network disconnection and another Mac remain open. One NSTableView reentrancy warning was observed during the first review; no data loss was observed and its cause remains unqualified.
+
+## V2 acceptance — 0.1.3
+
+MD/PDF identify the exporting app version/build from the official bundle. This does not retroactively identify the binary that calculated historical results. Unbundled development/test hosts explicitly report that bundle version is unavailable. V2 closes the controlled synthetic integrity/selection circuit; production-domain representativeness and the wider qualifications in STATUS.md remain separate. See ACCEPTANCE-V2.md.

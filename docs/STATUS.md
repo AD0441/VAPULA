@@ -4,7 +4,7 @@
 
 **Línea base:** [REQUIREMENTS.md v1.1](REQUIREMENTS.md).
 
-**Aplicación:** [0.1.2 preliminar](https://github.com/AD0441/VAPULA/releases/tag/v0.1.2), [fuentes del tag](https://github.com/AD0441/VAPULA/tree/v0.1.2). Lote de usabilidad sobre `d77da2e`. Las releases 0.1.0/0.1.1 conservan su evidencia histórica.
+**Aplicación:** [0.1.3 preliminar](https://github.com/AD0441/VAPULA/releases/tag/v0.1.3), [fuentes del tag](https://github.com/AD0441/VAPULA/tree/v0.1.3). Cierre de V2 de la Gantt sobre `db6f682`. Las releases 0.1.0/0.1.1/0.1.2 conservan su evidencia histórica.
 
 **Documentación/identidad revisada:** [`7caa136`](https://github.com/AD0441/VAPULA/commit/7caa1364daf87f4d4e480924c399bae8f79ea4fd), incorporando después este inventario.
 
@@ -32,10 +32,10 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 
 ## Evidencia disponible y sus límites
 
-- **Núcleo e integración:** 76 funciones Swift Testing en 16 suites en release. Incluyen los casos previos y los nuevos de RGB, traducción, conexiones y paginación PDF. [Salida final][tests], [registro del lote][usability].
+- **Núcleo e integración:** 79 funciones Swift Testing en 17 suites en release. Incluyen los casos previos y los nuevos de identidad del exportador y aceptación portable de 31 filas. [Salida final][tests], [registro de cierre][v2].
 - **Estadística:** 1.356 valores escalares de referencia independientes, con definiciones y tolerancias. No equivalen a 1.356 pruebas visuales. [Validación estadística][numerical].
 - **Aplicación real:** el recorrido base de 31 filas sigue registrado. El lote 1 añade borradores, conversión con cuatro pérdidas/cancelación/aceptación, recuperación visible y PDF/MD selectivos sobre cuatro filas sintéticas. [Lote 1][integritystage], [registro base][native], [capturas base][screenshots]. El [lote 2][usability] añade navegación, ES/EN, diagnóstico HEX, ocho formas, PDF/MD y reapertura con ocho filas sintéticas. No se revisaron todas las combinaciones de métodos, estilos, idiomas y temas.
-- **Distribución:** ZIP arm64 0.1.2, SHA-256, extracción limpia, firma estricta ad hoc y comparación de archivos. [Integridad 0.1.2][integrity], [notas de release][release]. No hay Developer ID/notarización ni calificación en otro Mac/macOS mínimo.
+- **Distribución:** ZIP arm64 0.1.3, SHA-256, extracción limpia, firma estricta ad hoc y comparación de archivos. [Integridad 0.1.3][integrity], [notas de release][release]. No hay Developer ID/notarización ni calificación en otro Mac/macOS mínimo.
 - **CI histórica:** ejecuciones satisfactorias de [main del código publicado](https://github.com/AD0441/VAPULA/actions/runs/41325036372), [tag 0.1.0](https://github.com/AD0441/VAPULA/actions/runs/41325199928) y [documentación de familia](https://github.com/AD0441/VAPULA/actions/runs/41332703840). CI no demuestra accesibilidad ni compatibilidad visual con todos los sistemas.
 
 ## 1. Proyecto, versiones y recuperación
@@ -179,7 +179,7 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 
 | Código | Prioridad | Estado | Cobertura real y pendiente |
 | --- | --- | --- | --- |
-| VAL-01 | P0 | Implementado | 76 funciones en 16 suites release; referencias estadísticas y SIGKILL anteriores conservados. Casos nuevos de interfaz/modelo y regresión PDF reproducida antes del arreglo. [Salida][tests], [lote 2][usability]. |
+| VAL-01 | P0 | Implementado | 79 funciones en 17 suites release; referencias estadísticas y cuatro SIGKILL conservados. Regresión de versión/build y aceptación portable con selección de resultados. [Cierre V2][v2]. [Salida][tests], [lote 2][usability]. |
 | VAL-02 | P0 | Implementado | Recorrido real, exportaciones abiertas y límites anotados. No sustituye GRA-05, UX-02/04 o VAL-03. [Registro][validation], [evidencia nativa][native], [PDF][pdfsample]. |
 | VAL-03 | P0 | Parcial | ZIP/suma/firma ad hoc y extracción limpia probados en M1/macOS 27.2; faltan otro Mac sin desarrollo y ejecución real en macOS 14. [Integridad][integrity], [release][release]. |
 | VAL-04 | P1 | Pendiente | Developer ID y notarización no realizados. Requiere recursos/cuenta autorizados al programar ese lote. [Release][release]. |
@@ -213,6 +213,8 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 
 El autor autorizó continuar con la siguiente etapa el 2 de noviembre; se entregó el lote 1. El autor autorizó el lote 2 a continuación. Su entrega preliminar no cierra las calificaciones externas ni la matriz completa; los lotes siguientes y las ampliaciones conservan su alcance pendiente. No se abren issues automáticamente por actualizar la matriz.
 
+**V2 de la Gantt semanal:** cerrado en el alcance técnico de muestras sintéticas controladas; versión de informes corregida y circuito de integridad/exportación/reapertura comprobado. [Registro de cierre][v2]. Este hito no cambia los estados parciales de la matriz ni cierra por sí solo V3.
+
 ## Condiciones para cerrar una fila
 
 1. Cumplir el criterio de [REQUIREMENTS.md](REQUIREMENTS.md) dentro de un alcance explícito.
@@ -220,14 +222,14 @@ El autor autorizó continuar con la siguiente etapa el 2 de noviembre; se entreg
 3. Corregir limitaciones y documentación si cambió el comportamiento. Conservar registros históricos con su fecha.
 4. Actualizar esta matriz sin convertir pruebas del núcleo en afirmaciones de interfaz, seguridad o compatibilidad no verificadas.
 
-[tests]: evidence/test-polish-release.txt
+[tests]: evidence/test-v2-release.txt
 [validation]: VALIDATION.md
 [numerical]: STATISTICAL-VALIDATION.md
 [native]: evidence/integrated-native-review.json
 [screenshots]: screenshots/README.md
 [pdfsample]: evidence/VAPULA-flujo-final.pdf
-[integrity]: evidence/bundle-integrity-0.1.2.json
-[release]: RELEASE-0.1.2.md
+[integrity]: evidence/bundle-integrity-0.1.3.json
+[release]: RELEASE-0.1.3.md
 [limits]: LIMITATIONS.md
 [projecttests]: ../Tests/VapulaTests/ProjectDataTests.swift
 [workflowtests]: ../Tests/VapulaTests/WorkflowExecutionTests.swift
@@ -288,3 +290,5 @@ El autor autorizó continuar con la siguiente etapa el 2 de noviembre; se entreg
 [usability]: USABILITY-STAGE.md
 [polishpdf]: evidence/usabilidad-final.pdf
 [uitext]: ../Sources/VapulaCore/Resources/Interface.en.json
+
+[v2]: ACCEPTANCE-V2.md
