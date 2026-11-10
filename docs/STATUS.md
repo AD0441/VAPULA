@@ -1,12 +1,12 @@
 # VAPULA — Estado de los requerimientos
 
-**Corte:** 3 de noviembre de 2026, America/Santiago.
+**Corte:** 10 de noviembre de 2026, America/Santiago.
 
 **Línea base:** [REQUIREMENTS.md v1.1](REQUIREMENTS.md).
 
 **Descarga pública comprobada:** [0.1.3 preliminar](https://github.com/AD0441/VAPULA/releases/tag/v0.1.3). V1 conserva su cierre con [0.1.1](https://github.com/AD0441/VAPULA/releases/tag/v0.1.1).
 
-**Entrega instalada:** 0.1.3, build 4; [código `0fd6a11`](https://github.com/AD0441/VAPULA/commit/0fd6a112f459f6204e3034200299175fb07b36eb). Pruebas y exportaciones locales verificadas; [CI del código satisfactoria](https://github.com/AD0441/VAPULA/actions/runs/41574435557). ZIP y checksum públicos coinciden con el paquete verificado. Los cambios posteriores de este STATUS son documentales.
+**Candidata V3 validada.** 0.1.4, build 5. Paquete arm64 y exportaciones locales comprobados. La CI y la publicación se registran al completar la entrega.
 
 **Documentación/identidad revisada:** [`7caa136`](https://github.com/AD0441/VAPULA/commit/7caa1364daf87f4d4e480924c399bae8f79ea4fd), incorporando después este inventario.
 
@@ -18,7 +18,7 @@ Esta matriz conserva la separación entre requisitos y cobertura usada en [NABER
 | --- | --- | --- |
 | V1 · S1 · Cerrar 0.1.1 | Cerrado | Publicación confirmada, [CI satisfactoria](https://github.com/AD0441/VAPULA/actions/runs/41450849893), ZIP descargado y suma/firma/36 archivos coincidentes; arranque de la copia descargada comprobado en el Mac actual. [Integridad 0.1.1](evidence/bundle-integrity-0.1.1.json). |
 | V2 · S1 · Aceptación de integridad | Cerrado en el alcance técnico de muestras sintéticas controladas | Importar, corregir/imputar, analizar, revisar conversiones, exportar y reabrir; 79 pruebas release, cuatro SIGKILL y exportaciones reales con versión/build correctos. [Cierre V2][v2], [registro](evidence/v2-acceptance.json), [PDF final](evidence/v2-final.pdf), [MD y ocho imágenes](evidence/v2-final.md). 0.1.3 publicada después de pasar la CI del código. |
-| V3 · S2 · Claridad esencial | Sin cierre declarado | 0.1.2 adelantó mejoras de navegación, mensajes y exportación. Falta contrastar su aceptación con los tropiezos priorizados; no equivale a auditoría universal. |
+| V3 · S2 · Claridad esencial | Cerrado en los recorridos comprobados | Foco y navegación en la lista, mensajes y exportación CSV/PDF, y arrastre confirmado por el autor. [Cierre V3][v3]. |
 
 **V2 de la Gantt y «lote 2 de usabilidad» son alcances distintos.** Cerrar V2 no cierra los nueve P0 parciales ni los requisitos de VoiceOver, idiomas/temas completos u otro Mac. No se reprograman los demás proyectos.
 
@@ -44,10 +44,10 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 
 ## Evidencia disponible y sus límites
 
-- **Núcleo e integración:** 79 funciones Swift Testing en 17 suites en release. Incluyen los casos previos y los nuevos de identidad del exportador y aceptación portable de 31 filas. [Salida final][tests], [registro de cierre][v2].
+- **Núcleo e integración:** 81 funciones Swift Testing en 17 suites en release. Incluyen aceptación portable, cuatro SIGKILL y dos regresiones de alcance CSV. [Salida final][tests], [registro de cierre][v2].
 - **Estadística:** 1.356 valores escalares de referencia independientes, con definiciones y tolerancias. No equivalen a 1.356 pruebas visuales. [Validación estadística][numerical].
 - **Aplicación real:** 0.1.3 reabrió 12 cajas/2 versiones/2 resultados y exportó 1 resultado seleccionado con 8 gráficos; MD y PDF de 10 páginas muestran la versión/build reales. [Aceptación V2][v2]. El recorrido base de 31 filas sigue registrado. El lote 1 añade borradores, conversión con cuatro pérdidas/cancelación/aceptación, recuperación visible y PDF/MD selectivos sobre cuatro filas sintéticas. [Lote 1][integritystage], [registro base][native], [capturas base][screenshots]. El [lote 2][usability] añade navegación, ES/EN, diagnóstico HEX, ocho formas, PDF/MD y reapertura con ocho filas sintéticas. No se revisaron todas las combinaciones de métodos, estilos, idiomas y temas.
-- **Distribución:** ZIP arm64 0.1.3 publicado, SHA-256, extracción limpia, firma estricta ad hoc y comparación de archivos. [Integridad 0.1.3][integrity], [notas de release][release]. No hay Developer ID/notarización ni calificación en otro Mac/macOS mínimo.
+- **Distribución:** ZIP arm64 0.1.4 verificado localmente con SHA-256, extracción limpia, firma estricta ad hoc y comparación de archivos. [Integridad 0.1.4][integrity], [notas de release][release]. No hay Developer ID/notarización ni calificación en otro Mac/macOS mínimo.
 - **CI de entregas recientes:** [0.1.1](https://github.com/AD0441/VAPULA/actions/runs/41450849893) y [0.1.2](https://github.com/AD0441/VAPULA/actions/runs/41569142256) satisfactorias. [0.1.3](https://github.com/AD0441/VAPULA/actions/runs/41574435557) satisfactoria sobre el commit de código `0fd6a11`.
 - **CI histórica:** ejecuciones satisfactorias de [main del código publicado](https://github.com/AD0441/VAPULA/actions/runs/41325036372), [tag 0.1.0](https://github.com/AD0441/VAPULA/actions/runs/41325199928) y [documentación de familia](https://github.com/AD0441/VAPULA/actions/runs/41332703840). CI no demuestra accesibilidad ni compatibilidad visual con todos los sistemas.
 
@@ -67,7 +67,7 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 | Código | Prioridad | Estado | Cobertura real y pendiente |
 | --- | --- | --- | --- |
 | FLU-01 | P0 | Implementado | Siete familias, barra, inspector y cuatro salidas; recorrido nativo real. [Interfaz][workbench], [revisión][validation]. |
-| FLU-02 | P0 | Implementado | Arrastre, zoom, desplazamiento, encuadre y posiciones persistidas; selección de fuente vuelve a su caja. [Lienzo][canvas], [revisión][validation]. |
+| FLU-02 | P0 | Implementado | Arrastre, zoom, desplazamiento, encuadre y posiciones persistidas; selección de fuente vuelve a su caja. [Lienzo][canvas], [revisión][validation]. La 0.1.4 corrige el arrastre y registra tres posiciones nuevas tras la prueba manual del autor. [V3][v3]. |
 | FLU-03 | P0 | Implementado | Validación de ciclos, clases, identidades y referencias; pruebas de fuente/salida. [Modelo][graph], [pruebas][workflowtests]. |
 | FLU-04 | P0 | Implementado | Antecesores selectivos, invalidación y ramas independientes verificadas con ejecución real del motor. [Pruebas][workflowtests]. |
 | FLU-05 | P0 | Implementado | Fases/errores por caja, compromisos previos conservados y cancelación cooperativa. Espera la consulta síncrona; no hay interrupción inmediata de DuckDB. [Ejecución][execution], [límites][limits]. |
@@ -156,7 +156,7 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 | INF-01 | P0 | Implementado | PDF de texto vectorial, tablas paginadas y figuras PNG; Unicode, pies, selección y páginas largas probados/renderizados. Figuras raster, no vectoriales. [PDF][pdfdocs], [pruebas][pdftests], [muestra][pdfsample]. |
 | INF-02 | P0 | Implementado | MD y PNG con referencias relativas; exportación nativa y protección de sidecars comprobadas. Los archivos asociados deben viajar juntos. [Pruebas][pdftests], [revisión][validation]. |
 | INF-03 | P0 | Implementado | Informe del flujo con salidas alcanzables, procedencia y máximo 32 figuras; rechazo de referencias ajenas. [Puente de exportación][reportui], [pruebas][pdftests]. |
-| INF-04 | P0 | Implementado | Selector y plan comunes para caja/resultado/proyecto; resumen previo, históricos y gráficos pendientes explícitos. ⌘E y PDF/MD reales verificados, con exclusión de ramas ajenas. [Selección][reportselection], [pruebas][selectiontests], [revisión][integritystage]. |
+| INF-04 | P0 | Implementado | Selector y plan comunes para caja/resultado/proyecto; resumen previo, históricos y gráficos pendientes explícitos. ⌘E y PDF/MD reales verificados, con exclusión de ramas ajenas. [Selección][reportselection], [pruebas][selectiontests], [revisión][integritystage]. CSV resume únicamente análisis con métricas y omite las ramas de figuras. [V3][v3]. |
 | INF-05 | P1 | Parcial | MD global admite perfiles; la caja Informe no los pasa y PDF no ofrece esas tablas. Falta paridad PDF/MD desde el flujo. [Informes][reports], [puente][reportui]. |
 | INF-06 | P0 | Implementado | CSV/Parquet de datos, CSV de resultados y destinos protegidos; pruebas de fallo/rollback y figuras existentes. [Pruebas de datos][projecttests], [pruebas de informes][pdftests]. |
 
@@ -165,10 +165,10 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 | Código | Prioridad | Estado | Cobertura real y pendiente |
 | --- | --- | --- | --- |
 | UX-01 | P0 | Parcial | Lista de pasos y nombres de formas, inspector más amplio y vista inferior proporcional; recorrido completo sintético y exportaciones reales. Falta evaluación sistemática de claridad con usuarios. [Lote 2][usability]. |
-| UX-02 | P0 | Parcial | Lista nativa, atajos de pasos/paneles, menú de entradas compatibles y nombres/selección AX comprobados. Falta recorrido completo sólo con teclado y VoiceOver. [Revisión][usability]. |
+| UX-02 | P0 | Parcial | Lista nativa, atajos de pasos/paneles, menú de entradas compatibles y nombres/selección AX comprobados. Falta recorrido completo sólo con teclado y VoiceOver. [Revisión][usability]. ⌥⌘L reveló y enfocó la lista. Se verificó la selección con flechas. [V3][v3]. |
 | UX-03 | P0 | Parcial | Acento adaptativo, marcas claras en oscuro, paneles ajustados y restricción nativa del mínimo 1060×700. Se observó oscuro y contenido largo; no se certificó el mínimo con la captura remota ni la matriz completa. [Revisión][usability]. |
 | UX-04 | P0 | Parcial | Catálogo ES/EN con 758 entradas y cambio en vivo del recorrido principal, mensajes conocidos y ayudas. Datos/títulos propios conservados. Informes y texto técnico desconocido aún pueden mezclar idiomas; diálogos del sistema siguen macOS. [Revisión][usability], [catálogo][uitext]. |
-| UX-05 | P0 | Parcial | Diagnóstico de lectura, HEX y contraste comprobados; selector de paquete/reapertura confirmados. Faltan todos los fallos/cancelaciones y seguimiento del aviso de tabla nativa. [Revisión][usability]. |
+| UX-05 | P0 | Parcial | Diagnóstico de lectura, HEX y contraste comprobados; selector de paquete/reapertura confirmados. Faltan todos los fallos/cancelaciones y seguimiento del aviso de tabla nativa. [Revisión][usability]. V3 añadió mensajes de destino y verificó el aviso de CSV sin métricas. En la prueba se volvió a elegir la carpeta para habilitar el selector nativo. [V3][v3]. |
 | UX-06 | P1 | Pendiente | No existe todavía estudio registrado de tres recorridos con usuarios ni cierre de tropiezos medidos. Las decisiones de la maqueta no sustituyen esa observación. |
 
 ## 12. Privacidad y seguridad
@@ -192,7 +192,7 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 
 | Código | Prioridad | Estado | Cobertura real y pendiente |
 | --- | --- | --- | --- |
-| VAL-01 | P0 | Implementado | 79 funciones en 17 suites release; referencias estadísticas y cuatro SIGKILL conservados. Regresión de versión/build y aceptación portable con selección de resultados. [Cierre V2][v2]. [Salida][tests], [lote 2][usability]. |
+| VAL-01 | P0 | Implementado | 81 funciones en 17 suites release. Recuperación, aceptación portable y regresiones de identidad y alcance CSV. [Salida][tests], [cierre V3][v3]. |
 | VAL-02 | P0 | Implementado | Recorrido real, exportaciones abiertas y límites anotados. No sustituye GRA-05, UX-02/04 o VAL-03. [Registro][validation], [evidencia nativa][native], [PDF][pdfsample]. |
 | VAL-03 | P0 | Parcial | ZIP/suma/firma ad hoc y extracción limpia probados en M1/macOS 27.2; faltan otro Mac sin desarrollo y ejecución real en macOS 14. [Integridad][integrity], [release][release]. |
 | VAL-04 | P1 | Pendiente | Developer ID y notarización no realizados. Requiere recursos/cuenta autorizados al programar ese lote. [Release][release]. |
@@ -226,7 +226,7 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 
 El autor autorizó continuar con la siguiente etapa el 2 de noviembre; se entregó el lote 1. El autor autorizó el lote 2 a continuación. Su entrega preliminar no cierra las calificaciones externas ni la matriz completa; los lotes siguientes y las ampliaciones conservan su alcance pendiente. No se abren issues automáticamente por actualizar la matriz.
 
-**V2 de la Gantt semanal:** cerrado en el alcance técnico de muestras sintéticas controladas; versión de informes corregida y circuito de integridad/exportación/reapertura comprobado. [Registro de cierre][v2]. Este hito no cambia los estados parciales de la matriz ni cierra por sí solo V3.
+**V2 de la Gantt semanal:** cerrado en el alcance técnico de muestras sintéticas controladas; versión de informes corregida y circuito de integridad/exportación/reapertura comprobado. [Registro de cierre][v2]. El seguimiento de V3 figura en la tabla semanal.
 
 ## Condiciones para cerrar una fila
 
@@ -235,14 +235,14 @@ El autor autorizó continuar con la siguiente etapa el 2 de noviembre; se entreg
 3. Corregir limitaciones y documentación si cambió el comportamiento. Conservar registros históricos con su fecha.
 4. Actualizar esta matriz sin convertir pruebas del núcleo en afirmaciones de interfaz, seguridad o compatibilidad no verificadas.
 
-[tests]: evidence/test-v2-release.txt
+[tests]: evidence/test-v3-release.txt
 [validation]: VALIDATION.md
 [numerical]: STATISTICAL-VALIDATION.md
 [native]: evidence/integrated-native-review.json
 [screenshots]: screenshots/README.md
 [pdfsample]: evidence/VAPULA-flujo-final.pdf
-[integrity]: evidence/bundle-integrity-0.1.3.json
-[release]: RELEASE-0.1.3.md
+[integrity]: evidence/bundle-integrity-0.1.4.json
+[release]: RELEASE-0.1.4.md
 [limits]: LIMITATIONS.md
 [projecttests]: ../Tests/VapulaTests/ProjectDataTests.swift
 [workflowtests]: ../Tests/VapulaTests/WorkflowExecutionTests.swift
@@ -305,3 +305,5 @@ El autor autorizó continuar con la siguiente etapa el 2 de noviembre; se entreg
 [uitext]: ../Sources/VapulaCore/Resources/Interface.en.json
 
 [v2]: ACCEPTANCE-V2.md
+
+[v3]: ACCEPTANCE-V3.md

@@ -5,24 +5,30 @@ struct WorkbenchCanvas: View {
   let workspace: Workspace
   @State private var zoom: CGFloat = 1
   @State private var pan = CGSize.zero
-  @State private var panStart: CGSize?
+  @GestureState private var panTranslation = CGSize.zero
+  @GestureState private var stepDrag: StepDrag?
   @State private var hasFitted = false
+  private var isDragging: Bool { stepDrag != nil || panTranslation != .zero }
+
   var body: some View {
     GeometryReader { geometry in
+      let viewport = CGSize(width: pan.width + panTranslation.width, height: pan.height + panTranslation.height)
+      let steps = displayedSteps
       ZStack(alignment: .topLeading) {
-        WorkbenchDotGrid(zoom: zoom, pan: pan)
+        WorkbenchDotGrid(zoom: zoom, pan: viewport)
           .contentShape(Rectangle())
-          .gesture(DragGesture(minimumDistance: 4).onChanged { value in
-            if panStart == nil { panStart = pan }
-            let start = panStart ?? .zero
-            pan = CGSize(width: start.width + value.translation.width, height: start.height + value.translation.height)
-          }.onEnded { _ in panStart = nil })
-        WorkbenchWires(steps: workspace.workflow.nodes, selected: workspace.workflowNodeID, zoom: zoom, pan: pan)
+          .gesture(DragGesture(minimumDistance: 4, coordinateSpace: .global)
+            .updating($panTranslation) { value, translation, _ in translation = value.translation }
+            .onEnded { value in
+              pan.width += value.translation.width
+              pan.height += value.translation.height
+            })
+        WorkbenchWires(steps: steps, selected: stepDrag?.id ?? workspace.workflowNodeID, zoom: zoom, pan: viewport)
           .allowsHitTesting(false).accessibilityHidden(true)
-        ForEach(workspace.workflow.nodes) { step in
-          MovableWorkflowStep(step: step, workspace: workspace, zoom: zoom)
+        ForEach(steps) { step in
+          MovableWorkflowStep(step: step, workspace: workspace, isDragging: isDragging, drag: dragGesture(for: step.id))
             .scaleEffect(zoom)
-            .position(x: step.position.x * zoom + pan.width, y: step.position.y * zoom + pan.height)
+            .position(x: step.position.x * zoom + viewport.width, y: step.position.y * zoom + viewport.height)
         }
         if workspace.workflow.nodes.isEmpty {
           ContentUnavailableView(L("Tu flujo empieza aquí"), systemImage: "square.stack.3d.up",
@@ -54,6 +60,7 @@ struct WorkbenchCanvas: View {
               Button { fit(in: geometry.size) } label: { Image(systemName: "arrow.up.left.and.arrow.down.right").frame(width: 29, height: 27) }.help(L("Ajustar el flujo · ⌘0")).accessibilityLabel(L("Ajustar al lienzo"))
             }.buttonStyle(.plain).background(.regularMaterial, in: RoundedRectangle(cornerRadius: 7))
               .overlay(RoundedRectangle(cornerRadius: 7).strokeBorder(.quaternary))
+              .disabled(isDragging)
           }.padding(14)
         }.frame(width: geometry.size.width, height: geometry.size.height)
       }
@@ -64,8 +71,45 @@ struct WorkbenchCanvas: View {
       .onChange(of: workspace.workflowFocusID) { focus(in: geometry.size) }
     }
   }
+
+  private struct StepDrag {
+    let id: UUID
+    let translation: CGSize
+  }
+
+  private var displayedSteps: [WorkflowNode] {
+    var steps = workspace.workflow.nodes
+    if let stepDrag, let index = steps.firstIndex(where: { $0.id == stepDrag.id }) {
+      steps[index].position = translated(steps[index].position, by: stepDrag.translation)
+    }
+    return steps
+  }
+
+  private func translated(_ origin: WorkflowPoint, by translation: CGSize) -> WorkflowPoint {
+    WorkflowPoint(origin.x + translation.width / zoom, origin.y + translation.height / zoom)
+  }
+
+  private func dragGesture(for id: UUID) -> some Gesture {
+    // The card moves and scales inside the window. Measuring in its own
+    // coordinates feeds that movement back into the next drag event.
+    DragGesture(minimumDistance: 5, coordinateSpace: .global)
+      .updating($stepDrag) { value, drag, _ in
+        guard !workspace.busy else { return }
+        drag = StepDrag(id: id, translation: value.translation)
+      }
+      .onEnded { value in
+        guard !workspace.busy, let step = workspace.workflow.nodes.first(where: { $0.id == id }) else { return }
+        let destination = translated(step.position, by: value.translation)
+        guard destination != step.position else { return }
+        workspace.rememberWorkflow()
+        workspace.workflowNodeID = id
+        workspace.moveWorkflowNode(id, x: destination.x, y: destination.y)
+        workspace.persistWorkflow()
+      }
+  }
+
   private func focus(in size: CGSize) {
-    guard let id = workspace.workflowFocusID ?? workspace.workflowNodeID,
+    guard !isDragging, let id = workspace.workflowFocusID ?? workspace.workflowNodeID,
       let step = workspace.workflow.nodes.first(where: { $0.id == id }) else { return }
     let point = CGPoint(x: step.position.x * zoom + pan.width, y: step.position.y * zoom + pan.height)
     let x = min(max(point.x, 125), max(125, size.width - 125))
@@ -73,6 +117,7 @@ struct WorkbenchCanvas: View {
     pan.width += x - point.x; pan.height += y - point.y
   }
   private func fit(in size: CGSize) {
+    guard !isDragging else { return }
     guard !workspace.workflow.nodes.isEmpty else { zoom = 1; pan = .zero; return }
     let points = workspace.workflow.nodes.map(\.position)
     let minX = (points.map(\.x).min() ?? 0) - 110
@@ -126,14 +171,14 @@ private struct WorkbenchWires: View {
     }
   }
 }
-private struct MovableWorkflowStep: View {
+private struct MovableWorkflowStep<Drag: Gesture>: View {
   let step: WorkflowNode
   let workspace: Workspace
-  let zoom: CGFloat
-  @State private var dragStart: WorkflowPoint?
+  let isDragging: Bool
+  let drag: Drag
   var body: some View {
     ZStack {
-      Button { workspace.selectWorkflowNode(step.id) } label: {
+      Button { if !isDragging { workspace.selectWorkflowNode(step.id) } } label: {
         WorkbenchNodeCard(node: step, workspace: workspace)
       }.buttonStyle(.plain).disabled(workspace.busy)
         .accessibilityLabel(step.displayName)
@@ -141,12 +186,7 @@ private struct MovableWorkflowStep: View {
         .accessibilityHint(L("Sus opciones y resultados aparecerán aquí."))
         .accessibilityAddTraits(workspace.workflowNodeID == step.id ? [.isSelected] : [])
         .accessibilityRemoveTraits(workspace.workflowNodeID == step.id ? [] : [.isSelected])
-        .simultaneousGesture(DragGesture(minimumDistance: 5).onChanged { value in
-          guard !workspace.busy else { return }
-          if dragStart == nil { dragStart = step.position; workspace.rememberWorkflow(); workspace.workflowNodeID = step.id }
-          let start = dragStart ?? step.position
-          workspace.moveWorkflowNode(step.id, x: start.x + value.translation.width / zoom, y: start.y + value.translation.height / zoom)
-        }.onEnded { _ in dragStart = nil; workspace.persistWorkflow() })
+        .simultaneousGesture(drag, including: workspace.busy ? .none : .all)
       if step.kind != .data {
         Button { workspace.connectWorkflow(to: step.id) } label: {
           Circle().fill(Color(nsColor: .controlBackgroundColor)).overlay(Circle().stroke(workspace.workflowConnection == nil ? Color.secondary : WorkbenchInk.accent, lineWidth: 1.5)).frame(width: 9, height: 9).padding(8)

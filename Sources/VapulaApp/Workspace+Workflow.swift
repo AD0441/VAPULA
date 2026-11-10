@@ -22,6 +22,12 @@ extension Workspace {
     persistWorkflow()
   }
   var workflowNode: WorkflowNode? { workflow.nodes.first { $0.id == workflowNodeID } }
+  func focusWorkflowSteps() {
+    guard !busy, let first = workflow.nodes.first else { return }
+    workflowSidebar = true
+    if workflowNode == nil { selectWorkflowNode(first.id) }
+    workflowStepsFocusRequested = true
+  }
   func selectAdjacentStep(_ delta: Int) {
     guard !busy, !workflow.nodes.isEmpty else { return }
     let index = workflow.nodes.firstIndex(where: { $0.id == workflowNodeID }) ?? (delta > 0 ? -1 : workflow.nodes.count)

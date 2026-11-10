@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-10",
+  "timezone": "America/Santiago",
+  "version": "0.1.4",
+  "build": "5",
+  "host": "macOS 27.3, Apple Silicon",
+  "tests": 81,
+  "suites": 17,
+  "configuration": "release",
+  "source_sha256": "eb1abb5bd4958f109fdbaa9167554e99e019b2aeddb8a1e50c1d186b765eee63",
+  "synthetic_rows": 4,
+  "steps": 4,
+  "native_keyboard": "Opened hidden sidebar and selected steps using arrows after Command-Option-L",
+  "baseline_csv": "Destination available without metrics and chart count displayed for results CSV",
+  "csv_metrics": 12,
+  "csv_selected_results": 1,
+  "csv_mean": 5.0,
+  "pdf_pages": 3,
+  "pdf_version": "VAPULA 0.1.4 (build 5)",
+  "pdf_selected_results": 1,
+  "pdf_figures": 1,
+  "pdf_folder": "Save became enabled after reselecting the same folder",
+  "native_cancel_message": "Exportación cancelada",
+  "drag_author_confirmation": "funciona bien ahora",
+  "persisted_drag_changes": [
+    {
+      "node": "muestra",
+      "delta_x": -13.194438559322037,
+      "delta_y": 35.802701271186436
+    },
+    {
+      "node": "Descriptiva",
+      "delta_x": 51.06657838983051,
+      "delta_y": -60.579396186440675
+    },
+    {
+      "node": "Gráfico",
+      "delta_x": -13.038877118644109,
+      "delta_y": -3.068802966101657
+    }
+  ],
+  "drag_method": "manual author confirmation and observed persisted positions",
+  "clean_close": true
+}

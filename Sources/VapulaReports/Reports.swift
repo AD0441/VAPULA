@@ -65,7 +65,7 @@ public enum Reports {
   }
   public static func writeNew(_ text: String, to url: URL) throws {
     guard url.isFileURL, FileManager.default.fileExists(atPath: url.path) == false else {
-      throw VapulaError.invalid("Choose a new report filename. Existing files are protected.")
+      throw VapulaError.invalid("Elige un nombre nuevo para el informe.")
     }
     // Exclusive creation protects imported sources and avoids overwrite races.
     try Data(text.utf8).write(to: url, options: .withoutOverwriting)

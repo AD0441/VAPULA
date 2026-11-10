@@ -64,4 +64,46 @@ struct ReportSelectionTests {
     #expect(throws: VapulaError.self) { try ReportSelection.plan(project: f.project, workflow: f.graph, scope: .result(UUID())) }
     #expect(throws: VapulaError.self) { try ReportSelection.plan(project: f.project, workflow: f.graph, scope: .node(UUID())) }
   }
+
+  @Test func csvReportUsesExecutedAnalysesEvenWithPendingChartBranches() throws {
+    var f = Fixture()
+    let chart = try #require(f.graph.nodes.first { $0.kind == .chart && !$0.dirty })
+    f.graph.invalidate(chart.id)
+
+    let plan = try ReportSelection.plan(project: f.project, workflow: f.graph, scope: .node(f.reportID), format: .csv)
+    #expect(plan.project.results.map(\.id) == [f.resultID])
+    #expect(plan.project.findings.isEmpty && plan.charts.isEmpty && plan.omittedCharts == 0)
+    #expect(throws: VapulaError.self) {
+      try ReportSelection.plan(project: f.project, workflow: f.graph, scope: .node(f.reportID), format: .markdown)
+    }
+
+    f.graph.invalidate(f.analysisID)
+    #expect(throws: VapulaError.self) {
+      try ReportSelection.plan(project: f.project, workflow: f.graph, scope: .node(f.reportID), format: .csv)
+    }
+  }
+
+  @Test func csvRequiresMetricsAndIsIndependentOfTheFigureLimit() throws {
+    var f = Fixture()
+    let chart = try #require(f.graph.nodes.first { $0.kind == .chart && !$0.dirty })
+    for number in 1...32 {
+      var extra = WorkflowNode(name: "Chart \(number)", task: chart.task, inputs: chart.inputs, position: chart.position)
+      extra.dirty = false
+      f.graph.nodes.append(extra)
+    }
+
+    #expect(throws: VapulaError.self) {
+      try ReportSelection.plan(project: f.project, workflow: f.graph, scope: .project)
+    }
+    let plan = try ReportSelection.plan(project: f.project, workflow: f.graph, scope: .project, format: .csv)
+    #expect(plan.project.results.count == 2)
+    #expect(plan.charts.isEmpty && plan.omittedCharts == 0)
+    #expect(throws: VapulaError.self) {
+      try ReportSelection.plan(project: f.project, workflow: f.graph, scope: .node(chart.id), format: .csv)
+    }
+    f.project.results = []
+    #expect(throws: VapulaError.self) {
+      try ReportSelection.plan(project: f.project, workflow: f.graph, scope: .project, format: .csv)
+    }
+  }
 }

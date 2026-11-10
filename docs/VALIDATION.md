@@ -1,5 +1,7 @@
 # Validation — local expanded build
 
+**10 November 2026 · 0.1.4.** [V3 acceptance](ACCEPTANCE-V3.md) records 81 release tests, native keyboard and report checks, and the author’s drag confirmation.
+
 **Current update — 2026-11-03, 0.1.3:** [V2 acceptance](ACCEPTANCE-V2.md) records 79 release functions in 17 suites, the new 31-row portable/selection regression, four recovery SIGKILL cases and actual MD/PDF exports with application version/build. Earlier records remain dated evidence.
 
 **Previous stage — 2026-11-02, 0.1.2:** [Usability stage](USABILITY-STAGE.md) records 76 release Swift Testing functions in 16 suites and the native synthetic review of step navigation, live language/theme changes, HEX diagnostics, eight forms, PDF/MD exports and reopening. The figure pagination regression was reproduced before the fix and passes in the final suite. That record states the remaining qualifications.

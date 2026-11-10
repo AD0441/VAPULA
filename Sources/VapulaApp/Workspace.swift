@@ -21,6 +21,8 @@ final class Workspace {
   var status = L("")
   var error: String?
   var reportExportRequest: ReportExportRequest?
+  var reportDestinationRequest: ReportDestinationRequest?
+  var reportDirectoryURL: URL?
   var recoveryNotice: ProjectRecoveryNotice?
   var inspectorDrafts = InspectorDraftStore()
   var inspectorRevision = 0
@@ -50,6 +52,7 @@ final class Workspace {
   var workflowConnection: UUID?
   var workflowInspector = true
   var workflowSidebar = true
+  var workflowStepsFocusRequested = false
   var workflowPreview = true
   var workflowTab = WorkbenchTab.data
   var workflowUndoAvailable = false
@@ -61,7 +64,7 @@ final class Workspace {
   @ObservationIgnored private var task: Task<Void, Never>?
   var dataset: DatasetVersion? { project?.datasets.first { $0.id == datasetID } }
   var findings: [QualityFinding] { project?.findings.filter { $0.datasetID == datasetID } ?? [] }
-  func run(_ label: String, operation: @escaping @MainActor () async throws -> Void) {
+  func run(_ label: String, success: String = L("Listo"), operation: @escaping @MainActor () async throws -> Void) {
     guard busy == false else { return }
     busy = true
     status = label
@@ -73,7 +76,7 @@ final class Workspace {
       }
       do {
         try await operation()
-        status = L("Listo")
+        status = success
       } catch is CancellationError {
         status = L("Cancelado; no se guardó el trabajo incompleto")
       } catch {
@@ -130,7 +133,7 @@ final class Workspace {
   }
   func reset(_ p: VapulaProject, url: URL) {
     project = p
-    recoveryNotice = nil; reportExportRequest = nil
+    recoveryNotice = nil; reportExportRequest = nil; reportDestinationRequest = nil
     inspectorDrafts.removeAll(); inspectorRevision += 1
     projectURL = url
     datasetID = p.datasets.last?.id
@@ -138,7 +141,7 @@ final class Workspace {
     workflow = p.workflow ?? DataWorkflow.inferred(from: p)
     workflowNodeID = workflow.nodes.last { $0.outputDatasetID == datasetID }?.id ?? workflow.nodes.first?.id
     workflowCharts = [:]; workflowHistory = []; workflowUndoAvailable = false
-    workflowUnsaved = false; workflowTab = .data; selectedDataRows = []
+    workflowUnsaved = false; workflowTab = .data; selectedDataRows = []; workflowStepsFocusRequested = false
     workflowFitRequest += 1
     selectedSection = .workflow
   }
@@ -364,16 +367,6 @@ final class Workspace {
   func useVersion(_ id: UUID, section: WorkspaceSection) {
     selectVersion(id)
     selectedSection = section
-  }
-}
-enum ReportExportFormat: Hashable {
-  case pdf, markdown, csv
-  var fileExtension: String {
-    switch self {
-    case .pdf: ".pdf"
-    case .markdown: ".md"
-    case .csv: ".csv"
-    }
   }
 }
 enum WorkspaceSection: String, CaseIterable, Identifiable {

@@ -34,7 +34,11 @@ struct ContentView: View {
       }.font(.system(size: 10.5)).padding(.horizontal, 16).frame(height: 30)
     }.tint(WorkbenchInk.accent)
       .sheet(isPresented: $workspace.showImport) { ImportView(workspace: workspace).interactiveDismissDisabled(workspace.busy) }
-      .sheet(item: $workspace.reportExportRequest) { request in ReportExportView(workspace: workspace, request: request) }
+      .sheet(item: $workspace.reportExportRequest, onDismiss: {
+        Task { await workspace.chooseReportDestination() }
+      }) { request in
+        ReportExportView(workspace: workspace, request: request)
+      }
       .sheet(item: $workspace.editRequest) { request in DataEditingView(workspace: workspace, request: request).interactiveDismissDisabled(workspace.busy) }
       .sheet(item: $workspace.evidenceFinding) { finding in
         VStack(alignment: .leading, spacing: 16) {
@@ -102,18 +106,19 @@ private struct WorkbenchHeader: View {
 }
 private struct WorkbenchSidebar: View {
   let workspace: Workspace
+  @FocusState private var stepsFocused: Bool
   var body: some View {
     VStack(alignment: .leading, spacing: 0) {
       Text(L("Mi laboratorio")).font(.system(size: 12, weight: .semibold)).padding(16).padding(.top, 5)
       Button { workspace.workflowTab = .data; workspace.workflowPreview = true } label: {
         Label(L("Flujo de trabajo"), systemImage: "point.3.connected.trianglepath.dotted").font(.system(size: 11.5, weight: .medium))
           .frame(maxWidth: .infinity, alignment: .leading).padding(10).background(WorkbenchInk.accent.opacity(0.11), in: RoundedRectangle(cornerRadius: 6))
-      }.buttonStyle(.plain).padding(.horizontal, 7)
+      }.buttonStyle(.plain).padding(.horizontal, 7).disabled(workspace.busy)
       Button {
         workspace.workflowNodeID = nil; workspace.workflowTab = .result; workspace.workflowPreview = true
       } label: {
         Label(L("Resultados guardados"), systemImage: "doc.text").font(.system(size: 11)).frame(maxWidth: .infinity, alignment: .leading).padding(10)
-      }.buttonStyle(.plain).padding(.horizontal, 7)
+      }.buttonStyle(.plain).padding(.horizontal, 7).disabled(workspace.busy)
       ScrollViewReader { proxy in
       List(selection: Binding<UUID?>(get: { workspace.workflowNodeID }, set: { if let id = $0 { workspace.selectWorkflowNode(id) } })) {
         Section(L("Pasos del flujo")) {
@@ -138,6 +143,14 @@ private struct WorkbenchSidebar: View {
           }
         }
       }.listStyle(.sidebar).font(.system(size: 11.5)).accessibilityLabel(L("Pasos y fuentes del flujo"))
+        .focused($stepsFocused)
+        .task(id: workspace.workflowStepsFocusRequested) {
+          guard workspace.workflowStepsFocusRequested else { return }
+          await Task.yield()
+          guard !Task.isCancelled else { return }
+          stepsFocused = true
+          workspace.workflowStepsFocusRequested = false
+        }
         .onChange(of: workspace.workflowNodeID) { _, id in
           if let id { proxy.scrollTo(id, anchor: .center) }
         }
@@ -149,7 +162,7 @@ private struct WorkbenchSidebar: View {
             workspace.showHistoricalVersion(version)
           }
         }
-      }.font(.system(size: 10.5)).padding(.horizontal, 12).padding(.bottom, 16)
+      }.font(.system(size: 10.5)).padding(.horizontal, 12).padding(.bottom, 16).disabled(workspace.busy)
       VStack(alignment: .leading, spacing: 10) {
         Label(L("Todo en tu Mac"), systemImage: "lock").font(.system(size: 10.5, weight: .medium))
         Text(L("Tus datos originales se conservan.")).font(.system(size: 10.5)).foregroundStyle(.secondary)
@@ -160,7 +173,7 @@ private struct WorkbenchSidebar: View {
           Link(destination: URL(string: "https://ko-fi.com/C0C51WQ1T0")!) { Image(systemName: "cup.and.saucer") }.help(L("Apoyar el desarrollo")).accessibilityLabel(L("Apoyar en Ko-fi; abre el navegador"))
         }
       }.padding(15)
-    }.frame(maxHeight: .infinity).background(.background.secondary).disabled(workspace.busy)
+    }.frame(maxHeight: .infinity).background(.background.secondary)
   }
 }
 private struct WorkbenchTools: View {

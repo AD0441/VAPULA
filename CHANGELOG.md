@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.4 · 2026-11-10
+
+- Use window coordinates for box and canvas gestures. Preview positions during the drag and commit one move on release.
+- Focus the step list with ⌥⌘L, including when the library is hidden.
+- Plan CSV from executed analysis metrics and show actionable export messages.
+- Verify 81 release tests and the focused native V3 cases. See docs/ACCEPTANCE-V3.md.
+
 ## 0.1.3 — 2026-11-03 · V2 acceptance
 
 - Read the exporting application version/build from its bundle for Markdown, PDF body and PDF Creator; preserve historical project/result metadata.

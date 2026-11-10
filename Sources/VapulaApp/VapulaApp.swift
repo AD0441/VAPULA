@@ -44,6 +44,9 @@ struct VapulaApp: App {
           .disabled(workspace.project == nil || workspace.busy)
       }
       CommandMenu(L("Flujo")) {
+        Button(L("Ir a los pasos del flujo"), action: workspace.focusWorkflowSteps)
+          .keyboardShortcut("l", modifiers: [.command, .option])
+          .disabled(workspace.workflow.nodes.isEmpty || workspace.busy)
         Button(L("Paso anterior")) { workspace.selectAdjacentStep(-1) }
           .keyboardShortcut(.upArrow, modifiers: [.command, .option]).disabled(workspace.project == nil || workspace.busy)
         Button(L("Paso siguiente")) { workspace.selectAdjacentStep(1) }

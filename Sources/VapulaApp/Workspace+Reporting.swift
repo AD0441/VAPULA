@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import UniformTypeIdentifiers
 import VapulaCore
 import VapulaData
 import VapulaReports
@@ -9,6 +10,12 @@ struct ReportExportRequest: Identifiable {
   let scope: ReportScope
   let format: ReportExportFormat
 }
+struct ReportDestinationRequest {
+  let projectID: UUID
+  let scope: ReportScope
+  let format: ReportExportFormat
+}
+
 extension Workspace {
   func requestReportExport(scope: ReportScope? = nil, format: ReportExportFormat = .pdf) {
     guard !busy, project != nil else { return }
@@ -27,33 +34,69 @@ extension Workspace {
   }
   func confirmReportExport(scope: ReportScope, format: ReportExportFormat) {
     guard !busy, let project else { return }
+    reportDestinationRequest = ReportDestinationRequest(projectID: project.id, scope: scope, format: format)
+    reportExportRequest = nil
+  }
+
+  func chooseReportDestination() async {
+    guard let request = reportDestinationRequest else { return }
+    reportDestinationRequest = nil
+    guard !busy, let project, project.id == request.projectID else { return }
+    let scope = request.scope
+    let format = request.format
     let plan: ReportPlan
-    do { plan = try ReportSelection.plan(project: project, workflow: workflow, scope: scope) }
+    do { plan = try ReportSelection.plan(project: project, workflow: workflow, scope: scope, format: format) }
     catch { self.error = error.localizedDescription; return }
     let title = reportScopeTitle(scope)
     let profiles = scope == .project ? self.profiles : []
     let profileID = datasetID
-    reportExportRequest = nil
-    Task { @MainActor in
-      await Task.yield()
-      guard !self.busy, self.project?.id == project.id else { return }
-      let panel = NSSavePanel()
-      panel.title = L("Exportar · \(title)")
-      panel.nameFieldStringValue = L("informe\(format.fileExtension)")
-      guard panel.runModal() == .OK, let url = panel.url else { return }
-      self.run(L("Exportando · \(title)…")) {
-        var figures: [ReportFigure] = []
-        if format != .csv {
-          for job in plan.charts {
-            try Task.checkCancellation()
-            let output = try await self.engine.workflowChart(datasetID: job.datasetID, request: job.request)
-            figures.append(try self.reportFigure(output))
-          }
-        }
+    let originalURL = projectURL
+    let panel = NSSavePanel()
+    panel.title = L("Exportar · \(title)")
+    if let type = UTType(filenameExtension: String(format.fileExtension.dropFirst())) {
+      panel.allowedContentTypes = [type]
+    }
+    panel.directoryURL = reportDirectoryURL ?? originalURL?.deletingLastPathComponent()
+    panel.isExtensionHidden = false
+    panel.nameFieldStringValue = L("informe\(format.fileExtension)")
+    let response: NSApplication.ModalResponse
+    if let window = NSApp.mainWindow {
+      response = await panel.beginSheetModal(for: window)
+    } else {
+      response = panel.runModal()
+    }
+    guard !busy, self.project?.id == project.id, projectURL == originalURL else { return }
+    guard response == .OK, let url = panel.url else {
+      status = L("Exportación cancelada")
+      return
+    }
+    reportDirectoryURL = url.deletingLastPathComponent()
+    run(L("Exportando · \(title)…"), success: L("Informe guardado: \(url.lastPathComponent)")) {
+      guard !FileManager.default.fileExists(atPath: url.path) else {
+        throw VapulaError.invalid("Ya existe un archivo con ese nombre. Elige otro nombre para el informe.")
+      }
+      var figures: [ReportFigure] = []
+      for job in plan.charts {
+        try Task.checkCancellation()
+        let output = try await self.engine.workflowChart(datasetID: job.datasetID, request: job.request)
+        figures.append(try self.reportFigure(output))
+      }
+      try Task.checkCancellation()
+      do {
         switch format {
         case .pdf: try PDFReport.data(project: plan.project, figures: figures).write(to: url, options: .withoutOverwriting)
         case .markdown: try Reports.writeMarkdown(plan.project, profiles: profiles, profileDatasetID: profileID, figures: figures, to: url)
         case .csv: try Reports.writeNew(Reports.csv(plan.project.results), to: url)
+        }
+      } catch let error as CocoaError {
+        switch error.code {
+        case .fileWriteFileExists:
+          throw VapulaError.invalid("Ya existe un archivo con ese nombre. Elige otro nombre para el informe.")
+        case .fileWriteNoPermission, .fileWriteVolumeReadOnly:
+          throw VapulaError.invalid("No se puede escribir en esta carpeta. Elige otra carpeta para el informe.")
+        case .fileWriteOutOfSpace:
+          throw VapulaError.invalid("No hay espacio suficiente. Libera espacio o elige otra ubicación para el informe.")
+        default: throw error
         }
       }
     }
