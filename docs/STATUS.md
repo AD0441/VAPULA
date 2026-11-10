@@ -4,21 +4,21 @@
 
 **Línea base:** [REQUIREMENTS.md v1.1](REQUIREMENTS.md).
 
-**Descarga pública comprobada:** [0.1.3 preliminar](https://github.com/AD0441/VAPULA/releases/tag/v0.1.3). V1 conserva su cierre con [0.1.1](https://github.com/AD0441/VAPULA/releases/tag/v0.1.1).
+**Descarga pública comprobada:** [0.1.4 preliminar](https://github.com/AD0441/VAPULA/releases/tag/v0.1.4). Los cierres de V2 y V1 conservan sus referencias a [0.1.3](https://github.com/AD0441/VAPULA/releases/tag/v0.1.3) y [0.1.1](https://github.com/AD0441/VAPULA/releases/tag/v0.1.1).
 
-**Candidata V3 validada.** 0.1.4, build 5. Paquete arm64 y exportaciones locales comprobados. La CI y la publicación se registran al completar la entrega.
+**Entrega V3 publicada e instalada.** 0.1.4, build 5, con arranque comprobado desde `/Applications/VAPULA.app`. [Commit `75ada78`](https://github.com/AD0441/VAPULA/commit/75ada78231628f87a6faa85e437670f89e8ee10a) · [CI satisfactoria](https://github.com/AD0441/VAPULA/actions/runs/42828113814).
 
 **Documentación/identidad revisada:** [`7caa136`](https://github.com/AD0441/VAPULA/commit/7caa1364daf87f4d4e480924c399bae8f79ea4fd), incorporando después este inventario.
 
 Esta matriz conserva la separación entre requisitos y cobertura usada en [NABERIUS](https://github.com/AD0441/NABERIUS/blob/main/docs/STATUS.md). El [lote 1 de integridad](INTEGRITY-STAGE.md) implementa PRY-05, IMP-04, EDT-03, FLU-07 e INF-04, con pruebas y revisión nativa. Los demás pendientes y propuestas conservan su alcance.
 
-## Seguimiento de la Gantt — semana 1
+## Seguimiento de la Gantt — semanas 1 y 2
 
 | Lote semanal | Estado al corte | Evidencia y alcance |
 | --- | --- | --- |
 | V1 · S1 · Cerrar 0.1.1 | Cerrado | Publicación confirmada, [CI satisfactoria](https://github.com/AD0441/VAPULA/actions/runs/41450849893), ZIP descargado y suma/firma/36 archivos coincidentes; arranque de la copia descargada comprobado en el Mac actual. [Integridad 0.1.1](evidence/bundle-integrity-0.1.1.json). |
 | V2 · S1 · Aceptación de integridad | Cerrado en el alcance técnico de muestras sintéticas controladas | Importar, corregir/imputar, analizar, revisar conversiones, exportar y reabrir; 79 pruebas release, cuatro SIGKILL y exportaciones reales con versión/build correctos. [Cierre V2][v2], [registro](evidence/v2-acceptance.json), [PDF final](evidence/v2-final.pdf), [MD y ocho imágenes](evidence/v2-final.md). 0.1.3 publicada después de pasar la CI del código. |
-| V3 · S2 · Claridad esencial | Cerrado en los recorridos comprobados | Foco y navegación en la lista, mensajes y exportación CSV/PDF, y arrastre confirmado por el autor. [Cierre V3][v3]. |
+| V3 · S2 · Claridad esencial | Cerrado en los recorridos comprobados | Foco y navegación en la lista, mensajes y exportación CSV/PDF, y arrastre confirmado por el autor. 0.1.4 publicada tras pasar la CI, con descarga e instalación comprobadas. [Cierre V3][v3] · [Release](https://github.com/AD0441/VAPULA/releases/tag/v0.1.4). |
 
 **V2 de la Gantt y «lote 2 de usabilidad» son alcances distintos.** Cerrar V2 no cierra los nueve P0 parciales ni los requisitos de VoiceOver, idiomas/temas completos u otro Mac. No se reprograman los demás proyectos.
 
@@ -44,11 +44,11 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 
 ## Evidencia disponible y sus límites
 
-- **Núcleo e integración:** 81 funciones Swift Testing en 17 suites en release. Incluyen aceptación portable, cuatro SIGKILL y dos regresiones de alcance CSV. [Salida final][tests], [registro de cierre][v2].
+- **Núcleo e integración:** 81 funciones Swift Testing en 17 suites en release. Incluyen aceptación portable, cuatro SIGKILL y dos regresiones de alcance CSV. [Salida final][tests], [registro de cierre][v3].
 - **Estadística:** 1.356 valores escalares de referencia independientes, con definiciones y tolerancias. No equivalen a 1.356 pruebas visuales. [Validación estadística][numerical].
 - **Aplicación real:** 0.1.3 reabrió 12 cajas/2 versiones/2 resultados y exportó 1 resultado seleccionado con 8 gráficos; MD y PDF de 10 páginas muestran la versión/build reales. [Aceptación V2][v2]. El recorrido base de 31 filas sigue registrado. El lote 1 añade borradores, conversión con cuatro pérdidas/cancelación/aceptación, recuperación visible y PDF/MD selectivos sobre cuatro filas sintéticas. [Lote 1][integritystage], [registro base][native], [capturas base][screenshots]. El [lote 2][usability] añade navegación, ES/EN, diagnóstico HEX, ocho formas, PDF/MD y reapertura con ocho filas sintéticas. No se revisaron todas las combinaciones de métodos, estilos, idiomas y temas.
-- **Distribución:** ZIP arm64 0.1.4 verificado localmente con SHA-256, extracción limpia, firma estricta ad hoc y comparación de archivos. [Integridad 0.1.4][integrity], [notas de release][release]. No hay Developer ID/notarización ni calificación en otro Mac/macOS mínimo.
-- **CI de entregas recientes:** [0.1.1](https://github.com/AD0441/VAPULA/actions/runs/41450849893) y [0.1.2](https://github.com/AD0441/VAPULA/actions/runs/41569142256) satisfactorias. [0.1.3](https://github.com/AD0441/VAPULA/actions/runs/41574435557) satisfactoria sobre el commit de código `0fd6a11`.
+- **Distribución:** ZIP arm64 0.1.4 descargado de la release y cotejado con el paquete probado. SHA-256, extracción limpia, firma estricta ad hoc y comparación de 38 archivos comprobados. Los dos ZIP locales conservados corresponden a 0.1.3 y 0.1.4. [Integridad 0.1.4][integrity], [notas de release][release]. No hay Developer ID/notarización ni calificación en otro Mac/macOS mínimo.
+- **CI de entregas recientes:** [0.1.1](https://github.com/AD0441/VAPULA/actions/runs/41450849893) y [0.1.2](https://github.com/AD0441/VAPULA/actions/runs/41569142256) satisfactorias. [0.1.3](https://github.com/AD0441/VAPULA/actions/runs/41574435557) satisfactoria sobre el commit de código `0fd6a11`. [0.1.4](https://github.com/AD0441/VAPULA/actions/runs/42828113814) satisfactoria sobre el commit `75ada78`.
 - **CI histórica:** ejecuciones satisfactorias de [main del código publicado](https://github.com/AD0441/VAPULA/actions/runs/41325036372), [tag 0.1.0](https://github.com/AD0441/VAPULA/actions/runs/41325199928) y [documentación de familia](https://github.com/AD0441/VAPULA/actions/runs/41332703840). CI no demuestra accesibilidad ni compatibilidad visual con todos los sistemas.
 
 ## 1. Proyecto, versiones y recuperación
@@ -194,7 +194,7 @@ Son cantidades de requisitos, con tamaños distintos; no un porcentaje de avance
 | --- | --- | --- | --- |
 | VAL-01 | P0 | Implementado | 81 funciones en 17 suites release. Recuperación, aceptación portable y regresiones de identidad y alcance CSV. [Salida][tests], [cierre V3][v3]. |
 | VAL-02 | P0 | Implementado | Recorrido real, exportaciones abiertas y límites anotados. No sustituye GRA-05, UX-02/04 o VAL-03. [Registro][validation], [evidencia nativa][native], [PDF][pdfsample]. |
-| VAL-03 | P0 | Parcial | ZIP/suma/firma ad hoc y extracción limpia probados en M1/macOS 27.2; faltan otro Mac sin desarrollo y ejecución real en macOS 14. [Integridad][integrity], [release][release]. |
+| VAL-03 | P0 | Parcial | ZIP/suma/firma ad hoc y extracción limpia comprobados en el Mac de desarrollo, con arranque en macOS 27.3; faltan otro Mac sin desarrollo y ejecución real en macOS 14. [Integridad][integrity], [release][release]. |
 | VAL-04 | P1 | Pendiente | Developer ID y notarización no realizados. Requiere recursos/cuenta autorizados al programar ese lote. [Release][release]. |
 
 ## 15. Presentación pública y familia
